@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SimpleLang;
+using System.Collections.Generic;
 
 namespace ProgramTree
 {
@@ -6,8 +7,7 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-        public Dictionary<string, int> Id_Dict = new Dictionary<string, int>();
-        public abstract void Visit();
+        public abstract void Nodes(Nodes n);
     }
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
@@ -19,14 +19,9 @@ namespace ProgramTree
         public string Name { get; set; }
         public IdNode(string name) { Name = name; }
 
-        public override void Visit()
+        public override void Nodes(Nodes n)
         {
-            System.Console.WriteLine("Зашел в IdNode");
-            var a = 0;
-            if (Id_Dict.TryGetValue(Name, out a) == false)
-            {
-                Id_Dict.Add(Name, 0);
-            }
+            n.GoToIdNode(this);
         }
     }
 
@@ -35,9 +30,9 @@ namespace ProgramTree
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
 
-        public override void Visit()
+        public override void Nodes(Nodes n)
         {
-            System.Console.WriteLine("Зашел в IntNumNode");
+            n.GoToIntNumNode(this);
 
         }
 
@@ -60,12 +55,9 @@ namespace ProgramTree
             AssOp = assop;
         }
 
-        public override void Visit()
+        public override void Nodes(Nodes n)
         {
-            System.Console.WriteLine("Зашел в AssignNode");
-            Id.Visit();
-            Expr.Visit();
-            
+            n.GoToAssignNode(this);      
         }
     }
 
@@ -78,11 +70,9 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Visit()
+        public override void Nodes(Nodes n)
         {
-            System.Console.WriteLine("Зашел в CycleNode");
-            Expr.Visit();
-            Stat.Visit();
+            n.GoToCycleNode(this);
         }
     }
     public class WhileNode : StatementNode
@@ -95,11 +85,9 @@ namespace ProgramTree
             Stat = stat;
         }
 
-        public override void Visit()
+        public override void Nodes(Nodes n)
         {
-            System.Console.WriteLine("Зашел в WhileNode");
-            Expr.Visit();
-            Stat.Visit();
+            n.GoToWhileNode(this);
         }
     }
 
@@ -115,11 +103,10 @@ namespace ProgramTree
             StList.Add(stat);
         }
 
-        public override void Visit()
+        public override void Nodes(Nodes n)
         {
-            System.Console.WriteLine("Зашел в BlockNode");
-            foreach (var st in this.StList)
-                st.Visit();
+            n.GoToBlockNode(this);
+
         }
     }
 

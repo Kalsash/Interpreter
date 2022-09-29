@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using SimpleScanner;
 using SimpleParser;
+using SimpleLang;
 
 namespace SimpleCompiler
 {
@@ -28,11 +29,12 @@ namespace SimpleCompiler
                     Console.WriteLine("Синтаксическое дерево построено");
                     //foreach (var st in parser.root.StList)
                     //Console.WriteLine(st);
-                    parser.root.Visit();
-                    Console.WriteLine(parser.root.Id_Dict.Count);
-                    foreach (var pair in parser.root.Id_Dict)
+                    var n = new Nodes();
+                    parser.root.Nodes(n);
+
+                    foreach (var pair in n.Id_Dict)
                     {
-                        Console.WriteLine($"Employee with key {pair.Key}: Id={pair.Value}");
+                        Console.WriteLine($"{pair.Key} = {pair.Value}");
                     }
 
                 }
