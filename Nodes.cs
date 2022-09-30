@@ -11,24 +11,27 @@ namespace SimpleLang
     public class Nodes
     {
         public Dictionary<string, int> Id_Dict = new Dictionary<string, int>();
+        public int n = 0;
         public virtual void GoToIdNode(IdNode id) 
         {
             System.Console.WriteLine("Зашел в IdNode");
-            var a = 0;
-            if (Id_Dict.TryGetValue(id.Name, out a) == false)
-            {
-                Id_Dict.Add(id.Name, 0);
-            }
         }
         public virtual void GoToIntNumNode(IntNumNode num) 
         {
             System.Console.WriteLine("Зашел в IntNumNode");
+            n = num.Num;
+
         }
         public virtual void GoToAssignNode(AssignNode a) 
         {
             System.Console.WriteLine("Зашел в AssignNode");
             a.Id.Nodes(this);
             a.Expr.Nodes(this);
+            var b = 0;
+            if (Id_Dict.TryGetValue(a.Id.Name, out b) == false)
+            {
+                Id_Dict.Add(a.Id.Name, n);
+            }
         }
         public virtual void GoToCycleNode(CycleNode c) 
         {
