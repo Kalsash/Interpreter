@@ -9,16 +9,6 @@ namespace SimpleCompiler
 {
     public class SimpleCompilerMain
     {
-        public class SymbolTable // Таблица символов
-        {
-            public  Dictionary<string, int> vars = new Dictionary<string, int>(); // таблица символов
-            public  void NewVarDef(string name, int val)
-            {
-                if (vars.ContainsKey(name))
-                    vars[name] = val;
-                else vars.Add(name, val);
-            }
-        }
         public static void Main()
         {
             string FileName = @"..\..\a.txt";
@@ -31,28 +21,18 @@ namespace SimpleCompiler
 
                 Parser parser = new Parser(scanner);
 
-               // var Id_Dict = new Dictionary<string, int>();
                 var b = parser.Parse();
                 if (!b)
                     Console.WriteLine("Ошибка");
                 else
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
-                    //foreach (var st in parser.root.StList)
-                    //Console.WriteLine(st);
-                    //var n = new Nodes();
-                    //parser.root.Nodes(n);
-                    //foreach (var pair in n.Id_Dict)
-                    //{
-                    //    Console.WriteLine($"{pair.Key} = {pair.Value}");
-                    //}
-                    var dict = new SymbolTable();
-                    dict = parser.root.Eval(dict);
-                    foreach (var pair in dict.vars)
+                    var v = new DefaultVisitor();
+                    parser.root.Eval(v);
+                    foreach (var pair in v.vars)
                     {
                         Console.WriteLine($"{pair.Key} = {pair.Value}");
                     }
-
                 }
             }
             catch (FileNotFoundException)

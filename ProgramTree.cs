@@ -1,4 +1,5 @@
 ﻿using SimpleLang;
+using SimpleLang.Visitors;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -11,8 +12,7 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-        public abstract SymbolTable Eval(SymbolTable dict);
-        // public abstract void Nodes(Nodes n);
+        public abstract void Eval(Visitor v);
     }
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
@@ -29,19 +29,12 @@ namespace ProgramTree
         {
             return Value;
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в IdNode");
-            if (dict.vars.ContainsKey(Name))
-            {
-                Value = dict.vars[Name];
-            }
-            return dict;
+            v.VisitIdNode(this);
+           
         }
-        //public override void Nodes(Nodes n)
-        //{
-        //    n.GoToIdNode(this);
-        //}
     }
 
     public  class IntNumNode : ExprNode
@@ -53,15 +46,12 @@ namespace ProgramTree
         {
             return Num;
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в IntNumNode");
-            return dict;
+            v.VisitIntNumNode(this);
+           
         }
-        //public override void Nodes(Nodes n)
-        //{
-        //    n.GoToIntNumNode(this);
-        //}
 
     }
     public class BinOpNode : ExprNode
@@ -90,17 +80,11 @@ namespace ProgramTree
             }
             return Left.Execute() + Right.Execute();
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в BinOpNode");
-            Left.Eval(dict);
-            Right.Eval(dict);
-            return dict;
+            v.VisitBinOpNode(this);
         }
-        //public override void Visit(Visitor v)
-        //{
-        //    v.VisitBinOpNode(this);
-        //}
     }
     public abstract class StatementNode : Node // базовый класс для всех операторов
     {
@@ -118,18 +102,11 @@ namespace ProgramTree
             Expr = expr;
             AssOp = assop;
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в AssignNode");
-            Id.Eval(dict);
-            Expr.Eval(dict);
-            dict.NewVarDef(Id.Name, Expr.Execute());
-            return dict;
+            v.VisitAssignNode(this);
         }
-        //public override void Nodes(Nodes n)
-        //{
-        //    n.GoToAssignNode(this);      
-        //}
     }
 
     public class CycleNode : StatementNode
@@ -141,17 +118,12 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в CycleNode");
-            Expr.Eval(dict);
-            Stat.Eval(dict);
-            return dict;
+            v.VisitCycleNode(this);
         }
-        //public override void Nodes(Nodes n)
-        //{
-        //    n.GoToCycleNode(this);
-        //}
+
     }
     public class WhileNode : StatementNode
     {
@@ -162,17 +134,12 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в WhileNode");
-            Expr.Eval(dict);
-            Stat.Eval(dict);
-            return dict;
+            v.VisitWhileNode(this);
         }
-        //public override void Nodes(Nodes n)
-        //{
-        //    n.GoToWhileNode(this);
-        //}
+
     }
 
     public class BlockNode : StatementNode
@@ -186,19 +153,12 @@ namespace ProgramTree
         {
             StList.Add(stat);
         }
-        public override SymbolTable Eval(SymbolTable dict)
+        public override void Eval(Visitor v)
         {
             System.Console.WriteLine("Зашел в BlockNode");
-            foreach (var st in StList)
-                st.Eval(dict);
-            return dict;
+            v.VisitBlockNode(this);
+          
         }
-
-        //public override void Nodes(Nodes n)
-        //{
-        //    n.GoToBlockNode(this);
-
-        //}
     }
 
 }
