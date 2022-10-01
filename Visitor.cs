@@ -15,5 +15,6 @@ namespace SimpleLang.Visitors
         public virtual void VisitCycleNode(CycleNode c) { }
         public virtual void VisitBlockNode(BlockNode bl) { }
         public virtual void VisitWhileNode(WhileNode w) { }
+        public virtual void VisitWriteNode(WriteNode w) { }
     }
 }

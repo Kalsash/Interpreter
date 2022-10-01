@@ -31,7 +31,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в IdNode");
+            //System.Console.WriteLine("Зашел в IdNode");
             v.VisitIdNode(this);
            
         }
@@ -48,7 +48,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в IntNumNode");
+            //System.Console.WriteLine("Зашел в IntNumNode");
             v.VisitIntNumNode(this);
            
         }
@@ -82,7 +82,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в BinOpNode");
+            //System.Console.WriteLine("Зашел в BinOpNode");
             v.VisitBinOpNode(this);
         }
     }
@@ -104,7 +104,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в AssignNode");
+           // System.Console.WriteLine("Зашел в AssignNode");
             v.VisitAssignNode(this);
         }
     }
@@ -120,7 +120,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в CycleNode");
+           // System.Console.WriteLine("Зашел в CycleNode");
             v.VisitCycleNode(this);
         }
 
@@ -136,7 +136,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в WhileNode");
+          //  System.Console.WriteLine("Зашел в WhileNode");
             v.VisitWhileNode(this);
         }
 
@@ -155,9 +155,23 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-            System.Console.WriteLine("Зашел в BlockNode");
+           // System.Console.WriteLine("Зашел в BlockNode");
             v.VisitBlockNode(this);
           
+        }
+    }
+
+    public class WriteNode : StatementNode
+    {
+        public ExprNode Expr { get; set; }
+        public WriteNode(ExprNode Expr)
+        {
+            this.Expr = Expr;
+        }
+        public override void Eval(Visitor v)
+        {
+            Console.WriteLine("Зашел в WriteNode");
+            v.VisitWriteNode(this);
         }
     }
 

@@ -29,12 +29,14 @@ namespace SimpleCompiler
                     Console.WriteLine("Синтаксическое дерево построено");
                     var v = new DefaultVisitor();
                     parser.root.Eval(v);
-                    foreach (var pair in v.vars)
-                    {
-                        Console.WriteLine($"{pair.Key} = {pair.Value}");
-                    }
+                    //foreach (var pair in v.vars)
+                    //{
+                    //    Console.WriteLine($"{pair.Key} = {pair.Value}");
+                    //}
                 }
+                Console.WriteLine("Программа завершена");
             }
+           
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Файл {0} не найден", FileName);

@@ -52,5 +52,10 @@ namespace SimpleLang
             foreach (var st in bl.StList)
                 st.Eval(this);
         }
+        public override void VisitWriteNode(WriteNode w)
+        {
+            w.Expr.Eval(this);
+            Console.WriteLine(w.Expr.Execute()); 
+        }
     }
 }

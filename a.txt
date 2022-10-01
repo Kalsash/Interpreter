@@ -1,10 +1,15 @@
 begin
   b := 2;
+  write(b);
   a := 3;
+  write(a);
   a := b;
-  d := b*4;
+  write(a);
+  d := b*4 +1;
+  write(d);
   while a do
   begin
-    c := 1
+    c := 1;
+    write(c)
   end
 end
