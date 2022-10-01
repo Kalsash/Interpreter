@@ -136,7 +136,7 @@ namespace ProgramTree
         }
         public override void Eval(Visitor v)
         {
-          //  System.Console.WriteLine("Зашел в WhileNode");
+            System.Console.WriteLine("Зашел в WhileNode");
             v.VisitWhileNode(this);
         }
 

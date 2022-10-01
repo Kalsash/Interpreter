@@ -11,6 +11,7 @@ namespace SimpleLang
     class DefaultVisitor: Visitor
     {
         public Dictionary<string, int> vars = new Dictionary<string, int>(); // таблица символов
+        public int cnt = -1;
         public void NewVarDef(string name, int val)
         {
             if (vars.ContainsKey(name))
@@ -45,7 +46,21 @@ namespace SimpleLang
         public override void VisitWhileNode(WhileNode w)
         {
             w.Expr.Eval(this);
-            w.Stat.Eval(this);
+            {
+
+            }
+            if (cnt == -1)
+            {
+                cnt = w.Expr.Execute();
+            }     
+            if (cnt > 0)
+            {
+                cnt--;
+                w.Stat.Eval(this);
+                VisitWhileNode(w);
+            }
+            cnt = -1;
+
         }
         public override void VisitBlockNode(BlockNode bl)
         {

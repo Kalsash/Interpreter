@@ -7,9 +7,10 @@ begin
   write(a);
   d := b*4 +1;
   write(d);
-  while a do
+  while 5 do
   begin
-    c := 1;
-    write(c)
+    a := a + 1;
+    write(a)
   end
+ 
 end
