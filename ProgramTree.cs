@@ -7,7 +7,8 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-        public abstract void Nodes(Nodes n);
+        public abstract void Eval();
+        // public abstract void Nodes(Nodes n);
     }
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
@@ -18,26 +19,52 @@ namespace ProgramTree
     {
         public string Name { get; set; }
         public IdNode(string name) { Name = name; }
-
-        public override void Nodes(Nodes n)
+        public override void Eval()
         {
-            n.GoToIdNode(this);
+            System.Console.WriteLine("Зашел в IdNode");
         }
+        //public override void Nodes(Nodes n)
+        //{
+        //    n.GoToIdNode(this);
+        //}
     }
 
     public  class IntNumNode : ExprNode
     {
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
-
-        public override void Nodes(Nodes n)
+        public override void Eval()
         {
-            n.GoToIntNumNode(this);
-
+            System.Console.WriteLine("Зашел в IntNumNode");
         }
+        //public override void Nodes(Nodes n)
+        //{
+        //    n.GoToIntNumNode(this);
+        //}
 
     }
-
+    public class BinOpNode : ExprNode
+    {
+        public ExprNode Left { get; set; }
+        public ExprNode Right { get; set; }
+        public char Op { get; set; }
+        public BinOpNode(ExprNode Left, ExprNode Right, char op)
+        {
+            this.Left = Left;
+            this.Right = Right;
+            this.Op = op;
+        }
+        public override void Eval()
+        {
+            System.Console.WriteLine("Зашел в BinOpNode");
+            Left.Eval();
+            Right.Eval();
+        }
+        //public override void Visit(Visitor v)
+        //{
+        //    v.VisitBinOpNode(this);
+        //}
+    }
     public abstract class StatementNode : Node // базовый класс для всех операторов
     {
     }
@@ -54,11 +81,16 @@ namespace ProgramTree
             Expr = expr;
             AssOp = assop;
         }
-
-        public override void Nodes(Nodes n)
+        public override void Eval()
         {
-            n.GoToAssignNode(this);      
+            System.Console.WriteLine("Зашел в AssignNode");
+            Id.Eval();
+            Expr.Eval();
         }
+        //public override void Nodes(Nodes n)
+        //{
+        //    n.GoToAssignNode(this);      
+        //}
     }
 
     public class CycleNode : StatementNode
@@ -70,10 +102,17 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Nodes(Nodes n)
+        public override void Eval()
         {
-            n.GoToCycleNode(this);
+            System.Console.WriteLine("Зашел в CycleNode");
+            Expr.Eval();
+            Stat.Eval();
+
         }
+        //public override void Nodes(Nodes n)
+        //{
+        //    n.GoToCycleNode(this);
+        //}
     }
     public class WhileNode : StatementNode
     {
@@ -84,11 +123,16 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-
-        public override void Nodes(Nodes n)
+        public override void Eval()
         {
-            n.GoToWhileNode(this);
+            System.Console.WriteLine("Зашел в WhileNode");
+            Expr.Eval();
+            Stat.Eval();
         }
+        //public override void Nodes(Nodes n)
+        //{
+        //    n.GoToWhileNode(this);
+        //}
     }
 
     public class BlockNode : StatementNode
@@ -102,12 +146,18 @@ namespace ProgramTree
         {
             StList.Add(stat);
         }
-
-        public override void Nodes(Nodes n)
+        public override void Eval()
         {
-            n.GoToBlockNode(this);
-
+            System.Console.WriteLine("Зашел в BlockNode");
+            foreach (var st in StList)
+                st.Eval();
         }
+
+        //public override void Nodes(Nodes n)
+        //{
+        //    n.GoToBlockNode(this);
+
+        //}
     }
 
 }

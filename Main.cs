@@ -21,6 +21,7 @@ namespace SimpleCompiler
 
                 Parser parser = new Parser(scanner);
 
+                var Id_Dict = new Dictionary<string, int>();
                 var b = parser.Parse();
                 if (!b)
                     Console.WriteLine("Ошибка");
@@ -29,13 +30,13 @@ namespace SimpleCompiler
                     Console.WriteLine("Синтаксическое дерево построено");
                     //foreach (var st in parser.root.StList)
                     //Console.WriteLine(st);
-                    var n = new Nodes();
-                    parser.root.Nodes(n);
-
-                    foreach (var pair in n.Id_Dict)
-                    {
-                        Console.WriteLine($"{pair.Key} = {pair.Value}");
-                    }
+                    //var n = new Nodes();
+                    //parser.root.Nodes(n);
+                    //foreach (var pair in n.Id_Dict)
+                    //{
+                    //    Console.WriteLine($"{pair.Key} = {pair.Value}");
+                    //}
+                    parser.root.Eval();
 
                 }
             }
