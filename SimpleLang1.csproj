@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="DefaultVisitor.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Nodes.cs" />
     <Compile Include="ParserHelper.cs" />
     <Compile Include="ProgramTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
