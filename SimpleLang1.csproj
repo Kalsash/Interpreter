@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultVisitor.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="ParserHelper.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="ShiftReduceParserCode.cs" />
     <Compile Include="SimpleLex.cs" />
     <Compile Include="SimpleYacc.cs" />
+    <Compile Include="Visitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

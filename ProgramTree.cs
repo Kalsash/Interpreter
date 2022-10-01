@@ -1,5 +1,10 @@
 ﻿using SimpleLang;
+using SimpleLang.Visitors;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using static SimpleCompiler.SimpleCompilerMain;
 
 namespace ProgramTree
 {
@@ -7,21 +12,28 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-        public abstract void Nodes(Nodes n);
+        public abstract void Eval(Visitor v);
     }
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
     {
+        public abstract int Execute();
     }
 
     public class IdNode : ExprNode
     {
         public string Name { get; set; }
+        public int Value { get; set; }
         public IdNode(string name) { Name = name; }
-
-        public override void Nodes(Nodes n)
+        public override int Execute()
         {
-            n.GoToIdNode(this);
+            return Value;
+        }
+        public override void Eval(Visitor v)
+        {
+            System.Console.WriteLine("Зашел в IdNode");
+            v.VisitIdNode(this);
+           
         }
     }
 
@@ -30,14 +42,50 @@ namespace ProgramTree
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
 
-        public override void Nodes(Nodes n)
+        public override int Execute()
         {
-            n.GoToIntNumNode(this);
-
+            return Num;
+        }
+        public override void Eval(Visitor v)
+        {
+            System.Console.WriteLine("Зашел в IntNumNode");
+            v.VisitIntNumNode(this);
+           
         }
 
     }
-
+    public class BinOpNode : ExprNode
+    {
+        public ExprNode Left { get; set; }
+        public ExprNode Right { get; set; }
+        public char Op { get; set; }
+        public BinOpNode(ExprNode Left, ExprNode Right, char op)
+        {
+            this.Left = Left;
+            this.Right = Right;
+            this.Op = op;
+        }
+        public override int Execute()
+        {
+            switch (Op)
+            {
+                case '+':
+                    return Left.Execute() + Right.Execute();
+                case '-':
+                    return Left.Execute() - Right.Execute();
+                case '*':
+                    return Left.Execute() * Right.Execute();
+                case '/':
+                    return Left.Execute() / Right.Execute();
+            }
+            return Left.Execute() + Right.Execute();
+        }
+        public override void Eval(Visitor v)
+        {
+            System.Console.WriteLine("Зашел в BinOpNode");
+            v.VisitBinOpNode(this);
+        }
+    }
     public abstract class StatementNode : Node // базовый класс для всех операторов
     {
     }
@@ -54,10 +102,10 @@ namespace ProgramTree
             Expr = expr;
             AssOp = assop;
         }
-
-        public override void Nodes(Nodes n)
+        public override void Eval(Visitor v)
         {
-            n.GoToAssignNode(this);      
+            System.Console.WriteLine("Зашел в AssignNode");
+            v.VisitAssignNode(this);
         }
     }
 
@@ -70,10 +118,12 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Nodes(Nodes n)
+        public override void Eval(Visitor v)
         {
-            n.GoToCycleNode(this);
+            System.Console.WriteLine("Зашел в CycleNode");
+            v.VisitCycleNode(this);
         }
+
     }
     public class WhileNode : StatementNode
     {
@@ -84,11 +134,12 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-
-        public override void Nodes(Nodes n)
+        public override void Eval(Visitor v)
         {
-            n.GoToWhileNode(this);
+            System.Console.WriteLine("Зашел в WhileNode");
+            v.VisitWhileNode(this);
         }
+
     }
 
     public class BlockNode : StatementNode
@@ -102,11 +153,11 @@ namespace ProgramTree
         {
             StList.Add(stat);
         }
-
-        public override void Nodes(Nodes n)
+        public override void Eval(Visitor v)
         {
-            n.GoToBlockNode(this);
-
+            System.Console.WriteLine("Зашел в BlockNode");
+            v.VisitBlockNode(this);
+          
         }
     }
 

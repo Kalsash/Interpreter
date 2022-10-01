@@ -27,16 +27,12 @@ namespace SimpleCompiler
                 else
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
-                    //foreach (var st in parser.root.StList)
-                    //Console.WriteLine(st);
-                    var n = new Nodes();
-                    parser.root.Nodes(n);
-
-                    foreach (var pair in n.Id_Dict)
+                    var v = new DefaultVisitor();
+                    parser.root.Eval(v);
+                    foreach (var pair in v.vars)
                     {
                         Console.WriteLine($"{pair.Key} = {pair.Value}");
                     }
-
                 }
             }
             catch (FileNotFoundException)
