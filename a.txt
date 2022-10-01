@@ -2,9 +2,9 @@ begin
   b := 2;
   a := 3;
   a := b;
+  d := b*2;
   while a do
   begin
-    a := c;
     c := 1
   end
 end

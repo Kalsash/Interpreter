@@ -1,5 +1,9 @@
 ﻿using SimpleLang;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using static SimpleCompiler.SimpleCompilerMain;
 
 namespace ProgramTree
 {
@@ -7,21 +11,32 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-        public abstract void Eval();
+        public abstract SymbolTable Eval(SymbolTable dict);
         // public abstract void Nodes(Nodes n);
     }
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
     {
+        public abstract int Execute();
     }
 
     public class IdNode : ExprNode
     {
         public string Name { get; set; }
+        public int Value { get; set; }
         public IdNode(string name) { Name = name; }
-        public override void Eval()
+        public override int Execute()
+        {
+            return Value;
+        }
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в IdNode");
+            if (dict.vars.ContainsKey(Name))
+            {
+                Value = dict.vars[Name];
+            }
+            return dict;
         }
         //public override void Nodes(Nodes n)
         //{
@@ -33,9 +48,15 @@ namespace ProgramTree
     {
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
-        public override void Eval()
+
+        public override int Execute()
+        {
+            return Num;
+        }
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в IntNumNode");
+            return dict;
         }
         //public override void Nodes(Nodes n)
         //{
@@ -54,11 +75,27 @@ namespace ProgramTree
             this.Right = Right;
             this.Op = op;
         }
-        public override void Eval()
+        public override int Execute()
+        {
+            switch (Op)
+            {
+                case '+':
+                    return Left.Execute() + Right.Execute();
+                case '-':
+                    return Left.Execute() - Right.Execute();
+                case '*':
+                    return Left.Execute() * Right.Execute();
+                case '/':
+                    return Left.Execute() / Right.Execute();
+            }
+            return Left.Execute() + Right.Execute();
+        }
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в BinOpNode");
-            Left.Eval();
-            Right.Eval();
+            Left.Eval(dict);
+            Right.Eval(dict);
+            return dict;
         }
         //public override void Visit(Visitor v)
         //{
@@ -81,11 +118,13 @@ namespace ProgramTree
             Expr = expr;
             AssOp = assop;
         }
-        public override void Eval()
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в AssignNode");
-            Id.Eval();
-            Expr.Eval();
+            Id.Eval(dict);
+            Expr.Eval(dict);
+            dict.NewVarDef(Id.Name, Expr.Execute());
+            return dict;
         }
         //public override void Nodes(Nodes n)
         //{
@@ -102,12 +141,12 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Eval()
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в CycleNode");
-            Expr.Eval();
-            Stat.Eval();
-
+            Expr.Eval(dict);
+            Stat.Eval(dict);
+            return dict;
         }
         //public override void Nodes(Nodes n)
         //{
@@ -123,11 +162,12 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Eval()
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в WhileNode");
-            Expr.Eval();
-            Stat.Eval();
+            Expr.Eval(dict);
+            Stat.Eval(dict);
+            return dict;
         }
         //public override void Nodes(Nodes n)
         //{
@@ -146,11 +186,12 @@ namespace ProgramTree
         {
             StList.Add(stat);
         }
-        public override void Eval()
+        public override SymbolTable Eval(SymbolTable dict)
         {
             System.Console.WriteLine("Зашел в BlockNode");
             foreach (var st in StList)
-                st.Eval();
+                st.Eval(dict);
+            return dict;
         }
 
         //public override void Nodes(Nodes n)

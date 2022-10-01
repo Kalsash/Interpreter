@@ -9,6 +9,16 @@ namespace SimpleCompiler
 {
     public class SimpleCompilerMain
     {
+        public class SymbolTable // Таблица символов
+        {
+            public  Dictionary<string, int> vars = new Dictionary<string, int>(); // таблица символов
+            public  void NewVarDef(string name, int val)
+            {
+                if (vars.ContainsKey(name))
+                    vars[name] = val;
+                else vars.Add(name, val);
+            }
+        }
         public static void Main()
         {
             string FileName = @"..\..\a.txt";
@@ -21,7 +31,7 @@ namespace SimpleCompiler
 
                 Parser parser = new Parser(scanner);
 
-                var Id_Dict = new Dictionary<string, int>();
+               // var Id_Dict = new Dictionary<string, int>();
                 var b = parser.Parse();
                 if (!b)
                     Console.WriteLine("Ошибка");
@@ -36,7 +46,12 @@ namespace SimpleCompiler
                     //{
                     //    Console.WriteLine($"{pair.Key} = {pair.Value}");
                     //}
-                    parser.root.Eval();
+                    var dict = new SymbolTable();
+                    dict = parser.root.Eval(dict);
+                    foreach (var pair in dict.vars)
+                    {
+                        Console.WriteLine($"{pair.Key} = {pair.Value}");
+                    }
 
                 }
             }
