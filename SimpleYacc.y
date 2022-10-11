@@ -70,6 +70,7 @@ T 		: T MULT F { $$ = new BinOpNode($1,$3,'*'); }
 		
 F 		: ident  { $$ = $1 as IdNode; }
 		| INUM { $$ = new IntNumNode($1); }
+		| RNUM { $$ = new RealNumNode($1); }
 		| LPAREN expr RPAREN { $$ = $2; }
 		;
 

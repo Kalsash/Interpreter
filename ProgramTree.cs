@@ -17,15 +17,15 @@ namespace ProgramTree
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
     {
-        public abstract int Execute();
+        public abstract double Execute();
     }
 
     public class IdNode : ExprNode
     {
         public string Name { get; set; }
-        public int Value { get; set; }
+        public double Value { get; set; }
         public IdNode(string name) { Name = name; }
-        public override int Execute()
+        public override double Execute()
         {
             return Value;
         }
@@ -42,7 +42,7 @@ namespace ProgramTree
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
 
-        public override int Execute()
+        public override double Execute()
         {
             return Num;
         }
@@ -52,7 +52,23 @@ namespace ProgramTree
             v.VisitIntNumNode(this);
            
         }
+    }
 
+    public class RealNumNode : ExprNode
+    {
+        public double Num { get; set; }
+        public RealNumNode(double num) { Num = num; }
+
+        public override double Execute()
+        {
+            return Num;
+        }
+        public override void Eval(Visitor v)
+        {
+            //System.Console.WriteLine("Зашел в IntNumNode");
+            v.VisitRealNumNode(this);
+
+        }
     }
     public class BinOpNode : ExprNode
     {
@@ -65,7 +81,7 @@ namespace ProgramTree
             this.Right = Right;
             this.Op = op;
         }
-        public override int Execute()
+        public override double Execute()
         {
             switch (Op)
             {

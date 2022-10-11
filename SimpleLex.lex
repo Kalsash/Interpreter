@@ -19,7 +19,7 @@ ID {Alpha}{AlphaDigit}*
 }
 
 {REALNUM} { 
-  yylval.dVal = double.Parse(yytext); 
+  yylval.dVal = double.Parse(yytext,new System.Globalization.CultureInfo("en-US")); 
   return (int)Tokens.RNUM;
 }
 

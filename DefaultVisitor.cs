@@ -8,11 +8,12 @@ using SimpleLang.Visitors;
 
 namespace SimpleLang
 {
+    public enum type { tint, tdouble };
     class DefaultVisitor: Visitor
     {
-        public Dictionary<string, int> vars = new Dictionary<string, int>(); // таблица символов
-        public int cnt = -1;
-        public void NewVarDef(string name, int val)
+        public Dictionary<string, double> vars = new Dictionary<string, double>(); // таблица символов
+        public double cnt = -1;
+        public void NewVarDef(string name, double val)
         {
             if (vars.ContainsKey(name))
                 vars[name] = val;
