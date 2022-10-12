@@ -14,13 +14,17 @@ namespace SimpleLang
     {
         public type type;
         public string value;
+        public Var(type t, string val)
+        {
+            type = t;
+            value = val;
+        }
     }
     class DefaultVisitor: Visitor
     {
         public Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
-        public double Loop_Counter = -1;
-        public double dValue;
-        public int iValue;
+        public int Loop_Counter = -1;
+        public string Value;
         public type Type;
         public void NewVarDef(string name, Var v)
         {
@@ -31,128 +35,99 @@ namespace SimpleLang
         public override void VisitIdNode(IdNode id)
         {
             if (Vars.ContainsKey(id.Name))
-            {
-                if (Vars[id.Name].type == type.tint)
-                {
-                    iValue = Int32.Parse(Vars[id.Name].value);
-                    Type = type.tint;
-                }
-                if (Vars[id.Name].type == type.tdouble)
-                {
-                    dValue = double.Parse(Vars[id.Name].value);
-                    Type = type.tdouble;
-                }
-
+            { 
+               Type = Vars[id.Name].type;           
+               Value = Vars[id.Name].value;
             }
         }
         public override void VisitIntNumNode(IntNumNode num) 
         {
-            iValue = num.Num;
+            Value = num.Num.ToString();
             Type = type.tint;
         }
         public override void VisitRealNumNode(RealNumNode num)
         {
-            dValue = num.Num;
+            Value = num.Num.ToString();
             Type = type.tdouble;
         }
 
         public override void VisitBinOpNode(BinOpNode binop)
         {
-           // type t1 = type.tdouble;
-            //type t2 = type.tdouble;
             binop.Left.Eval(this);
-            //if (Type == type.tint)
-            //{
-            //    t1 = type.tint;
-            //    int val1 = iValue;
-            //}
-            //else
-            //if (Type == type.tdouble)
-            //{
-            //    double val1 = iValue;
-            //}
+            var t1 = Type;
+            var val1 = Value;   
             binop.Right.Eval(this);
-            //if (Type == type.tint)
-            //{
-            //    int val2 = iValue;
-            //}
-            //else
-            //if (Type == type.tdouble)
-            //{
-            //    double val2 = iValue;
-            //}
-            //switch (binop.Op)
-            //{
-           
-            //    case '+':
-            //        dValue = val1 + val2;
-            //        break;
-            //    case '-':
-            //        Value = val1 - val2;
-            //        break;
-            //    case '*':
-            //        Value = val1 * val2;
-            //        break;
-            //    case '/':
-            //        Value = val1 / val2;
-            //        break;
-            //}
+            var t2 = Type;
+            var val2 = Value;
+            if (t1 == type.tint && t2 == type.tint)
+            {
+                Type = type.tint;
+                switch (binop.Op)
+                {
+
+                    case '+':
+                        Value = (int.Parse(val1) + int.Parse(val2)).ToString();
+                        break;
+                    case '-':
+                        Value = (int.Parse(val1) - int.Parse(val2)).ToString();
+                        break;
+                    case '*':
+                        Value = (int.Parse(val1) * int.Parse(val2)).ToString();
+                        break;
+                    case '/':
+                        Value = (int.Parse(val1) / int.Parse(val2)).ToString();
+                        break;
+                }
+            }
+            else
+            {
+                Type = type.tdouble;
+                switch (binop.Op)
+                {
+
+                    case '+':
+                        Value = (double.Parse(val1) + double.Parse(val2)).ToString();
+                        break;
+                    case '-':
+                        Value = (double.Parse(val1) - double.Parse(val2)).ToString();
+                        break;
+                    case '*':
+                        Value = (double.Parse(val1) * double.Parse(val2)).ToString();
+                        break;
+                    case '/':
+                        Value = (double.Parse(val1) / double.Parse(val2)).ToString();
+                        break;
+                }
+            }
+              
+
+
+
         }
         public override void VisitAssignNode(AssignNode a)
         {
-            // для каких-то визиторов порядок может быть обратный - вначале обойти выражение, потом - идентификатор
             a.Id.Eval(this);
             a.Expr.Eval(this);
-            Var v = new Var();
-            if (Type == type.tint)
-            {
-                v.type = type.tint;
-                v.value = iValue.ToString();
-            }
-            if (Type == type.tdouble)
-            {
-                v.type = type.tdouble;
-                v.value = dValue.ToString();
-            }
-            NewVarDef(a.Id.Name, v);
+            NewVarDef(a.Id.Name, new Var(Type, Value));
         }
         public override void VisitLoopNode(LoopNode l)
         {
-            //l.Expr.Eval(this);
-            //{
-
-            //}
-            //if (Loop_Counter == -1)
-            //{
-            //    Loop_Counter = Value;
-            //}
-            //if (Loop_Counter > 0)
-            //{
-            //    Loop_Counter--;
-            //    l.Stat.Eval(this);
-            //    VisitLoopNode(l);
-            //}
-            //Loop_Counter = -1;
+            l.Expr.Eval(this);
+            if (Loop_Counter == -1)
+            {
+                Loop_Counter = int.Parse(Value);
+            }
+            if (Loop_Counter > 0)
+            {
+                Loop_Counter--;
+                l.Stat.Eval(this);
+                VisitLoopNode(l);
+            }
+            Loop_Counter = -1;
         }
         public override void VisitWhileNode(WhileNode w)
         {
-            //w.Expr.Eval(this);
-            //{
-
-            //}
-            //if (Loop_Counter == -1)
-            //{
-            //    Loop_Counter = value;
-            //}
-            //if (Loop_Counter > 0)
-            //{
-            //    Loop_Counter--;
-            //    w.Stat.Eval(this);
-            //    VisitWhileNode(w);
-            //}
-            //Loop_Counter = -1;
             Console.WriteLine("Цикл на стадии разработки!");
-
         }
         public override void VisitBlockNode(BlockNode bl)
         {
@@ -164,11 +139,11 @@ namespace SimpleLang
             w.Expr.Eval(this);
             if (Type == type.tint)
             {
-                Console.WriteLine("Переменная со значением " + iValue + " типа int");
+                Console.WriteLine("Переменная со значением " + Value + " типа int");
             }
             if (Type == type.tdouble)
             {
-                Console.WriteLine("Переменная со значением " + dValue + " типа double");
+                Console.WriteLine("Переменная со значением " + Value + " типа double");
             }
 
         }
