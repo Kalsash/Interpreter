@@ -4,7 +4,7 @@
 
 // GPPG version 1.3.6
 // Machine:  LASTHEROPC
-// DateTime: 11.10.2022 22:27:45
+// DateTime: 12.10.2022 11:13:17
 // UserName: LastHero
 // Input file <SimpleYacc.y>
 
@@ -21,7 +21,7 @@ namespace SimpleParser
 {
 public enum Tokens {
     error=1,EOF=2,BEGIN=3,END=4,WHILE=5,DO=6,
-    CYCLE=7,ASSIGN=8,SEMICOLON=9,PLUS=10,MINUS=11,MULT=12,
+    LOOP=7,ASSIGN=8,SEMICOLON=9,PLUS=10,MINUS=11,MULT=12,
     DIV=13,WRITE=14,LPAREN=15,RPAREN=16,COLUMN=17,INUM=18,
     RNUM=19,ID=20};
 
@@ -56,7 +56,7 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
   private static Rule[] rules = new Rule[26];
   private static State[] states = new State[46];
   private static string[] nonTerms = new string[] {
-      "expr", "ident", "T", "F", "assign", "statement", "cycle", "while", "write", 
+      "expr", "ident", "T", "F", "assign", "statement", "loop", "while", "write", 
       "stlist", "block", "progr", "$accept", };
 
   static Parser() {
@@ -165,7 +165,7 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
       case 6: // statement -> block
 { CurrentSemanticValue.stVal = ValueStack[ValueStack.Depth-1].blVal; }
         break;
-      case 7: // statement -> cycle
+      case 7: // statement -> loop
 { CurrentSemanticValue.stVal = ValueStack[ValueStack.Depth-1].stVal; }
         break;
       case 8: // statement -> while
@@ -213,8 +213,8 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
       case 22: // block -> BEGIN, stlist, END
 { CurrentSemanticValue.blVal = ValueStack[ValueStack.Depth-2].blVal; }
         break;
-      case 23: // cycle -> CYCLE, expr, statement
-{ CurrentSemanticValue.stVal = new CycleNode(ValueStack[ValueStack.Depth-2].eVal, ValueStack[ValueStack.Depth-1].stVal); }
+      case 23: // loop -> LOOP, expr, statement
+{ CurrentSemanticValue.stVal = new LoopNode(ValueStack[ValueStack.Depth-2].eVal, ValueStack[ValueStack.Depth-1].stVal); }
         break;
       case 24: // while -> WHILE, expr, DO, statement
 { CurrentSemanticValue.stVal = new WhileNode(ValueStack[ValueStack.Depth-3].eVal, ValueStack[ValueStack.Depth-1].stVal); }

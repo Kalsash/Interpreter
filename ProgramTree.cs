@@ -17,7 +17,6 @@ namespace ProgramTree
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
     {
-        public abstract double Execute();
     }
 
     public class IdNode : ExprNode
@@ -25,10 +24,6 @@ namespace ProgramTree
         public string Name { get; set; }
         public double Value { get; set; }
         public IdNode(string name) { Name = name; }
-        public override double Execute()
-        {
-            return Value;
-        }
         public override void Eval(Visitor v)
         {
             //System.Console.WriteLine("Зашел в IdNode");
@@ -42,10 +37,6 @@ namespace ProgramTree
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
 
-        public override double Execute()
-        {
-            return Num;
-        }
         public override void Eval(Visitor v)
         {
             //System.Console.WriteLine("Зашел в IntNumNode");
@@ -59,10 +50,6 @@ namespace ProgramTree
         public double Num { get; set; }
         public RealNumNode(double num) { Num = num; }
 
-        public override double Execute()
-        {
-            return Num;
-        }
         public override void Eval(Visitor v)
         {
             //System.Console.WriteLine("Зашел в IntNumNode");
@@ -80,21 +67,6 @@ namespace ProgramTree
             this.Left = Left;
             this.Right = Right;
             this.Op = op;
-        }
-        public override double Execute()
-        {
-            switch (Op)
-            {
-                case '+':
-                    return Left.Execute() + Right.Execute();
-                case '-':
-                    return Left.Execute() - Right.Execute();
-                case '*':
-                    return Left.Execute() * Right.Execute();
-                case '/':
-                    return Left.Execute() / Right.Execute();
-            }
-            return Left.Execute() + Right.Execute();
         }
         public override void Eval(Visitor v)
         {
@@ -125,19 +97,19 @@ namespace ProgramTree
         }
     }
 
-    public class CycleNode : StatementNode
+    public class LoopNode : StatementNode
     {
         public ExprNode Expr { get; set; }
         public StatementNode Stat { get; set; }
-        public CycleNode(ExprNode expr, StatementNode stat)
+        public LoopNode(ExprNode expr, StatementNode stat)
         {
             Expr = expr;
             Stat = stat;
         }
         public override void Eval(Visitor v)
         {
-           // System.Console.WriteLine("Зашел в CycleNode");
-            v.VisitCycleNode(this);
+            // System.Console.WriteLine("Зашел в LoopNode");
+            v.VisitLoopNode(this);
         }
 
     }

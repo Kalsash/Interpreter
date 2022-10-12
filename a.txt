@@ -1,5 +1,13 @@
 begin
-  b := 2;
-  write(b)
- 
+  b := 2+1;
+  a:= 3.5;
+  write(b);
+  write(a);
+  a:= 1.3+5.8;
+  write(a);
+  loop b
+  begin
+    a:= a+1;
+    write(a)
+  end
 end

@@ -20,13 +20,13 @@
 
 %namespace SimpleParser
 
-%token BEGIN END WHILE DO CYCLE ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN
+%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN
 %token <iVal> INUM 
 %token <dVal> RNUM 
 %token <sVal> ID
 
 %type <eVal> expr ident T F
-%type <stVal> assign statement cycle while write
+%type <stVal> assign statement loop while write
 %type <blVal> stlist block
 
 %%
@@ -47,7 +47,7 @@ stlist	: statement
 
 statement: assign { $$ = $1; }
 		| block   { $$ = $1; }
-		| cycle   { $$ = $1; }
+		| loop   { $$ = $1; }
 		| while   { $$ = $1; }
 		| write   { $$ = $1; }
 	;
@@ -77,7 +77,7 @@ F 		: ident  { $$ = $1 as IdNode; }
 block	: BEGIN stlist END { $$ = $2; }
 		;
 
-cycle	: CYCLE expr statement { $$ = new CycleNode($2, $3); }
+loop	: LOOP expr statement { $$ = new LoopNode($2, $3); }
 		;
 
 while	: WHILE expr DO statement { $$ = new WhileNode($2, $4); }

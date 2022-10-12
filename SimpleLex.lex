@@ -72,7 +72,7 @@ class ScannerHelper
     keywords = new Dictionary<string,int>();
     keywords.Add("begin",(int)Tokens.BEGIN);
     keywords.Add("end",(int)Tokens.END);
-    keywords.Add("cycle",(int)Tokens.CYCLE);
+    keywords.Add("loop",(int)Tokens.LOOP);
 	keywords.Add("while",(int)Tokens.WHILE);
 	keywords.Add("do",(int)Tokens.DO);
 	keywords.Add("write",(int)Tokens.WRITE);

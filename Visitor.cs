@@ -13,7 +13,7 @@ namespace SimpleLang.Visitors
         public virtual void VisitRealNumNode(RealNumNode num) { }
         public virtual void VisitBinOpNode(BinOpNode binop) { }
         public virtual void VisitAssignNode(AssignNode a) { }
-        public virtual void VisitCycleNode(CycleNode c) { }
+        public virtual void VisitLoopNode(LoopNode l) { }
         public virtual void VisitBlockNode(BlockNode bl) { }
         public virtual void VisitWhileNode(WhileNode w) { }
         public virtual void VisitWriteNode(WriteNode w) { }
