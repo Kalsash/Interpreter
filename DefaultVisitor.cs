@@ -29,7 +29,25 @@ namespace SimpleLang
         public void NewVarDef(string name, Var v)
         {
             if (Vars.ContainsKey(name))
-                Vars[name] = v;
+            {
+                if (Vars[name].type == v.type)
+                {
+                    Vars[name] = v;
+                }
+                else
+                {
+                    if (Vars[name].type == type.tint)
+                    {
+                        throw new Exception("Нельзя типу int присвоить double!");
+                    }
+                    else
+                    {
+                        v.type = type.tdouble;
+                        Vars[name] = v;
+                    }
+                }
+                
+            }          
             else Vars.Add(name, v);
         }
         public override void VisitIdNode(IdNode id)
