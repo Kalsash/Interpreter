@@ -12,7 +12,7 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-        public abstract void Eval(Visitor v);
+        public abstract T Eval<T>(Visitor<T> v);
     }
 
     public abstract class ExprNode : Node // базовый класс для всех выражений
@@ -24,10 +24,11 @@ namespace ProgramTree
         public string Name { get; set; }
         public double Value { get; set; }
         public IdNode(string name) { Name = name; }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             //System.Console.WriteLine("Зашел в IdNode");
-            v.VisitIdNode(this);
+           return v.VisitIdNode(this);
+           
            
         }
     }
@@ -37,10 +38,10 @@ namespace ProgramTree
         public int Num { get; set; }
         public IntNumNode(int num) { Num = num; }
 
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             //System.Console.WriteLine("Зашел в IntNumNode");
-            v.VisitIntNumNode(this);
+            return v.VisitIntNumNode(this);
            
         }
     }
@@ -50,10 +51,10 @@ namespace ProgramTree
         public double Num { get; set; }
         public RealNumNode(double num) { Num = num; }
 
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             //System.Console.WriteLine("Зашел в IntNumNode");
-            v.VisitRealNumNode(this);
+            return v.VisitRealNumNode(this);
 
         }
     }
@@ -68,10 +69,10 @@ namespace ProgramTree
             this.Right = Right;
             this.Op = op;
         }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             //System.Console.WriteLine("Зашел в BinOpNode");
-            v.VisitBinOpNode(this);
+            return v.VisitBinOpNode(this);
         }
     }
     public abstract class StatementNode : Node // базовый класс для всех операторов
@@ -90,10 +91,10 @@ namespace ProgramTree
             Expr = expr;
             AssOp = assop;
         }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
-           // System.Console.WriteLine("Зашел в AssignNode");
-            v.VisitAssignNode(this);
+            // System.Console.WriteLine("Зашел в AssignNode");
+            return v.VisitAssignNode(this);
         }
     }
 
@@ -106,10 +107,10 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             // System.Console.WriteLine("Зашел в LoopNode");
-            v.VisitLoopNode(this);
+            return v.VisitLoopNode(this);
         }
 
     }
@@ -122,10 +123,10 @@ namespace ProgramTree
             Expr = expr;
             Stat = stat;
         }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             System.Console.WriteLine("Зашел в WhileNode");
-            v.VisitWhileNode(this);
+            return v.VisitWhileNode(this);
         }
 
     }
@@ -141,10 +142,10 @@ namespace ProgramTree
         {
             StList.Add(stat);
         }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
-           // System.Console.WriteLine("Зашел в BlockNode");
-            v.VisitBlockNode(this);
+            // System.Console.WriteLine("Зашел в BlockNode");
+            return v.VisitBlockNode(this);
           
         }
     }
@@ -156,10 +157,11 @@ namespace ProgramTree
         {
             this.Expr = Expr;
         }
-        public override void Eval(Visitor v)
+        public override T Eval<T>(Visitor<T> v)
         {
             Console.WriteLine("Зашел в WriteNode");
-            v.VisitWriteNode(this);
+            return v.VisitWriteNode(this);
+           
         }
     }
 

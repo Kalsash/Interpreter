@@ -27,12 +27,13 @@ namespace SimpleCompiler
                 else
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
-                    var v = new DefaultVisitor();
-                    parser.root.Eval(v);
-                    //foreach (var pair in v.vars)
-                    //{
-                    //    Console.WriteLine($"{pair.Key} = {pair.Value}");
-                    //}
+                    var TypeChecker = new TypeChecker();
+                    parser.root.Eval(TypeChecker);
+                    Console.WriteLine("Типы проверены!");
+
+                    var d = new DefaultVisitor();
+                   // parser.root.Eval(d);
+               
                 }
                 Console.WriteLine("Программа завершена");
             }

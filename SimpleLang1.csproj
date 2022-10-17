@@ -54,6 +54,7 @@
     <Compile Include="ShiftReduceParserCode.cs" />
     <Compile Include="SimpleLex.cs" />
     <Compile Include="SimpleYacc.cs" />
+    <Compile Include="TypeChecker.cs" />
     <Compile Include="Visitor.cs" />
   </ItemGroup>
   <ItemGroup>
