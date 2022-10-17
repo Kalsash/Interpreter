@@ -159,7 +159,7 @@ namespace ProgramTree
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            Console.WriteLine("Зашел в WriteNode");
+            //Console.WriteLine("Зашел в WriteNode");
             return v.VisitWriteNode(this);
            
         }

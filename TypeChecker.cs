@@ -11,30 +11,30 @@ namespace SimpleLang
     public enum type { tint, tdouble, tnope };
     class TypeChecker:Visitor<type>
     {
-        public Dictionary<string, type> Vars = new Dictionary<string, type>(); // таблица символов
+        public Dictionary<string, type> Types = new Dictionary<string, type>(); // таблица символов
         public void NewVarDef(string name, type t)
         {
-            if (Vars.ContainsKey(name))
+            if (Types.ContainsKey(name))
             {
-                if (Vars[name] != t)
+                if (Types[name] != t)
                 {
                   
-                    if (Vars[name] == type.tint)
+                    if (Types[name] == type.tint)
                     {
                         throw new Exception("Нельзя типу int присвоить double!");
                     }
                     else
                     {
-                        Vars[name] = type.tdouble;
+                        Types[name] = type.tdouble;
                     }
                 }
             }
-            else Vars.Add(name, t);
+            else Types.Add(name, t);
         }
         public override type VisitIdNode(IdNode id)
         {
-            if (Vars.ContainsKey(id.Name))
-                return Vars[id.Name];
+            if (Types.ContainsKey(id.Name))
+                return Types[id.Name];
             return type.tnope;
         }
         public override type VisitIntNumNode(IntNumNode num)

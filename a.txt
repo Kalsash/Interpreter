@@ -1,13 +1,13 @@
 begin
   b := 2;
-  a:= 3.8 *(b+1);
+  a := 3.8 * (b + 1);
   write(b);
   write(a);
-  a:= b;
+  a := b;
   write(a);
   loop b
   begin
-  a:= a+5.5;
+  a := a + 5.5;
   write(a)
   end
 end
