@@ -6,30 +6,19 @@ using System.Xml.Linq;
 using ProgramTree;
 using SimpleLang.Visitors;
 using static System.Net.Mime.MediaTypeNames;
+using SimpleParser;
 
 namespace SimpleLang
 {
     class Interpreter : Visitor<object>
     {
-        public Dictionary<string, object> Vars = new Dictionary<string, object>(); // таблица символов
+        public Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
         public int Loop_Counter = -1;
-        public void NewVarDef(string name, object ob)
-        {
-            if (Vars.ContainsKey(name))
-            {
-                Vars[name] = ob;
-            }
-            else
-            {
-                Vars.Add(name, ob);
-            }
-
-        }
         public override object VisitIdNode(IdNode id)
         {
-            if (Vars.ContainsKey(id.Name))
+            if (Vars_Dict.ContainsKey(id.Name))
             {
-                return Vars[id.Name];
+                return Vars_Dict[id.Name].Value;
             }
             return 0;
         }
@@ -50,7 +39,7 @@ namespace SimpleLang
            var val2 = binop.Right.Eval(this);
            var t2 = binop.Right.Eval(TypeChecker);
 
-            if (t1 == type.tint && t2 == type.tint)
+            if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
             {
                 switch (binop.Op)
                 {
@@ -86,7 +75,7 @@ namespace SimpleLang
         {
             a.Id.Eval(this);
             var val = a.Expr.Eval(this);
-            NewVarDef(a.Id.Name, val);
+           SymbolTable.SetValue(a.Id.Name, val);
             return 0;
         }
         public override object VisitLoopNode(LoopNode l)

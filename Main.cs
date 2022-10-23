@@ -30,10 +30,8 @@ namespace SimpleCompiler
                     var TypeChecker = new TypeChecker();
                     parser.root.Eval(TypeChecker);
                     Console.WriteLine("Типы проверены!");
-
                     var d = new Interpreter();
                     parser.root.Eval(d);
-               
                 }
                 Console.WriteLine("Программа завершена");
             }

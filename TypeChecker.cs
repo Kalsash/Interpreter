@@ -5,48 +5,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleParser;
 
 namespace SimpleLang
 {
-    public enum type { tint, tdouble, tnope };
-    class TypeChecker:Visitor<type>
+    
+    class TypeChecker:Visitor<SimpleParser.Types>
     {
-        public Dictionary<string, type> Types = new Dictionary<string, type>(); // таблица символов
-        public void NewVarDef(string name, type t)
+        Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
+        public override SimpleParser.Types VisitIdNode(IdNode id)
         {
-            if (Types.ContainsKey(name))
-            {
-                if (Types[name] != t)
-                {
-                  
-                    if (Types[name] == type.tint)
-                    {
-                        throw new Exception("Нельзя типу int присвоить double!");
-                    }
-                    else
-                    {
-                        Types[name] = type.tdouble;
-                    }
-                }
-            }
-            else Types.Add(name, t);
+            if (Vars_Dict.ContainsKey(id.Name))
+                return Vars_Dict[id.Name].Type;
+            return SimpleParser.Types.tvoid;
         }
-        public override type VisitIdNode(IdNode id)
+        public override SimpleParser.Types VisitIntNumNode(IntNumNode num)
         {
-            if (Types.ContainsKey(id.Name))
-                return Types[id.Name];
-            return type.tnope;
+            return SimpleParser.Types.tint;
         }
-        public override type VisitIntNumNode(IntNumNode num)
-        {
-            return type.tint;
-        }
-        public override type VisitRealNumNode(RealNumNode num)
+        public override SimpleParser.Types VisitRealNumNode(RealNumNode num)
         {
            
-            return type.tdouble;
+            return SimpleParser.Types.tdouble;
         }
-        public override type VisitBinOpNode(BinOpNode binop)
+        public override SimpleParser.Types VisitBinOpNode(BinOpNode binop)
         {
            var t1 = binop.Left.Eval(this);
            var t2 = binop.Right.Eval(this);
@@ -56,31 +38,32 @@ namespace SimpleLang
             }
             else
             {
-                return type.tdouble;
+                return SimpleParser.Types.tdouble;
             }
         }
-        public override type VisitAssignNode(AssignNode a)
+        public override SimpleParser.Types VisitAssignNode(AssignNode a)
         {
-            NewVarDef(a.Id.Name, a.Expr.Eval(this));
-            return type.tnope;
+            Var v = new Var(a.Expr.Eval(this), 0);
+            SymbolTable.NewVarDef(a.Id.Name, v);
+            return SimpleParser.Types.tvoid;
         }
-        public override type VisitLoopNode(LoopNode l)
+        public override SimpleParser.Types VisitLoopNode(LoopNode l)
         {
-            return type.tnope;
+            return SimpleParser.Types.tvoid;
         }
-        public override type VisitWhileNode(WhileNode w)
+        public override SimpleParser.Types VisitWhileNode(WhileNode w)
         {
-            return type.tnope;
+            return SimpleParser.Types.tvoid;
         }
-        public override type VisitBlockNode(BlockNode bl)
+        public override SimpleParser.Types VisitBlockNode(BlockNode bl)
         {
             foreach (var st in bl.StList)
                 st.Eval(this);
-            return type.tnope;
+            return SimpleParser.Types.tvoid;
         }
-        public override type VisitWriteNode(WriteNode w)
+        public override SimpleParser.Types VisitWriteNode(WriteNode w)
         {
-            return type.tnope;
+            return SimpleParser.Types.tvoid;
         }
     }
 }
