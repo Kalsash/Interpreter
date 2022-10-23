@@ -48,6 +48,10 @@ namespace SimpleCompiler
             {
                 Console.WriteLine("Синтаксическая ошибка. " + e.Message);
             }
+            catch (SemanticException e)
+            {
+                Console.WriteLine("Семантическая ошибка. " + e.Message);
+            }
 
             Console.ReadLine();
         }

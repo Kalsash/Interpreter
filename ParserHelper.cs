@@ -36,7 +36,7 @@ namespace SimpleParser
 
                     if (Vars[name].Type == Types.tint)
                     {
-                        throw new Exception("Нельзя типу int присвоить double!");
+                        throw new SemanticException("Нельзя типу int присвоить тип double!");
                     }
                     else
                     {
@@ -61,6 +61,10 @@ namespace SimpleParser
     public class SyntaxException : Exception
     {
         public SyntaxException(string msg) : base(msg) { }
+    }
+    public class SemanticException : Exception
+    {
+        public SemanticException(string msg) : base(msg) { }
     }
     // Класс глобальных описаний и статических методов
     // для использования различными подсистемами парсера и сканера
