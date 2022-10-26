@@ -62,6 +62,10 @@ public void LexError()
   string errorMsg = string.Format("({0},{1}): Неизвестный символ {2}", yyline, yycol, yytext);
   throw new LexException(errorMsg);
 }
+public String PosColumn()
+{
+  return string.Format("({0},{1}): ", yyline, yycol);
+}
 
 class ScannerHelper 
 {

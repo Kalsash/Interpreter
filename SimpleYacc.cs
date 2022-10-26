@@ -4,7 +4,7 @@
 
 // GPPG version 1.3.6
 // Machine:  LASTHEROPC
-// DateTime: 12.10.2022 11:13:17
+// DateTime: 26.10.2022 15:33:05
 // UserName: LastHero
 // Input file <SimpleYacc.y>
 

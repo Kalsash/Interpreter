@@ -81,7 +81,7 @@ namespace ProgramTree
 
     public class AssignNode : StatementNode
     {
-
+        public int AssignCounter = 0; 
         public IdNode Id { get; set; }
         public ExprNode Expr { get; set; }
         public AssignType AssOp { get; set; }
@@ -90,6 +90,7 @@ namespace ProgramTree
             Id = id;
             Expr = expr;
             AssOp = assop;
+            AssignCounter++;
         }
         public override T Eval<T>(Visitor<T> v)
         {
