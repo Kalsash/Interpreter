@@ -72,7 +72,7 @@ namespace SimpleLang
         }
 
         public override object VisitAssignNode(AssignNode a)
-        {
+        {  
             a.Id.Eval(this);
             var val = a.Expr.Eval(this);
            SymbolTable.SetValue(a.Id.Name, val);

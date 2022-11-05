@@ -3,9 +3,9 @@
 // (see accompanying GPPGcopyright.rtf)
 
 // GPPG version 1.3.6
-// Machine:  LASTHEROPC
-// DateTime: 26.10.2022 15:33:05
-// UserName: LastHero
+// Machine:  KALSLAPTOP
+// DateTime: 05.11.2022 12:24:32
+// UserName: kalsa
 // Input file <SimpleYacc.y>
 
 // options: no-lines gplex
@@ -150,7 +150,7 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
         break;
       case 3: // stlist -> statement
 { 
-				CurrentSemanticValue.blVal = new BlockNode(ValueStack[ValueStack.Depth-1].stVal); 
+				CurrentSemanticValue.blVal = new BlockNode(ValueStack[ValueStack.Depth-1].stVal,CurrentLocationSpan); 
 			}
         break;
       case 4: // stlist -> stlist, SEMICOLON, statement
@@ -175,25 +175,25 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
 { CurrentSemanticValue.stVal = ValueStack[ValueStack.Depth-1].stVal; }
         break;
       case 10: // ident -> ID
-{ CurrentSemanticValue.eVal = new IdNode(ValueStack[ValueStack.Depth-1].sVal); }
+{ CurrentSemanticValue.eVal = new IdNode(ValueStack[ValueStack.Depth-1].sVal,CurrentLocationSpan); }
         break;
       case 11: // assign -> ident, ASSIGN, expr
-{ CurrentSemanticValue.stVal = new AssignNode(ValueStack[ValueStack.Depth-3].eVal as IdNode, ValueStack[ValueStack.Depth-1].eVal); }
+{ CurrentSemanticValue.stVal = new AssignNode(ValueStack[ValueStack.Depth-3].eVal as IdNode, ValueStack[ValueStack.Depth-1].eVal,CurrentLocationSpan); }
         break;
       case 12: // expr -> expr, PLUS, T
-{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'+'); }
+{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'+',CurrentLocationSpan); }
         break;
       case 13: // expr -> expr, MINUS, T
-{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'-'); }
+{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'-',CurrentLocationSpan); }
         break;
       case 14: // expr -> T
 { CurrentSemanticValue.eVal = ValueStack[ValueStack.Depth-1].eVal; }
         break;
       case 15: // T -> T, MULT, F
-{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'*'); }
+{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'*',CurrentLocationSpan); }
         break;
       case 16: // T -> T, DIV, F
-{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'/'); }
+{ CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'/',CurrentLocationSpan); }
         break;
       case 17: // T -> F
 { CurrentSemanticValue.eVal = ValueStack[ValueStack.Depth-1].eVal; }
@@ -202,10 +202,10 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
 { CurrentSemanticValue.eVal = ValueStack[ValueStack.Depth-1].eVal as IdNode; }
         break;
       case 19: // F -> INUM
-{ CurrentSemanticValue.eVal = new IntNumNode(ValueStack[ValueStack.Depth-1].iVal); }
+{ CurrentSemanticValue.eVal = new IntNumNode(ValueStack[ValueStack.Depth-1].iVal,CurrentLocationSpan); }
         break;
       case 20: // F -> RNUM
-{ CurrentSemanticValue.eVal = new RealNumNode(ValueStack[ValueStack.Depth-1].dVal); }
+{ CurrentSemanticValue.eVal = new RealNumNode(ValueStack[ValueStack.Depth-1].dVal,CurrentLocationSpan); }
         break;
       case 21: // F -> LPAREN, expr, RPAREN
 { CurrentSemanticValue.eVal = ValueStack[ValueStack.Depth-2].eVal; }
@@ -214,13 +214,13 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
 { CurrentSemanticValue.blVal = ValueStack[ValueStack.Depth-2].blVal; }
         break;
       case 23: // loop -> LOOP, expr, statement
-{ CurrentSemanticValue.stVal = new LoopNode(ValueStack[ValueStack.Depth-2].eVal, ValueStack[ValueStack.Depth-1].stVal); }
+{ CurrentSemanticValue.stVal = new LoopNode(ValueStack[ValueStack.Depth-2].eVal, ValueStack[ValueStack.Depth-1].stVal,CurrentLocationSpan);}
         break;
       case 24: // while -> WHILE, expr, DO, statement
-{ CurrentSemanticValue.stVal = new WhileNode(ValueStack[ValueStack.Depth-3].eVal, ValueStack[ValueStack.Depth-1].stVal); }
+{ CurrentSemanticValue.stVal = new WhileNode(ValueStack[ValueStack.Depth-3].eVal, ValueStack[ValueStack.Depth-1].stVal,CurrentLocationSpan); }
         break;
       case 25: // write -> WRITE, LPAREN, expr, RPAREN
-{ CurrentSemanticValue.stVal = new WriteNode(ValueStack[ValueStack.Depth-2].eVal); }
+{ CurrentSemanticValue.stVal = new WriteNode(ValueStack[ValueStack.Depth-2].eVal,CurrentLocationSpan); }
         break;
     }
   }

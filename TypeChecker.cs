@@ -44,7 +44,7 @@ namespace SimpleLang
         public override SimpleParser.Types VisitAssignNode(AssignNode a)
         {
             Var v = new Var(a.Expr.Eval(this), 0);
-            SymbolTable.NewVarDef(a.Id.Name, v);
+            SymbolTable.NewVarDef(a.Id.Name, v,a.lx.StartLine,a.lx.EndColumn-1);
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitLoopNode(LoopNode l)

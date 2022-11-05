@@ -1,4 +1,5 @@
-﻿using SimpleLang;
+﻿using QUT.Gppg;
+using SimpleLang;
 using SimpleLang.Visitors;
 using System;
 using System.CodeDom.Compiler;
@@ -12,6 +13,7 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
+       public LexLocation lx;
         public abstract T Eval<T>(Visitor<T> v);
     }
 
@@ -23,39 +25,32 @@ namespace ProgramTree
     {
         public string Name { get; set; }
         public double Value { get; set; }
-        public IdNode(string name) { Name = name; }
+        public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name; }
         public override T Eval<T>(Visitor<T> v)
         {
-            //System.Console.WriteLine("Зашел в IdNode");
-           return v.VisitIdNode(this);
-           
-           
+           return v.VisitIdNode(this);       
         }
     }
 
     public  class IntNumNode : ExprNode
     {
         public int Num { get; set; }
-        public IntNumNode(int num) { Num = num; }
+        public IntNumNode(int num, LexLocation lx = null) { this.lx = lx; Num = num; }
 
         public override T Eval<T>(Visitor<T> v)
         {
-            //System.Console.WriteLine("Зашел в IntNumNode");
-            return v.VisitIntNumNode(this);
-           
+            return v.VisitIntNumNode(this); 
         }
     }
 
     public class RealNumNode : ExprNode
     {
         public double Num { get; set; }
-        public RealNumNode(double num) { Num = num; }
+        public RealNumNode(double num,LexLocation lx = null) { this.lx = lx; Num = num;  }
 
         public override T Eval<T>(Visitor<T> v)
         {
-            //System.Console.WriteLine("Зашел в IntNumNode");
             return v.VisitRealNumNode(this);
-
         }
     }
     public class BinOpNode : ExprNode
@@ -63,15 +58,15 @@ namespace ProgramTree
         public ExprNode Left { get; set; }
         public ExprNode Right { get; set; }
         public char Op { get; set; }
-        public BinOpNode(ExprNode Left, ExprNode Right, char op)
+        public BinOpNode(ExprNode Left, ExprNode Right, char op, LexLocation lx = null)
         {
             this.Left = Left;
             this.Right = Right;
             this.Op = op;
+            this.lx = lx;
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            //System.Console.WriteLine("Зашел в BinOpNode");
             return v.VisitBinOpNode(this);
         }
     }
@@ -85,16 +80,16 @@ namespace ProgramTree
         public IdNode Id { get; set; }
         public ExprNode Expr { get; set; }
         public AssignType AssOp { get; set; }
-        public AssignNode(IdNode id, ExprNode expr, AssignType assop = AssignType.Assign)
+        public AssignNode(IdNode id, ExprNode expr, LexLocation lx, AssignType assop = AssignType.Assign)
         {
             Id = id;
             Expr = expr;
             AssOp = assop;
+            this.lx = lx;
             AssignCounter++;
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            // System.Console.WriteLine("Зашел в AssignNode");
             return v.VisitAssignNode(this);
         }
     }
@@ -103,14 +98,14 @@ namespace ProgramTree
     {
         public ExprNode Expr { get; set; }
         public StatementNode Stat { get; set; }
-        public LoopNode(ExprNode expr, StatementNode stat)
+        public LoopNode(ExprNode expr, StatementNode stat, LexLocation lx = null)
         {
             Expr = expr;
             Stat = stat;
+            this.lx = lx;
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            // System.Console.WriteLine("Зашел в LoopNode");
             return v.VisitLoopNode(this);
         }
 
@@ -119,10 +114,11 @@ namespace ProgramTree
     {
         public ExprNode Expr { get; set; }
         public StatementNode Stat { get; set; }
-        public WhileNode(ExprNode expr, StatementNode stat)
+        public WhileNode(ExprNode expr, StatementNode stat, LexLocation lx = null)
         {
             Expr = expr;
             Stat = stat;
+            this.lx = lx;
         }
         public override T Eval<T>(Visitor<T> v)
         {
@@ -135,8 +131,9 @@ namespace ProgramTree
     public class BlockNode : StatementNode
     {
         public List<StatementNode> StList = new List<StatementNode>();
-        public BlockNode(StatementNode stat)
+        public BlockNode(StatementNode stat, LexLocation lx = null)
         {
+            this.lx = lx;
             Add(stat);
         }
         public void Add(StatementNode stat)
@@ -145,24 +142,22 @@ namespace ProgramTree
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            // System.Console.WriteLine("Зашел в BlockNode");
-            return v.VisitBlockNode(this);
-          
+            return v.VisitBlockNode(this);      
         }
     }
 
     public class WriteNode : StatementNode
     {
         public ExprNode Expr { get; set; }
-        public WriteNode(ExprNode Expr)
+        public WriteNode(ExprNode Expr, LexLocation lx = null)
         {
             this.Expr = Expr;
+            this.lx = lx;
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            //Console.WriteLine("Зашел в WriteNode");
             return v.VisitWriteNode(this);
-           
+         
         }
     }
 

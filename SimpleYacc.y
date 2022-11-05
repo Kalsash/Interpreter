@@ -36,7 +36,7 @@ progr   : block { root = $1; }
 
 stlist	: statement 
 			{ 
-				$$ = new BlockNode($1); 
+				$$ = new BlockNode($1,@$); 
 			}
 		| stlist SEMICOLON statement 
 			{ 
@@ -52,38 +52,38 @@ statement: assign { $$ = $1; }
 		| write   { $$ = $1; }
 	;
 
-ident 	: ID { $$ = new IdNode($1); }	
+ident 	: ID { $$ = new IdNode($1,@$); }	
 		;
 	
-assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
+assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3,@$); }
 		;
 
-expr	: expr PLUS T { $$ = new BinOpNode($1,$3,'+'); }
-		| expr MINUS T { $$ = new BinOpNode($1,$3,'-'); }
+expr	: expr PLUS T { $$ = new BinOpNode($1,$3,'+',@$); }
+		| expr MINUS T { $$ = new BinOpNode($1,$3,'-',@$); }
 		| T { $$ = $1; }
 		;
 		
-T 		: T MULT F { $$ = new BinOpNode($1,$3,'*'); }
-		| T DIV F { $$ = new BinOpNode($1,$3,'/'); }
+T 		: T MULT F { $$ = new BinOpNode($1,$3,'*',@$); }
+		| T DIV F { $$ = new BinOpNode($1,$3,'/',@$); }
 		| F { $$ = $1; }
 		;
 		
 F 		: ident  { $$ = $1 as IdNode; }
-		| INUM { $$ = new IntNumNode($1); }
-		| RNUM { $$ = new RealNumNode($1); }
+		| INUM { $$ = new IntNumNode($1,@$); }
+		| RNUM { $$ = new RealNumNode($1,@$); }
 		| LPAREN expr RPAREN { $$ = $2; }
 		;
 
 block	: BEGIN stlist END { $$ = $2; }
 		;
 
-loop	: LOOP expr statement { $$ = new LoopNode($2, $3); }
+loop	: LOOP expr statement { $$ = new LoopNode($2, $3,@$);}
 		;
 
-while	: WHILE expr DO statement { $$ = new WhileNode($2, $4); }
+while	: WHILE expr DO statement { $$ = new WhileNode($2, $4,@$); }
 		;
 
-write	: WRITE LPAREN expr RPAREN { $$ = new WriteNode($3); }
+write	: WRITE LPAREN expr RPAREN { $$ = new WriteNode($3,@$); }
 		;
 	
 %%

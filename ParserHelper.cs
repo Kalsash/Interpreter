@@ -31,34 +31,16 @@ namespace SimpleParser
     public static class SymbolTable // Таблица символов
     {
         public static Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
-        public static void NewVarDef(string name, Var v)
+        public static void NewVarDef(string name, Var v, int line, int col)
         {
             if (Vars.ContainsKey(name))
             {
                 if (Vars[name].Type != v.Type)
                 {
-
                     if (Vars[name].Type == Types.tint)
                     {
-                        Dictionary<int, String> assign_dict = new Dictionary<int, String>(); // таблица символов
-                        string FileName = @"..\..\a.txt";
-                        string Text = File.ReadAllText(FileName);
-                        Scanner scanner = new Scanner();
-                        scanner.SetSource(Text, 0);
-                        int tok = 0;
-                        int k = 0;
-                        do
-                        {
-                            tok = scanner.yylex();
-                            
-                            if (tok == (int)Tokens.ASSIGN)
-                            {
-                                assign_dict.Add(k,scanner.PosColumn());
-                                k++;
-                            }
-                        } while (tok != (int)Tokens.EOF);
- 
-                        throw new SemanticException(assign_dict[3] + "Нельзя типу int присвоить тип double!");
+                        throw new SemanticException(string.Format("({0},{1}):" +
+                            " Нельзя типу int присвоить тип double!", line,col));
                     }
                     else
                     {
