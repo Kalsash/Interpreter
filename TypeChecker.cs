@@ -35,6 +35,11 @@ namespace SimpleLang
         {
            var t1 = binop.Left.Eval(this);
            var t2 = binop.Right.Eval(this);
+            if (t1 == Types.tvoid || t2 == Types.tvoid)
+            {
+                throw new SemanticException(string.Format("({0},{1}):" +
+              " Неизвестное имя переменной ", binop.lx.StartLine, binop.lx.EndColumn-1));
+            }
             if (t1 == t2)
             {
                 return t1;
@@ -46,12 +51,22 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitAssignNode(AssignNode a)
         {
+            if (a.Expr.Eval(this) == SimpleParser.Types.tvoid)
+            {
+                throw new SemanticException(string.Format("({0},{1}):" +
+              " Переменной присвоено неверное значение ", a.lx.StartLine, a.lx.StartColumn + 2));
+            }
             Var v = new Var(a.Expr.Eval(this), 0);
             SymbolTable.NewVarDef(a.Id.Name, v,a.lx.StartLine,a.lx.EndColumn-1);
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitLoopNode(LoopNode l)
         {
+            if (l.Expr.Eval(this) == SimpleParser.Types.tvoid)
+            {
+                throw new SemanticException(string.Format("({0},{1}):" +
+                              " Неизвестное имя переменной ", l.lx.StartLine, l.lx.StartColumn + 5));
+            }
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitWhileNode(WhileNode w)
@@ -66,6 +81,12 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitWriteNode(WriteNode w)
         {
+            var val = w.Expr.Eval(this);
+            if (val == Types.tvoid)
+            {
+                throw new SemanticException(string.Format("({0},{1}):" +
+                              " Неизвестное имя переменной ", w.lx.StartLine, w.lx.StartColumn+6));
+            }
             return SimpleParser.Types.tvoid;
         }
     }
