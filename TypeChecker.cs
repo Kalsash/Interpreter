@@ -24,8 +24,11 @@ namespace SimpleLang
             return SimpleParser.Types.tint;
         }
         public override SimpleParser.Types VisitRealNumNode(RealNumNode num)
+        {          
+            return SimpleParser.Types.tdouble;
+        }
+        public override SimpleParser.Types VisitFuncNode(FuncNode num)
         {
-           
             return SimpleParser.Types.tdouble;
         }
         public override SimpleParser.Types VisitBinOpNode(BinOpNode binop)

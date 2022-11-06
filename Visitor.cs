@@ -9,6 +9,7 @@ namespace SimpleLang.Visitors
     public abstract class Visitor<T>
     {
         public virtual T VisitIdNode(IdNode id) { return (T)Convert.ChangeType(id, typeof(T)); }
+        public virtual T VisitFuncNode(FuncNode f) { return (T)Convert.ChangeType(f, typeof(T)); }
         public virtual T VisitIntNumNode(IntNumNode num) { return (T)Convert.ChangeType(num, typeof(T)); }
         public virtual T VisitRealNumNode(RealNumNode num) { return (T)Convert.ChangeType(num, typeof(T)); }
         public virtual T VisitBinOpNode(BinOpNode binop) { return (T)Convert.ChangeType(binop, typeof(T)); }

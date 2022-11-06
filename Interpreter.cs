@@ -30,6 +30,10 @@ namespace SimpleLang
         {
             return num.Num;
         }
+        public override object VisitFuncNode(FuncNode f)
+        {
+            return f.Val;
+        }
 
         public override object VisitBinOpNode(BinOpNode binop)
         {
@@ -72,7 +76,7 @@ namespace SimpleLang
         }
 
         public override object VisitAssignNode(AssignNode a)
-        {  
+        {
             a.Id.Eval(this);
             var val = a.Expr.Eval(this);
            SymbolTable.SetValue(a.Id.Name, val);
@@ -108,6 +112,7 @@ namespace SimpleLang
         public override object VisitWriteNode(WriteNode w)
         {
             var val = w.Expr.Eval(this);
+           // Console.WriteLine(Math.Sin(30));
             Console.WriteLine(val);
             return val;
         }

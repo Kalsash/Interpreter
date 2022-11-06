@@ -9,10 +9,10 @@ Digit   [0-9]
 AlphaDigit {Alpha}|{Digit}
 INTNUM  {Digit}+
 REALNUM {INTNUM}\.{INTNUM}
-ID {Alpha}{AlphaDigit}* 
+ID {Alpha}{AlphaDigit}*
+FUNC [@]{AlphaDigit}+[(]({INTNUM}|{REALNUM})*[)]
 
 %%
-
 {INTNUM} { 
   yylval.iVal = int.Parse(yytext); 
   return (int)Tokens.INUM; 
@@ -30,6 +30,10 @@ ID {Alpha}{AlphaDigit}*
   return res;
 }
 
+{FUNC} { 
+   yylval.oVal = yytext; 
+return (int)Tokens.FUN;
+}
 ":=" { return (int)Tokens.ASSIGN; }
 ";" { return (int)Tokens.SEMICOLON; }
 "+" { return (int)Tokens.PLUS; }
@@ -39,6 +43,7 @@ ID {Alpha}{AlphaDigit}*
 "(" { return (int)Tokens.LPAREN; }
 ")" { return (int)Tokens.RPAREN; }
 "," { return (int)Tokens.COLUMN; }
+
 
 [^ \r\n] {
 	LexError();

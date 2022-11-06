@@ -1,7 +1,6 @@
 begin
   b := 2;
-  a := 3.8 * (b + 1);
-  b:= a;
+  a := @sqrt(64) * (b + 1) + @pi();
   write(b);
   write(a);
   a := b;

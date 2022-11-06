@@ -9,7 +9,8 @@
 %union { 
 			public double dVal; 
 			public int iVal; 
-			public string sVal; 
+			public string sVal;
+			public object oVal;
 			public Node nVal;
 			public ExprNode eVal;
 			public StatementNode stVal;
@@ -20,10 +21,11 @@
 
 %namespace SimpleParser
 
-%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN
+%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN 
 %token <iVal> INUM 
 %token <dVal> RNUM 
 %token <sVal> ID
+%token <oVal> FUN
 
 %type <eVal> expr ident T F
 %type <stVal> assign statement loop while write
@@ -71,6 +73,7 @@ T 		: T MULT F { $$ = new BinOpNode($1,$3,'*',@$); }
 F 		: ident  { $$ = $1 as IdNode; }
 		| INUM { $$ = new IntNumNode($1,@$); }
 		| RNUM { $$ = new RealNumNode($1,@$); }
+		| FUN { $$ = new FuncNode($1,@$); }
 		| LPAREN expr RPAREN { $$ = $2; }
 		;
 
