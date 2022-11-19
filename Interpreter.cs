@@ -32,6 +32,10 @@ namespace SimpleLang
         }
         public override object VisitFuncNode(FuncNode f)
         {
+            if (f.Name.StartsWith("@sin"))
+            {                
+               f.Val = Math.Sin(double.Parse(f.Expr.Eval(this).ToString()));
+            }
             return f.Val;
         }
 

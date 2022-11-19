@@ -10,7 +10,7 @@ AlphaDigit {Alpha}|{Digit}
 INTNUM  {Digit}+
 REALNUM {INTNUM}\.{INTNUM}
 ID {Alpha}{AlphaDigit}*
-FUNC [@]{AlphaDigit}+[(]({INTNUM}|{REALNUM})*[)]
+FUN [@]{ID}
 
 %%
 {INTNUM} { 
@@ -29,11 +29,11 @@ FUNC [@]{AlphaDigit}+[(]({INTNUM}|{REALNUM})*[)]
 	yylval.sVal = yytext;
   return res;
 }
-
-{FUNC} { 
+{FUN} { 
    yylval.oVal = yytext; 
 return (int)Tokens.FUN;
 }
+
 ":=" { return (int)Tokens.ASSIGN; }
 ";" { return (int)Tokens.SEMICOLON; }
 "+" { return (int)Tokens.PLUS; }

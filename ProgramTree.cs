@@ -57,45 +57,16 @@ namespace ProgramTree
     }
     public class FuncNode : ExprNode
     {
+        public string Name { get; set; }
+        public ExprNode Expr { get; set; }
         public double Val { get; set; }
-        public FuncNode(object name, LexLocation lx = null) 
+        public FuncNode(object name, ExprNode expr, LexLocation lx = null) 
         { 
             this.lx = lx;
             var s = name.ToString();
+            Name = s;
+            Expr = expr;
             Val = 0;
-            if (s.StartsWith("@pi"))
-            {
-                Val = Math.PI;
-            }
-            if (s.StartsWith("@e"))
-            {
-                Val = Math.E;
-            }
-            if (s.StartsWith("@sqrt"))
-            {
-                int k = s.IndexOf(')');
-                var ss = s.Substring(6, k - 6);
-                Val = Math.Sqrt(int.Parse(ss));
-            }
-            if (s.StartsWith("@sin"))
-            {
-                int k = s.IndexOf(')');
-                var ss = s.Substring(5, k-5);
-                Val = Math.Sin(int.Parse(ss));
-            }
-            if (s.StartsWith("@cos"))
-            {
-                int k = s.IndexOf(')');
-                var ss = s.Substring(5, k - 5);
-                Val = Math.Cos(int.Parse(ss));
-            }
-            if (s.StartsWith("@tan"))
-            {
-                int k = s.IndexOf(')');
-                var ss = s.Substring(5, k - 5);
-                Val = Math.Tan(int.Parse(ss));
-            }
-
         }
 
         public override T Eval<T>(Visitor<T> v)

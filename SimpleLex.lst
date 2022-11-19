@@ -4,7 +4,7 @@
 // ==========================================================================
 //  Version:  1.1.3.301
 //  Machine:  KALSLAPTOP
-//  DateTime: 05.11.2022 17:29:19
+//  DateTime: 18.11.2022 10:50:28
 //  UserName: kalsa
 // ==========================================================================
 
@@ -21,7 +21,7 @@ AlphaDigit {Alpha}|{Digit}
 INTNUM  {Digit}+
 REALNUM {INTNUM}\.{INTNUM}
 ID {Alpha}{AlphaDigit}*
-FUNC [&]{AlphaDigit}+[(]{INTNUM}[)]
+FUN [@]{ID}
 
 %%
 {INTNUM} { 
@@ -40,13 +40,9 @@ FUNC [&]{AlphaDigit}+[(]{INTNUM}[)]
 	yylval.sVal = yytext;
   return res;
 }
-
-"%"
-// Error: Expected space here
-// --------------------------
-{
+{FUN} { 
+   yylval.oVal = yytext; 
 return (int)Tokens.FUN;
-}
 
 ":=" { return (int)Tokens.ASSIGN; }
 ";" { return (int)Tokens.SEMICOLON; }
@@ -58,9 +54,18 @@ return (int)Tokens.FUN;
 ")" { return (int)Tokens.RPAREN; }
 "," { return (int)Tokens.COLUMN; }
 
+
 [^ \r\n] {
+//-^-^
+// Error: Illegal character in this context
+// Error: Illegal character in this context
+// Error: Illegal character in this context
+// ----------------------------------------
 	LexError();
 }
+// Error: Missing matching construct <']'> 
+// Error: Parser error <Syntax error, unexpected "}"> 
+// ---------------------------------------------------
 
 %{
   yylloc = new LexLocation(tokLin, tokCol, tokELin, tokECol);

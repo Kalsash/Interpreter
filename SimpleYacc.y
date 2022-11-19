@@ -21,14 +21,14 @@
 
 %namespace SimpleParser
 
-%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN 
+%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN
 %token <iVal> INUM 
 %token <dVal> RNUM 
 %token <sVal> ID
 %token <oVal> FUN
 
-%type <eVal> expr ident T F
-%type <stVal> assign statement loop while write
+%type <eVal> expr exprlist exprlistnull ident T F func 
+%type <stVal> assign statement loop while write 
 %type <blVal> stlist block
 
 %%
@@ -60,6 +60,17 @@ ident 	: ID { $$ = new IdNode($1,@$); }
 assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3,@$); }
 		;
 
+func    : FUN LPAREN exprlistnull RPAREN { $$ = new FuncNode($1, $3,@$); }
+		;
+
+exprlist: expr
+		| exprlist,expr
+		;
+
+exprlistnull: exprlist
+			| 
+			;
+
 expr	: expr PLUS T { $$ = new BinOpNode($1,$3,'+',@$); }
 		| expr MINUS T { $$ = new BinOpNode($1,$3,'-',@$); }
 		| T { $$ = $1; }
@@ -73,7 +84,7 @@ T 		: T MULT F { $$ = new BinOpNode($1,$3,'*',@$); }
 F 		: ident  { $$ = $1 as IdNode; }
 		| INUM { $$ = new IntNumNode($1,@$); }
 		| RNUM { $$ = new RealNumNode($1,@$); }
-		| FUN { $$ = new FuncNode($1,@$); }
+		| func  { $$ = $1 as FuncNode; }
 		| LPAREN expr RPAREN { $$ = $2; }
 		;
 
