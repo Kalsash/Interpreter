@@ -22,7 +22,7 @@
 
 %namespace SimpleParser
 
-%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN
+%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN MORE LESS EQ NEQ AND OR 
 %token <iVal> INUM 
 %token <dVal> RNUM
 %token <bVal> BNUM
@@ -30,7 +30,7 @@
 %token <oVal> FUN
 
 
-%type <eVal> expr exprlist exprlistnull ident T F func 
+%type <eVal> expr exprlist exprlistnull ident Q S P T F func 
 %type <stVal> assign statement loop while write 
 %type <blVal> stlist block
 
@@ -74,11 +74,26 @@ exprlistnull: exprlist
 			| 
 			;
 
-expr	: expr PLUS T { $$ = new BinOpNode($1,$3,'+',@$); }
-		| expr MINUS T { $$ = new BinOpNode($1,$3,'-',@$); }
+expr	: expr AND Q { $$ = new BinOpNode($1,$3,'&',@$); }
+		| expr OR  Q { $$ = new BinOpNode($1,$3,'|',@$); }
+		| Q { $$ = $1; }
+		;
+
+Q    	: Q EQ S { $$ = new BinOpNode($1,$3,'=',@$); }
+		| Q NEQ S { $$ = new BinOpNode($1,$3,'!',@$); }
+		| S { $$ = $1; }
+		;
+
+S	    : S MORE P { $$ = new BinOpNode($1,$3,'>',@$); }
+		| S LESS P { $$ = new BinOpNode($1,$3,'<',@$); }
+		| P { $$ = $1; }
+		;
+
+P       : P PLUS T { $$ = new BinOpNode($1,$3,'+',@$); }
+		| P MINUS T { $$ = new BinOpNode($1,$3,'-',@$); }
 		| T { $$ = $1; }
 		;
-		
+
 T 		: T MULT F { $$ = new BinOpNode($1,$3,'*',@$); }
 		| T DIV F { $$ = new BinOpNode($1,$3,'/',@$); }
 		| F { $$ = $1; }

@@ -44,18 +44,28 @@ namespace SimpleLang
                 throw new SemanticException(string.Format("({0},{1}):" +
               " Неизвестное имя переменной ", binop.lx.StartLine, binop.lx.EndColumn-1));
             }
-            if (t1 == Types.tbool || t2 == Types.tbool)
-            {
-                throw new SemanticException(string.Format("({0},{1}):" +
-              " Для типов {2} и {3} операция '{4}' не применима", 
-              binop.lx.StartLine, binop.lx.EndColumn - 1, t1, t2, binop.Op));
-            }
+
             if (t1 == t2)
             {
+                if (binop.Op == '>' || binop.Op == '<' || binop.Op == '=')
+                {
+                    return Types.tbool;
+                }
                 return t1;
             }
             else
             {
+
+                if (t1 == Types.tbool || t2 == Types.tbool)
+                {
+                    throw new SemanticException(string.Format("({0},{1}):" +
+                  " Для типов {2} и {3} операция '{4}' не применима",
+                  binop.lx.StartLine, binop.lx.EndColumn - 1, t1, t2, binop.Op));
+                }
+                if (binop.Op == '>' || binop.Op == '<' || binop.Op == '=')
+                {
+                    return Types.tbool;
+                }
                 return SimpleParser.Types.tdouble;
             }
         }

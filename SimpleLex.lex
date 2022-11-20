@@ -48,6 +48,12 @@ return (int)Tokens.FUN;
 "(" { return (int)Tokens.LPAREN; }
 ")" { return (int)Tokens.RPAREN; }
 "," { return (int)Tokens.COLUMN; }
+">" { return (int)Tokens.MORE; }
+"<" { return (int)Tokens.LESS; }
+"=" { return (int)Tokens.EQ; }
+"!" { return (int)Tokens.NEQ; }
+"&" { return (int)Tokens.AND; }
+"|" { return (int)Tokens.OR; }
 
 
 [^ \r\n] {

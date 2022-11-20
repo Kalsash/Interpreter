@@ -65,35 +65,66 @@ namespace SimpleLang
            var t1 = binop.Left.Eval(TypeChecker);
            var val2 = binop.Right.Eval(this);
            var t2 = binop.Right.Eval(TypeChecker);
-
-            if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
+            if (t1 == SimpleParser.Types.tbool && t2 == SimpleParser.Types.tbool)
             {
                 switch (binop.Op)
                 {
-                    case '+':
-                        return int.Parse(string.Format("{0}", val1)) + int.Parse(string.Format("{0}", val2));
-                    case '-':
-                        return int.Parse(string.Format("{0}", val1)) - int.Parse(string.Format("{0}", val2));
-                    case '*':
-                        return int.Parse(string.Format("{0}", val1)) * int.Parse(string.Format("{0}", val2));
-                    case '/':
-                        return int.Parse(string.Format("{0}", val1)) / int.Parse(string.Format("{0}", val2));
+                    case '&':
+                        return bool.Parse(string.Format("{0}", val1)) && bool.Parse(string.Format("{0}", val2));
+                    case '|':
+                        return bool.Parse(string.Format("{0}", val1)) || bool.Parse(string.Format("{0}", val2));
                 }
             }
             else
             {
-                switch (binop.Op)
+                if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
                 {
-                    case '+':
-                        return double.Parse(string.Format("{0}", val1)) + double.Parse(string.Format("{0}", val2));
-                    case '-':
-                        return double.Parse(string.Format("{0}", val1)) - double.Parse(string.Format("{0}", val2));
-                    case '*':
-                        return double.Parse(string.Format("{0}", val1)) * double.Parse(string.Format("{0}", val2));
-                    case '/':
-                        return double.Parse(string.Format("{0}", val1)) / double.Parse(string.Format("{0}", val2));
+                    switch (binop.Op)
+                    {
+                        case '+':
+                            return int.Parse(string.Format("{0}", val1)) + int.Parse(string.Format("{0}", val2));
+                        case '-':
+                            return int.Parse(string.Format("{0}", val1)) - int.Parse(string.Format("{0}", val2));
+                        case '*':
+                            return int.Parse(string.Format("{0}", val1)) * int.Parse(string.Format("{0}", val2));
+                        case '/':
+                            return int.Parse(string.Format("{0}", val1)) / int.Parse(string.Format("{0}", val2));
+                        case '>':
+                            return int.Parse(string.Format("{0}", val1)) > int.Parse(string.Format("{0}", val2));
+                        case '<':
+                            return int.Parse(string.Format("{0}", val1)) < int.Parse(string.Format("{0}", val2));
+                        case '=':
+                            return int.Parse(string.Format("{0}", val1)) == int.Parse(string.Format("{0}", val2));
+                        case '!':
+                            return int.Parse(string.Format("{0}", val1)) != int.Parse(string.Format("{0}", val2));
+                    }
+                }
+                else
+                {
+                    switch (binop.Op)
+                    {
+                        case '+':
+                            return double.Parse(string.Format("{0}", val1)) + double.Parse(string.Format("{0}", val2));
+                        case '-':
+                            return double.Parse(string.Format("{0}", val1)) - double.Parse(string.Format("{0}", val2));
+                        case '*':
+                            return double.Parse(string.Format("{0}", val1)) * double.Parse(string.Format("{0}", val2));
+                        case '/':
+                            return double.Parse(string.Format("{0}", val1)) / double.Parse(string.Format("{0}", val2));
+                        case '>':
+                            return double.Parse(string.Format("{0}", val1)) > double.Parse(string.Format("{0}", val2));
+                        case '<':
+                            return double.Parse(string.Format("{0}", val1)) < double.Parse(string.Format("{0}", val2));
+                        case '=':
+                            return double.Parse(string.Format("{0}", val1)) == double.Parse(string.Format("{0}", val2));
+                        case '!':
+                            return double.Parse(string.Format("{0}", val1)) != double.Parse(string.Format("{0}", val2));
+                    }
                 }
             }
+           
+
+      
 
             return 0;
         }
