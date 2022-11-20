@@ -9,6 +9,7 @@ Digit   [0-9]
 AlphaDigit {Alpha}|{Digit}
 INTNUM  {Digit}+
 REALNUM {INTNUM}\.{INTNUM}
+BOOLNUM true|false
 ID {Alpha}{AlphaDigit}*
 FUN [@]{ID}
 
@@ -21,6 +22,10 @@ FUN [@]{ID}
 {REALNUM} { 
   yylval.dVal = double.Parse(yytext,new System.Globalization.CultureInfo("en-US")); 
   return (int)Tokens.RNUM;
+}
+{BOOLNUM} { 
+  yylval.bVal = bool.Parse(yytext); 
+  return (int)Tokens.BNUM; 
 }
 
 {ID}  { 

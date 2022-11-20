@@ -1,6 +1,8 @@
 begin
   b := 2;
-  a := @sin(30);
+  a := @sqrt(64) * 2 - 3.5;
+  c:= true;
+  write(c);
   write(b);
   write(a);
   a := b;

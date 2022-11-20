@@ -7,7 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace SimpleParser
 {
-    public enum Types { tint, tdouble, tvoid };
+    public enum Types { tint, tdouble, tbool, tvoid };
     public class Var
     {
          Types type;
@@ -37,15 +37,23 @@ namespace SimpleParser
             {
                 if (Vars[name].Type != v.Type)
                 {
+                    if (v.Type == Types.tbool)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+                           " Нельзя типу {2} присвоить тип tbool!", line, col, Vars[name].Type));
+                    }
+                    if (v.Type == Types.tvoid)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+                           " Нельзя типу {2} присвоить тип tvoid!", line, col, Vars[name].Type));
+                    }
                     if (Vars[name].Type == Types.tint)
                     {
                         throw new SemanticException(string.Format("({0},{1}):" +
                             " Нельзя типу int присвоить тип double!", line,col));
                     }
-                    else
-                    {
-                        Vars[name].Type = Types.tdouble;
-                    }
+                    Vars[name].Type = Types.tdouble;
+
                 }
             }
             else Vars.Add(name, v);

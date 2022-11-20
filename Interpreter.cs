@@ -30,11 +30,30 @@ namespace SimpleLang
         {
             return num.Num;
         }
+        public override object VisitBoolNumNode(BoolNumNode num)
+        {
+            return num.Num;
+        }
         public override object VisitFuncNode(FuncNode f)
         {
+            double x = double.Parse(f.Expr.Eval(this).ToString());
+
+            // funcs with 1 param
             if (f.Name.StartsWith("@sin"))
             {                
-               f.Val = Math.Sin(double.Parse(f.Expr.Eval(this).ToString()));
+               f.Val = Math.Sin(x);
+            }
+            if (f.Name.StartsWith("@cos"))
+            {
+                f.Val = Math.Cos(x);
+            }
+            if (f.Name.StartsWith("@tan"))
+            {
+                f.Val = Math.Tan(x);
+            }
+            if (f.Name.StartsWith("@sqrt"))
+            {
+                f.Val = Math.Sqrt(x);
             }
             return f.Val;
         }

@@ -12,6 +12,7 @@ namespace SimpleLang.Visitors
         public virtual T VisitFuncNode(FuncNode f) { return (T)Convert.ChangeType(f, typeof(T)); }
         public virtual T VisitIntNumNode(IntNumNode num) { return (T)Convert.ChangeType(num, typeof(T)); }
         public virtual T VisitRealNumNode(RealNumNode num) { return (T)Convert.ChangeType(num, typeof(T)); }
+        public virtual T VisitBoolNumNode(BoolNumNode num) { return (T)Convert.ChangeType(num, typeof(T)); }
         public virtual T VisitBinOpNode(BinOpNode binop) { return (T)Convert.ChangeType(binop, typeof(T)); }
         public virtual T VisitAssignNode(AssignNode a) { return (T)Convert.ChangeType(a, typeof(T)); }
         public virtual T VisitLoopNode(LoopNode l) { return (T)Convert.ChangeType(l, typeof(T)); }

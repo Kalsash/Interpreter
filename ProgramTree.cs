@@ -48,11 +48,22 @@ namespace ProgramTree
         public double Num { get; set; }
         public RealNumNode(double num,LexLocation lx = null) {
             this.lx = lx; Num = num;  }
-
-
         public override T Eval<T>(Visitor<T> v)
         {
             return v.VisitRealNumNode(this);
+        }
+    }
+
+    public class BoolNumNode : ExprNode
+    {
+        public bool Num { get; set; }
+        public BoolNumNode(bool num, LexLocation lx = null)
+        {
+            this.lx = lx; Num = num;
+        }
+        public override T Eval<T>(Visitor<T> v)
+        {
+            return v.VisitBoolNumNode(this);
         }
     }
     public class FuncNode : ExprNode
