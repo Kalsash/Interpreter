@@ -22,7 +22,7 @@
 
 %namespace SimpleParser
 
-%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN MORE LESS EQ NEQ AND OR 
+%token BEGIN END WHILE DO LOOP IF ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN MORE LESS EQ NEQ AND OR 
 %token <iVal> INUM 
 %token <dVal> RNUM
 %token <bVal> BNUM
@@ -31,7 +31,7 @@
 
 
 %type <eVal> expr exprlist exprlistnull ident Q S P T F func 
-%type <stVal> assign statement loop while write 
+%type <stVal> assign statement loop while if write 
 %type <blVal> stlist block
 
 %%
@@ -54,6 +54,7 @@ statement: assign { $$ = $1; }
 		| block   { $$ = $1; }
 		| loop   { $$ = $1; }
 		| while   { $$ = $1; }
+		| if   { $$ = $1; }
 		| write   { $$ = $1; }
 	;
 
@@ -114,6 +115,9 @@ loop	: LOOP expr statement { $$ = new LoopNode($2, $3,@$);}
 		;
 
 while	: WHILE expr DO statement { $$ = new WhileNode($2, $4,@$); }
+		;
+
+if		: IF LPAREN expr RPAREN statement { $$ = new IfNode($3, $5,@$);}
 		;
 
 write	: WRITE LPAREN expr RPAREN { $$ = new WriteNode($3,@$); }

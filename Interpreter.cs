@@ -152,6 +152,16 @@ namespace SimpleLang
             Loop_Counter = -1;
             return 0;
         }
+
+        public override object VisitIfNode(IfNode f)
+        {
+            bool val = bool.Parse(f.Expr.Eval(this).ToString());
+            if (val == true)
+            {
+                f.Stat.Eval(this);
+            }
+            return 0;
+        }
         public override object VisitWhileNode(WhileNode w)
         {
             Console.WriteLine("Цикл на стадии разработки!");

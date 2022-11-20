@@ -7,9 +7,9 @@ begin
   write(a);
   a := b;
   write(a);
-  loop b+1
+  if (c)
   begin
-  a := a + 5.5;
-  write(a)
+  a := a + 1;
+    write(a)
   end
 end

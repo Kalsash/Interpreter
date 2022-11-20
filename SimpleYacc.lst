@@ -4,7 +4,7 @@
 // ==========================================================================
 //  Version:  1.3.6
 //  Machine:  KALSLAPTOP
-//  DateTime: 20.11.2022 11:03:35
+//  DateTime: 20.11.2022 11:28:19
 //  UserName: kalsa
 // ==========================================================================
 
@@ -33,7 +33,7 @@
 
 %namespace SimpleParser
 
-%token BEGIN END WHILE DO LOOP ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN MORE LESS EQ NEQ AND OR 
+%token BEGIN END WHILE DO LOOP IF ASSIGN SEMICOLON PLUS MINUS	MULT DIV WRITE LPAREN RPAREN COLUMN MORE LESS EQ NEQ AND OR 
 %token <iVal> INUM 
 %token <dVal> RNUM
 %token <bVal> BNUM
@@ -42,10 +42,12 @@
 
 
 %type <eVal> expr exprlist exprlistnull ident Q S P T F func 
-%type <stVal> assign statement loop while write 
+%type <stVal> assign statement loop while if write 
 %type <blVal> stlist block
 
 %%
+// Warning: NonTerminal symbol "if" is unreachable
+// -----------------------------------------------
 
 progr   : block { root = $1; }
 		;
@@ -88,10 +90,9 @@ exprlistnull: exprlist
 expr	: expr AND Q { $$ = new BinOpNode($1,$3,'&',@$); }
 		| expr OR  Q { $$ = new BinOpNode($1,$3,'|',@$); }
 		| Q { $$ = $1; }
+		;
 
 Q    	: Q EQ S { $$ = new BinOpNode($1,$3,'=',@$); }
-// Error: Syntax error, unexpected anchoredSymbol
-// ----------------------------------------------
 		| Q NEQ S { $$ = new BinOpNode($1,$3,'!',@$); }
 		| S { $$ = $1; }
 		;
@@ -126,6 +127,9 @@ loop	: LOOP expr statement { $$ = new LoopNode($2, $3,@$);}
 		;
 
 while	: WHILE expr DO statement { $$ = new WhileNode($2, $4,@$); }
+		;
+
+if		: IF LPAREN expr RPAREN statement { $$ = new IFNode($3, $5,@$);}
 		;
 
 write	: WRITE LPAREN expr RPAREN { $$ = new WriteNode($3,@$); }

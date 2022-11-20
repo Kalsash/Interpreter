@@ -16,6 +16,7 @@ namespace SimpleLang.Visitors
         public virtual T VisitBinOpNode(BinOpNode binop) { return (T)Convert.ChangeType(binop, typeof(T)); }
         public virtual T VisitAssignNode(AssignNode a) { return (T)Convert.ChangeType(a, typeof(T)); }
         public virtual T VisitLoopNode(LoopNode l) { return (T)Convert.ChangeType(l, typeof(T)); }
+        public virtual T VisitIfNode(IfNode i) { return (T)Convert.ChangeType(i, typeof(T)); }
         public virtual T VisitBlockNode(BlockNode bl) { return (T)Convert.ChangeType(bl, typeof(T)); }
         public virtual T VisitWhileNode(WhileNode w) { return (T)Convert.ChangeType(w, typeof(T)); }
         public virtual T VisitWriteNode(WriteNode w) { return (T)Convert.ChangeType(w, typeof(T)); }

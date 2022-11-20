@@ -89,6 +89,10 @@ namespace SimpleLang
             }
             return SimpleParser.Types.tvoid;
         }
+        public override SimpleParser.Types VisitIfNode(IfNode w)
+        {
+            return SimpleParser.Types.tvoid;
+        }
         public override SimpleParser.Types VisitWhileNode(WhileNode w)
         {
             return SimpleParser.Types.tvoid;

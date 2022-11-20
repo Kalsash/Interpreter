@@ -126,6 +126,22 @@ namespace ProgramTree
         }
     }
 
+    public class IfNode : StatementNode
+    {
+        public ExprNode Expr { get; set; }
+        public StatementNode Stat { get; set; }
+        public IfNode(ExprNode expr, StatementNode stat, LexLocation lx = null)
+        {
+            Expr = expr;
+            Stat = stat;
+            this.lx = lx;
+        }
+        public override T Eval<T>(Visitor<T> v)
+        {
+            return v.VisitIfNode(this);
+        }
+
+    }
     public class LoopNode : StatementNode
     {
         public ExprNode Expr { get; set; }
