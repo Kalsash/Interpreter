@@ -170,7 +170,6 @@ namespace ProgramTree
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            System.Console.WriteLine("Зашел в WhileNode");
             return v.VisitWhileNode(this);
         }
 

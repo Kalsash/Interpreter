@@ -114,7 +114,7 @@ block	: BEGIN stlist END { $$ = $2; }
 loop	: LOOP expr statement { $$ = new LoopNode($2, $3,@$);}
 		;
 
-while	: WHILE expr DO statement { $$ = new WhileNode($2, $4,@$); }
+while	: WHILE LPAREN expr RPAREN DO statement { $$ = new WhileNode($3, $6,@$); }
 		;
 
 if		: IF LPAREN expr RPAREN statement { $$ = new IfNode($3, $5,@$);}

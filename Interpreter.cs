@@ -152,7 +152,16 @@ namespace SimpleLang
             Loop_Counter = -1;
             return 0;
         }
-
+        public override object VisitWhileNode(WhileNode w)
+        {
+            bool val = bool.Parse(w.Expr.Eval(this).ToString());
+            if (val == true)
+            {
+                w.Stat.Eval(this);
+                VisitWhileNode(w);
+            }
+            return 0;
+        }
         public override object VisitIfNode(IfNode f)
         {
             bool val = bool.Parse(f.Expr.Eval(this).ToString());
@@ -160,11 +169,6 @@ namespace SimpleLang
             {
                 f.Stat.Eval(this);
             }
-            return 0;
-        }
-        public override object VisitWhileNode(WhileNode w)
-        {
-            Console.WriteLine("Цикл на стадии разработки!");
             return 0;
         }
         public override object VisitBlockNode(BlockNode bl)
@@ -176,7 +180,6 @@ namespace SimpleLang
         public override object VisitWriteNode(WriteNode w)
         {
             var val = w.Expr.Eval(this);
-           // Console.WriteLine(Math.Sin(30));
             Console.WriteLine(val);
             return val;
         }
