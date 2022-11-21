@@ -36,24 +36,51 @@ namespace SimpleLang
         }
         public override object VisitFuncNode(FuncNode f)
         {
-            double x = double.Parse(f.Expr.Eval(this).ToString());
-
-            // funcs with 1 param
-            if (f.Name.StartsWith("@sin"))
-            {                
-               f.Val = Math.Sin(x);
-            }
-            if (f.Name.StartsWith("@cos"))
+            double x = 0;
+            double[] arr = new double[4];
+            int cnt = 0;
+            foreach (var ex in f.ExprList)
             {
-                f.Val = Math.Cos(x);
+                 x = double.Parse(ex.Eval(this).ToString());
+                arr[cnt] = x;
+                cnt++;
             }
-            if (f.Name.StartsWith("@tan"))
+            if (cnt == 0)
             {
-                f.Val = Math.Tan(x);
+                if (f.Name.StartsWith("@pi"))
+                {
+                    f.Val = Math.PI;
+                }
             }
-            if (f.Name.StartsWith("@sqrt"))
+            if (cnt == 1)
             {
-                f.Val = Math.Sqrt(x);
+                if (f.Name.StartsWith("@sin"))
+                {
+                    f.Val = Math.Sin(arr[0]);
+                }
+                if (f.Name.StartsWith("@cos"))
+                {
+                    f.Val = Math.Cos(arr[0]);
+                }
+                if (f.Name.StartsWith("@tan"))
+                {
+                    f.Val = Math.Tan(arr[0]);
+                }
+                if (f.Name.StartsWith("@sqrt"))
+                {
+                    f.Val = Math.Sqrt(arr[0]);
+                }
+            }
+            if (cnt == 2)
+            {
+                if (f.Name.StartsWith("@max"))
+                {
+                    f.Val = Math.Max(arr[0], arr[1]);
+                }
+                if (f.Name.StartsWith("@min"))
+                {
+                    f.Val = Math.Max(arr[0], arr[1]);
+                }
             }
             return f.Val;
         }

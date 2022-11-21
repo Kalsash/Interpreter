@@ -1,6 +1,8 @@
 begin
   b := 2;
   a := @sqrt(64) * 2 - 3.5;
+  d:= @max(a,b);
+  write(d);
   c:= a = b | false;
   write(c);
   write(b);

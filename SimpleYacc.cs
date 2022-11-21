@@ -3,9 +3,9 @@
 // (see accompanying GPPGcopyright.rtf)
 
 // GPPG version 1.3.6
-// Machine:  KALSLAPTOP
-// DateTime: 21.11.2022 16:09:13
-// UserName: kalsa
+// Machine:  LASTHEROPC
+// DateTime: 21.11.2022 19:40:48
+// UserName: LastHero
 // Input file <SimpleYacc.y>
 
 // options: no-lines gplex

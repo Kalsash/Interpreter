@@ -1,6 +1,7 @@
 ﻿using QUT.Gppg;
 using SimpleLang;
 using SimpleLang.Visitors;
+using SimpleParser;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -68,18 +69,21 @@ namespace ProgramTree
     }
     public class FuncNode : ExprNode
     {
+        public List<ExprNode> ExprList = new List<ExprNode>();
         public string Name { get; set; }
-        public ExprNode Expr { get; set; }
         public double Val { get; set; }
-        public FuncNode(object name, ExprNode expr, LexLocation lx = null) 
+        public FuncNode(object name, ExprNode Expr, LexLocation lx = null) 
         { 
             this.lx = lx;
             var s = name.ToString();
             Name = s;
-            Expr = expr;
+            Add(Expr);
             Val = 0;
         }
-
+        public void Add(ExprNode e)
+        {
+            ExprList.Add(e);
+        }
         public override T Eval<T>(Visitor<T> v)
         {
             return v.VisitFuncNode(this);
@@ -192,6 +196,7 @@ namespace ProgramTree
             return v.VisitBlockNode(this);      
         }
     }
+
 
     public class WriteNode : StatementNode
     {
