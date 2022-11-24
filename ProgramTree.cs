@@ -71,14 +71,14 @@ namespace ProgramTree
     {
         public List<ExprNode> ExprList = new List<ExprNode>();
         public string Name { get; set; }
-        public double Val { get; set; }
+        public RunTimeValue Val { get; set; }
         public FuncNode(object name, ExprNode Expr, LexLocation lx = null) 
         { 
             this.lx = lx;
             var s = name.ToString();
             Name = s;
             Add(Expr);
-            Val = 0;
+          //  Val = new RunTimeValue(5);
         }
         public void Add(ExprNode e)
         {

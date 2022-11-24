@@ -4,7 +4,7 @@
 
 // GPPG version 1.3.6
 // Machine:  LASTHEROPC
-// DateTime: 21.11.2022 19:40:48
+// DateTime: 24.11.2022 11:32:34
 // UserName: LastHero
 // Input file <SimpleYacc.y>
 
@@ -37,6 +37,7 @@ public struct ValueType
 			public ExprNode eVal;
 			public StatementNode stVal;
 			public BlockNode blVal;
+			public RunTimeValue rtv;
        }
 // Abstract base class for GPLEX scanners
 public abstract class ScanBase : AbstractScanner<ValueType,LexLocation> {

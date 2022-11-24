@@ -36,58 +36,53 @@ namespace SimpleLang
         }
         public override object VisitFuncNode(FuncNode f)
         {
-            double x = 0;
-            double[] arr = new double[4];
-            int cnt = 0;
-            foreach (var ex in f.ExprList)
-            {
-                 x = double.Parse(ex.Eval(this).ToString());
-                arr[cnt] = x;
-                cnt++;
-            }
-            if (cnt == 0)
-            {
+  
                 if (f.Name.StartsWith("@pi"))
                 {
-                    f.Val = Math.PI;
+                    f.Val = new RunTimeValue(Math.PI);
                 }
-            }
-            if (cnt == 1)
+            if (f.Name.StartsWith("@sin"))
             {
-                if (f.Name.StartsWith("@sin"))
-                {
-                    f.Val = Math.Sin(arr[0]);
-                }
-                if (f.Name.StartsWith("@cos"))
-                {
-                    f.Val = Math.Cos(arr[0]);
-                }
-                if (f.Name.StartsWith("@tan"))
-                {
-                    f.Val = Math.Tan(arr[0]);
-                }
-                if (f.Name.StartsWith("@sqrt"))
-                {
-                    f.Val = Math.Sqrt(arr[0]);
-                }
+                f.Val = new RunTimeValue(Math.Sin(double.Parse(f.ExprList.FirstOrDefault().ToString())));
             }
-            if (cnt == 2)
+            if (f.Name.StartsWith("@cos"))
             {
+                f.Val = new RunTimeValue(Math.Cos(double.Parse(f.ExprList.First().ToString())));
+            }
+            if (f.Name.StartsWith("@tan"))
+            {
+                f.Val = new RunTimeValue(Math.Tan(double.Parse(f.ExprList.First().ToString())));
+            }
+            if (f.Name.StartsWith("@sqrt"))
+            {
+                double x = 0;
+                foreach (var ex in f.ExprList)
+                {
+                    x = double.Parse(ex.Eval(this).ToString());
+                }
+                f.Val = new RunTimeValue(Math.Sqrt(x));
+            }
+
                 if (f.Name.StartsWith("@max"))
                 {
-                    f.Val = Math.Max(arr[0], arr[1]);
+                double[] arr = new double[2];
+                int k = 0;
+                double x = 0;
+                foreach (var ex in f.ExprList)
+                {  
+                    x = double.Parse(ex.Eval(this).ToString());
+                    arr[k] = x;
+                    k++;
                 }
-                if (f.Name.StartsWith("@min"))
-                {
-                    f.Val = Math.Max(arr[0], arr[1]);
+                f.Val = new RunTimeValue(Math.Max(arr[0], arr[1]));
                 }
-            }
-            return f.Val;
+
+            return f.Val.Value();
         }
 
         public override object VisitBinOpNode(BinOpNode binop)
         {
-            var TypeChecker = new TypeChecker();
+            var TypeChecker = new SemanticChecker();
           var val1 =  binop.Left.Eval(this);
            var t1 = binop.Left.Eval(TypeChecker);
            var val2 = binop.Right.Eval(this);

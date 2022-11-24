@@ -3,6 +3,7 @@ using SimpleScanner;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Principal;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SimpleParser
@@ -50,7 +51,7 @@ namespace SimpleParser
                     if (Vars[name].Type == Types.tint)
                     {
                         throw new SemanticException(string.Format("({0},{1}):" +
-                            " Нельзя типу int присвоить тип double!", line,col));
+                            " Нельзя типу int присвоить тип double!", line, col));
                     }
                     Vars[name].Type = Types.tdouble;
 
@@ -58,12 +59,53 @@ namespace SimpleParser
             }
             else Vars.Add(name, v);
         }
+  
         public static void SetValue(string name, object ob)
         {
             if (Vars.ContainsKey(name))
             {
                 Vars[name].Value = ob;
             }
+        }
+    }
+
+    public class RunTimeValue
+    {
+        public int i;
+        public double d;
+        public bool b;
+        public Types tt = Types.tvoid;
+        public RunTimeValue(int x)
+        {
+           i = x;
+            tt = Types.tint;
+        }
+        public RunTimeValue(double x)
+        {
+            d = x;
+            tt = Types.tdouble;
+        }
+        public RunTimeValue(bool x)
+        {
+            b = x;
+            tt = Types.tbool;
+        }
+
+        public object Value()
+        {
+            if (tt == Types.tint)
+            {
+                return i;
+            }
+            if (tt == Types.tdouble)
+            {
+                return d;
+            }
+            if (tt == Types.tbool)
+            {
+                return b;
+            }
+            return 0;
         }
     }
     public class LexException : Exception

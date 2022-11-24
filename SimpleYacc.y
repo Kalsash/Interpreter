@@ -16,6 +16,7 @@
 			public ExprNode eVal;
 			public StatementNode stVal;
 			public BlockNode blVal;
+			public RunTimeValue rtv;
        }
 
 %using ProgramTree;

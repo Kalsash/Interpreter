@@ -27,7 +27,7 @@ namespace SimpleCompiler
                 else
                 {
                     Console.WriteLine("Синтаксическое дерево построено");
-                    var TypeChecker = new TypeChecker();
+                    var TypeChecker = new SemanticChecker();
                     parser.root.Eval(TypeChecker);
                     Console.WriteLine("Типы проверены!");
                     var d = new Interpreter();

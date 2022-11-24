@@ -10,7 +10,7 @@ using SimpleParser;
 namespace SimpleLang
 {
     
-    class TypeChecker:Visitor<SimpleParser.Types>
+    class SemanticChecker:Visitor<SimpleParser.Types>
     {
         Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
         public override SimpleParser.Types VisitIdNode(IdNode id)
@@ -31,9 +31,19 @@ namespace SimpleLang
         {
             return SimpleParser.Types.tbool;
         }
-        public override SimpleParser.Types VisitFuncNode(FuncNode num)
+        public override SimpleParser.Types VisitFuncNode(FuncNode f)
         {
-            return SimpleParser.Types.tdouble;
+                foreach (var ex in f.ExprList)
+                {
+                if (ex != null)
+                {
+                    return ex.Eval(this);
+                }
+                 
+                }
+
+            return Types.tdouble;
+            
         }
         public override SimpleParser.Types VisitBinOpNode(BinOpNode binop)
         {
