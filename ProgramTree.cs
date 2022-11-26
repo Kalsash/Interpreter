@@ -198,17 +198,17 @@ namespace ProgramTree
     }
 
 
-    public class WriteNode : StatementNode
+    public class PrintNode : StatementNode
     {
         public ExprNode Expr { get; set; }
-        public WriteNode(ExprNode Expr, LexLocation lx = null)
+        public PrintNode(ExprNode Expr, LexLocation lx = null)
         {
             this.Expr = Expr;
             this.lx = lx;
         }
         public override T Eval<T>(Visitor<T> v)
         {
-            return v.VisitWriteNode(this);
+            return v.VisitPrintNode(this);
          
         }
     }

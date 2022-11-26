@@ -1,14 +1,15 @@
 begin
-  b := 2;
-  a := @sqrt(64) * 2 - 3.5;
-  c:= a = b | false;
-  write(c);
-  write(b);
-  write(a);
-  b:= 8;
-  while (b > 0) do
+  b := 2+3;
+  a := b * 6.5 - @sin(30);
+  c:= false | true & a =b;
+  print(c);
+  print(b);
+  print(a);
+    b:= 3;
+  while (b > 0)
   begin
-  b := b - 1;
-    write(b)
+  b:= b-1;
+  print(b)
   end
+    
 end

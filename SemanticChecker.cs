@@ -113,13 +113,13 @@ namespace SimpleLang
                 st.Eval(this);
             return SimpleParser.Types.tvoid;
         }
-        public override SimpleParser.Types VisitWriteNode(WriteNode w)
+        public override SimpleParser.Types VisitPrintNode(PrintNode p)
         {
-            var val = w.Expr.Eval(this);
+            var val = p.Expr.Eval(this);
             if (val == Types.tvoid)
             {
                 throw new SemanticException(string.Format("({0},{1}):" +
-                              " Неизвестное имя переменной ", w.lx.StartLine, w.lx.StartColumn+6));
+                              " Неизвестное имя переменной ", p.lx.StartLine, p.lx.StartColumn+6));
             }
             return SimpleParser.Types.tvoid;
         }

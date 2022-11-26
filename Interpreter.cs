@@ -43,24 +43,19 @@ namespace SimpleLang
                 }
             if (f.Name.StartsWith("@sin"))
             {
-                f.Val = new RunTimeValue(Math.Sin(double.Parse(f.ExprList.FirstOrDefault().ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
             }
             if (f.Name.StartsWith("@cos"))
             {
-                f.Val = new RunTimeValue(Math.Cos(double.Parse(f.ExprList.First().ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
             }
             if (f.Name.StartsWith("@tan"))
             {
-                f.Val = new RunTimeValue(Math.Tan(double.Parse(f.ExprList.First().ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
             }
             if (f.Name.StartsWith("@sqrt"))
             {
-                double x = 0;
-                foreach (var ex in f.ExprList)
-                {
-                    x = double.Parse(ex.Eval(this).ToString());
-                }
-                f.Val = new RunTimeValue(Math.Sqrt(x));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
             }
 
                 if (f.Name.StartsWith("@max"))
@@ -69,7 +64,8 @@ namespace SimpleLang
                 int k = 0;
                 double x = 0;
                 foreach (var ex in f.ExprList)
-                {  
+                {
+
                     x = double.Parse(ex.Eval(this).ToString());
                     arr[k] = x;
                     k++;
@@ -104,7 +100,8 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
-                            return int.Parse(string.Format("{0}", val1)) + int.Parse(string.Format("{0}", val2));
+                            //return (int)val1 + (int)val2;
+                            return int.Parse(string.Format("{0}", val1)) +int.Parse(string.Format("{0}", val2));
                         case '-':
                             return int.Parse(string.Format("{0}", val1)) - int.Parse(string.Format("{0}", val2));
                         case '*':
@@ -199,9 +196,9 @@ namespace SimpleLang
                 st.Eval(this);
             return 0;
         }
-        public override object VisitWriteNode(WriteNode w)
+        public override object VisitPrintNode(PrintNode p)
         {
-            var val = w.Expr.Eval(this);
+            var val = p.Expr.Eval(this);
             Console.WriteLine(val);
             return val;
         }
