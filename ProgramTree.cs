@@ -14,7 +14,7 @@ namespace ProgramTree
 
     public abstract class Node // базовый класс для всех узлов    
     {
-       public LexLocation lx;
+        public LexLocation lx;
         public abstract T Eval<T>(Visitor<T> v);
     }
 
@@ -29,26 +29,26 @@ namespace ProgramTree
         public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name; }
         public override T Eval<T>(Visitor<T> v)
         {
-           return v.VisitIdNode(this);       
+            return v.VisitIdNode(this);
         }
     }
 
-    public  class IntNumNode : ExprNode
+    public class IntNumNode : ExprNode
     {
         public int Num { get; set; }
         public IntNumNode(int num, LexLocation lx = null) { this.lx = lx; Num = num; }
 
         public override T Eval<T>(Visitor<T> v)
         {
-            return v.VisitIntNumNode(this); 
+            return v.VisitIntNumNode(this);
         }
     }
 
     public class RealNumNode : ExprNode
     {
         public double Num { get; set; }
-        public RealNumNode(double num,LexLocation lx = null) {
-            this.lx = lx; Num = num;  }
+        public RealNumNode(double num, LexLocation lx = null) {
+            this.lx = lx; Num = num; }
         public override T Eval<T>(Visitor<T> v)
         {
             return v.VisitRealNumNode(this);
@@ -67,22 +67,33 @@ namespace ProgramTree
             return v.VisitBoolNumNode(this);
         }
     }
+    public class ExprList
+     {
+        public List<ExprNode> ExList = new List<ExprNode>();
+        public ExprList()
+        {
+        }
+        public ExprList(ExprNode Exp)
+        {
+            ExList.Add(Exp);
+        }
+        public void Add(ExprNode e)
+        {
+            ExList.Add(e);
+        }
+    }
     public class FuncNode : ExprNode
     {
-        public List<ExprNode> ExprList = new List<ExprNode>();
+        public ExprList ExprL = new ExprList();
         public string Name { get; set; }
         public RunTimeValue Val { get; set; }
-        public FuncNode(object name, ExprNode Expr, LexLocation lx = null) 
+        public FuncNode(object name, ExprList Expr, LexLocation lx = null) 
         { 
             this.lx = lx;
             var s = name.ToString();
             Name = s;
-            Add(Expr);
+            ExprL = Expr;
           //  Val = new RunTimeValue(5);
-        }
-        public void Add(ExprNode e)
-        {
-            ExprList.Add(e);
         }
         public override T Eval<T>(Visitor<T> v)
         {

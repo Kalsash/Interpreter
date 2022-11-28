@@ -33,14 +33,14 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitFuncNode(FuncNode f)
         {
-                foreach (var ex in f.ExprList)
-                {
+            foreach (var ex in f.ExprL.ExList)
+            {
                 if (ex != null)
                 {
                     return ex.Eval(this);
                 }
-                 
-                }
+
+            }
 
             return Types.tdouble;
             

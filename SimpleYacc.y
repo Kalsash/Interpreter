@@ -17,6 +17,7 @@
 			public StatementNode stVal;
 			public BlockNode blVal;
 			public RunTimeValue rtv;
+			public ExprList exl;
        }
 
 %using ProgramTree;
@@ -34,6 +35,7 @@
 %type <eVal> expr exprlist exprlistnull ident Q S P T F func 
 %type <stVal> assign statement loop while if print 
 %type <blVal> stlist block
+%type <exl> exprlist exprlistnull
 
 %%
 
@@ -68,8 +70,8 @@ assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3,@$); }
 func    : FUN LPAREN exprlistnull RPAREN { $$ = new FuncNode($1, $3,@$); }
 		;
 
-exprlist: expr
-		| exprlist COLUMN expr
+exprlist: expr { $$ = new ExprList(); $$.Add($1);}
+		| exprlist COLUMN expr{ $$ = $1; $1.Add($3); }		
 		;
 
 exprlistnull: exprlist

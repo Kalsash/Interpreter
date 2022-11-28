@@ -4,7 +4,7 @@
 
 // GPPG version 1.3.6
 // Machine:  KALSLAPTOP
-// DateTime: 26.11.2022 18:51:47
+// DateTime: 28.11.2022 11:25:48
 // UserName: kalsa
 // Input file <SimpleYacc.y>
 
@@ -38,6 +38,7 @@ public struct ValueType
 			public StatementNode stVal;
 			public BlockNode blVal;
 			public RunTimeValue rtv;
+			public ExprList exl;
        }
 // Abstract base class for GPLEX scanners
 public abstract class ScanBase : AbstractScanner<ValueType,LexLocation> {
@@ -239,7 +240,13 @@ public class Parser: ShiftReduceParser<ValueType, LexLocation>
 { CurrentSemanticValue.stVal = new AssignNode(ValueStack[ValueStack.Depth-3].eVal as IdNode, ValueStack[ValueStack.Depth-1].eVal,CurrentLocationSpan); }
         break;
       case 13: // func -> FUN, LPAREN, exprlistnull, RPAREN
-{ CurrentSemanticValue.eVal = new FuncNode(ValueStack[ValueStack.Depth-4].oVal, ValueStack[ValueStack.Depth-2].eVal,CurrentLocationSpan); }
+{ CurrentSemanticValue.eVal = new FuncNode(ValueStack[ValueStack.Depth-4].oVal, ValueStack[ValueStack.Depth-2].exl,CurrentLocationSpan); }
+        break;
+      case 14: // exprlist -> expr
+{ CurrentSemanticValue.exl = new ExprList(); CurrentSemanticValue.exl.Add(ValueStack[ValueStack.Depth-1].eVal);}
+        break;
+      case 15: // exprlist -> exprlist, COLUMN, expr
+{ CurrentSemanticValue.exl = ValueStack[ValueStack.Depth-3].exl; ValueStack[ValueStack.Depth-3].exl.Add(ValueStack[ValueStack.Depth-1].eVal); }
         break;
       case 18: // expr -> expr, AND, Q
 { CurrentSemanticValue.eVal = new BinOpNode(ValueStack[ValueStack.Depth-3].eVal,ValueStack[ValueStack.Depth-1].eVal,'&',CurrentLocationSpan); }

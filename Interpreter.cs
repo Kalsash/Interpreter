@@ -43,27 +43,27 @@ namespace SimpleLang
                 }
             if (f.Name.StartsWith("@sin"))
             {
-                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprL.ExList.First().Eval(this).ToString())));
             }
             if (f.Name.StartsWith("@cos"))
             {
-                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprL.ExList.First().Eval(this).ToString())));
             }
             if (f.Name.StartsWith("@tan"))
             {
-                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprL.ExList.First().Eval(this).ToString())));
             }
             if (f.Name.StartsWith("@sqrt"))
             {
-                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprList.First().Eval(this).ToString())));
+                f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.ExprL.ExList.First().Eval(this).ToString())));
             }
 
-                if (f.Name.StartsWith("@max"))
-                {
+            if (f.Name.StartsWith("@max"))
+            {
                 double[] arr = new double[2];
                 int k = 0;
                 double x = 0;
-                foreach (var ex in f.ExprList)
+                foreach (var ex in f.ExprL.ExList)
                 {
 
                     x = double.Parse(ex.Eval(this).ToString());
@@ -71,7 +71,21 @@ namespace SimpleLang
                     k++;
                 }
                 f.Val = new RunTimeValue(Math.Max(arr[0], arr[1]));
+            }
+            if (f.Name.StartsWith("@min"))
+            {
+                double[] arr = new double[2];
+                int k = 0;
+                double x = 0;
+                foreach (var ex in f.ExprL.ExList)
+                {
+
+                    x = double.Parse(ex.Eval(this).ToString());
+                    arr[k] = x;
+                    k++;
                 }
+                f.Val = new RunTimeValue(Math.Min(arr[0], arr[1]));
+            }
 
             return f.Val.Value();
         }
