@@ -8,6 +8,21 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace SimpleParser
 {
+    public class ExprList
+    {
+        public List<ExprNode> ExList = new List<ExprNode>();
+        public ExprList()
+        {
+        }
+        public ExprList(ExprNode Exp)
+        {
+            ExList.Add(Exp);
+        }
+        public void Add(ExprNode e)
+        {
+            ExList.Add(e);
+        }
+    }
     public enum Types { tint, tdouble, tbool, tvoid };
     public class Var
     {

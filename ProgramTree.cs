@@ -67,24 +67,10 @@ namespace ProgramTree
             return v.VisitBoolNumNode(this);
         }
     }
-    public class ExprList
-     {
-        public List<ExprNode> ExList = new List<ExprNode>();
-        public ExprList()
-        {
-        }
-        public ExprList(ExprNode Exp)
-        {
-            ExList.Add(Exp);
-        }
-        public void Add(ExprNode e)
-        {
-            ExList.Add(e);
-        }
-    }
+
     public class FuncNode : ExprNode
     {
-        public ExprList ExprL = new ExprList();
+        public ExprList EList = new ExprList();
         public string Name { get; set; }
         public RunTimeValue Val { get; set; }
         public FuncNode(object name, ExprList Expr, LexLocation lx = null) 
@@ -92,7 +78,7 @@ namespace ProgramTree
             this.lx = lx;
             var s = name.ToString();
             Name = s;
-            ExprL = Expr;
+            EList = Expr;
           //  Val = new RunTimeValue(5);
         }
         public override T Eval<T>(Visitor<T> v)

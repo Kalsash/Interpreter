@@ -33,16 +33,55 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitFuncNode(FuncNode f)
         {
-            foreach (var ex in f.ExprL.ExList)
+
+            switch (f.Name)
             {
-                if (ex != null)
-                {
-                    return ex.Eval(this);
-                }
+                case "@pi":
+                    return Types.tdouble;
+                case "@e":
+                    return Types.tdouble;
+                case "@sin":
+                    return Types.tdouble;
+                case "@cos":
+                    return Types.tdouble;
+                case "@tan":
+                    return Types.tdouble;
+                case "@sqrt":
+                    f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
+                    return f.Val.tt;
+                case "@max":
+                    //double[] arr = new double[2];
+                    //int k = 0;
+                    //double x = 0;
+                    //foreach (var ex in f.EList.ExList)
+                    //{
 
+                    //    x = double.Parse(ex.Eval(this).ToString());
+                    //    arr[k] = x;
+                    //    k++;
+                    //}
+                    //f.Val = new RunTimeValue(Math.Max(arr[0], arr[1]));
+                    //return f.Val.tt;
+                    return Types.tdouble;
+                case "@min":
+                    double[] arr2 = new double[2];
+                    int k2 = 0;
+                    double x2 = 0;
+                    foreach (var ex in f.EList.ExList)
+                    {
+
+                        x2 = double.Parse(ex.Eval(this).ToString());
+                        arr2[k2] = x2;
+                        k2++;
+                    }
+                    f.Val = new RunTimeValue(Math.Min(arr2[0], arr2[1]));
+                    return f.Val.tt;
+
+
+                default:
+                    throw new SemanticException(string.Format("({0},{1}):" +
+                              " Неизвестное имя функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
             }
-
-            return Types.tdouble;
             
         }
         public override SimpleParser.Types VisitBinOpNode(BinOpNode binop)
