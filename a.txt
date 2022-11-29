@@ -7,7 +7,7 @@ begin
   print(d);
   c:= false | true & a =b;
   print(c);
-    b:= 3;
+  b:= 3;
   while (b > 0)
   begin
   b:= b-1;

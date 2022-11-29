@@ -37,19 +37,74 @@ namespace SimpleLang
             switch (f.Name)
             {
                 case "@pi":
+                    if (f.EList.ExList.Count != 0)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     return Types.tdouble;
                 case "@e":
+                    if (f.EList.ExList.Count != 0)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     return Types.tdouble;
                 case "@sin":
+                    if (f.EList.ExList.Count != 1)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
+                    if (f.EList.ExList.First().Eval(this) != Types.tdouble && f.EList.ExList.First().Eval(this) != Types.tint)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверный аргумент функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     return Types.tdouble;
                 case "@cos":
+                    if (f.EList.ExList.Count != 1)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
+                    if (f.EList.ExList.First().Eval(this) != Types.tdouble && f.EList.ExList.First().Eval(this) != Types.tint)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверный аргумент функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     return Types.tdouble;
                 case "@tan":
+                    if (f.EList.ExList.Count != 1)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
+                    if (f.EList.ExList.First().Eval(this) != Types.tdouble && f.EList.ExList.First().Eval(this) != Types.tint)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверный аргумент функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     return Types.tdouble;
                 case "@sqrt":
+                    if (f.EList.ExList.Count != 1)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
+                    if (f.EList.ExList.First().Eval(this) != Types.tdouble && f.EList.ExList.First().Eval(this) != Types.tint)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверный аргумент функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
                     return f.Val.tt;
                 case "@max":
+                    if (f.EList.ExList.Count != 2)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     //double[] arr = new double[2];
                     //int k = 0;
                     //double x = 0;
@@ -64,6 +119,11 @@ namespace SimpleLang
                     //return f.Val.tt;
                     return Types.tdouble;
                 case "@min":
+                    if (f.EList.ExList.Count != 2)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+          " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                    }
                     double[] arr2 = new double[2];
                     int k2 = 0;
                     double x2 = 0;
@@ -131,19 +191,29 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitLoopNode(LoopNode l)
         {
-            if (l.Expr.Eval(this) == SimpleParser.Types.tvoid)
+            if (l.Expr.Eval(this) != SimpleParser.Types.tint)
             {
                 throw new SemanticException(string.Format("({0},{1}):" +
-                              " Неизвестное имя переменной ", l.lx.StartLine, l.lx.StartColumn + 5));
+                              "Loop должен принимать выражения типа int!", l.lx.StartLine, l.lx.StartColumn + 5));
             }
             return SimpleParser.Types.tvoid;
         }
-        public override SimpleParser.Types VisitIfNode(IfNode w)
+        public override SimpleParser.Types VisitIfNode(IfNode f)
         {
+            if (f.Expr.Eval(this) != SimpleParser.Types.tbool)
+            {
+                throw new SemanticException(string.Format("({0},{1}):" +
+                              "If должен принимать логические высказывания!", f.lx.StartLine, f.lx.StartColumn + 5));
+            }
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitWhileNode(WhileNode w)
         {
+            if (w.Expr.Eval(this) != SimpleParser.Types.tbool)
+            {
+                throw new SemanticException(string.Format("({0},{1}):" +
+                              "While должен принимать логические высказывания!", w.lx.StartLine, w.lx.StartColumn + 5));
+            }
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitBlockNode(BlockNode bl)
