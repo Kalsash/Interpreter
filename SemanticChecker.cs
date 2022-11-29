@@ -97,46 +97,55 @@ namespace SimpleLang
                         throw new SemanticException(string.Format("({0},{1}):" +
           " Неверный аргумент функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
                     }
-                    f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
-                    return f.Val.tt;
+                    return f.EList.ExList.First().Eval(this);
                 case "@max":
                     if (f.EList.ExList.Count != 2)
                     {
                         throw new SemanticException(string.Format("({0},{1}):" +
           " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
                     }
-                    //double[] arr = new double[2];
-                    //int k = 0;
-                    //double x = 0;
-                    //foreach (var ex in f.EList.ExList)
-                    //{
-
-                    //    x = double.Parse(ex.Eval(this).ToString());
-                    //    arr[k] = x;
-                    //    k++;
-                    //}
-                    //f.Val = new RunTimeValue(Math.Max(arr[0], arr[1]));
-                    //return f.Val.tt;
-                    return Types.tdouble;
+                    var flag = false;
+                    foreach (var ex in f.EList.ExList)
+                    {
+                        if (ex.Eval(this) != Types.tdouble && ex.Eval(this) != Types.tint)
+                        {
+                            throw new SemanticException(string.Format("({0},{1}):" +
+              " Неверные аргументы функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                        }
+                        if (ex.Eval(this) == Types.tdouble)
+                        {
+                            flag = true;
+                        }
+                    }
+                    if (flag)
+                    {
+                        return Types.tdouble;
+                    }
+                    return Types.tint;
                 case "@min":
                     if (f.EList.ExList.Count != 2)
                     {
                         throw new SemanticException(string.Format("({0},{1}):" +
           " Неверное количество параметров функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
                     }
-                    double[] arr2 = new double[2];
-                    int k2 = 0;
-                    double x2 = 0;
+                    flag = false;
                     foreach (var ex in f.EList.ExList)
                     {
-
-                        x2 = double.Parse(ex.Eval(this).ToString());
-                        arr2[k2] = x2;
-                        k2++;
+                        if (ex.Eval(this) != Types.tdouble && ex.Eval(this) != Types.tint)
+                        {
+                            throw new SemanticException(string.Format("({0},{1}):" +
+              " Неверные аргументы функции {2} ", f.lx.StartLine, f.lx.StartColumn + 5, f.Name));
+                        }
+                        if (ex.Eval(this) == Types.tdouble)
+                        {
+                            flag = true;
+                        }
                     }
-                    f.Val = new RunTimeValue(Math.Min(arr2[0], arr2[1]));
-                    return f.Val.tt;
-
+                    if (flag)
+                    {
+                        return Types.tdouble;
+                    }
+                    return Types.tint;
 
                 default:
                     throw new SemanticException(string.Format("({0},{1}):" +
