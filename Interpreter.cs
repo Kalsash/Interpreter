@@ -45,16 +45,16 @@ namespace SimpleLang
                     f.Val = new RunTimeValue(Math.E);
                     break;
                 case "@sin":
-                    f.Val = new RunTimeValue(Math.Sin(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
+                    f.Val = new RunTimeValue(Math.Sin(Convert.ToDouble(f.EList.ExList.First().Eval(this))));
                     break;
                 case "@cos":
-                    f.Val = new RunTimeValue(Math.Cos(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
+                    f.Val = new RunTimeValue(Math.Cos(Convert.ToDouble(f.EList.ExList.First().Eval(this))));
                     break;
                 case "@tan":
-                    f.Val = new RunTimeValue(Math.Tan(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
+                    f.Val = new RunTimeValue(Math.Tan(Convert.ToDouble(f.EList.ExList.First().Eval(this))));
                     break;
                 case "@sqrt":
-                    f.Val = new RunTimeValue(Math.Sqrt(double.Parse(f.EList.ExList.First().Eval(this).ToString())));
+                    f.Val = new RunTimeValue(Math.Sqrt(Convert.ToDouble(f.EList.ExList.First().Eval(this))));
                     break;
                 case "@max":
                         double[] arr = new double[2];
@@ -63,7 +63,7 @@ namespace SimpleLang
                         foreach (var ex in f.EList.ExList)
                         {
 
-                            x = double.Parse(ex.Eval(this).ToString());
+                            x = Convert.ToDouble(f.EList.ExList.First().Eval(this));
                             arr[k] = x;
                             k++;
                         }
@@ -76,7 +76,7 @@ namespace SimpleLang
                     foreach (var ex in f.EList.ExList)
                     {
 
-                        x2 = double.Parse(ex.Eval(this).ToString());
+                        x2 = Convert.ToDouble(f.EList.ExList.First().Eval(this));
                         arr2[k2] = x2;
                         k2++;
                     }
@@ -102,9 +102,9 @@ namespace SimpleLang
                 switch (binop.Op)
                 {
                     case '&':
-                        return bool.Parse(string.Format("{0}", val1)) && bool.Parse(string.Format("{0}", val2));
+                        return (bool)val1 && (bool)val2;
                     case '|':
-                        return bool.Parse(string.Format("{0}", val1)) || bool.Parse(string.Format("{0}", val2));
+                        return (bool)val1 || (bool)val2;
                 }
             }
             else
@@ -114,46 +114,43 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
-                            //return (int)val1 + (int)val2;
-                            return int.Parse(string.Format("{0}", val1)) +int.Parse(string.Format("{0}", val2));
+                            return (int)val1 + (int)val2;
                         case '-':
-                            return int.Parse(string.Format("{0}", val1)) - int.Parse(string.Format("{0}", val2));
+                            return (int)val1 - (int)val2;
                         case '*':
-                            return int.Parse(string.Format("{0}", val1)) * int.Parse(string.Format("{0}", val2));
+                            return (int)val1 * (int)val2;
                         case '/':
-                            return int.Parse(string.Format("{0}", val1)) / int.Parse(string.Format("{0}", val2));
+                            return (int)val1 / (int)val2;
                         case '>':
-                            return int.Parse(string.Format("{0}", val1)) > int.Parse(string.Format("{0}", val2));
+                            return (int)val1 > (int)val2;
                         case '<':
-                            return int.Parse(string.Format("{0}", val1)) < int.Parse(string.Format("{0}", val2));
+                            return (int)val1 < (int)val2;
                         case '=':
-                            return int.Parse(string.Format("{0}", val1)) == int.Parse(string.Format("{0}", val2));
+                            return (int)val1 == (int)val2;
                         case '!':
-                            return int.Parse(string.Format("{0}", val1)) != int.Parse(string.Format("{0}", val2));
+                            return (int)val1 != (int)val2;
                     }
                 }
-                else
-                {
                     switch (binop.Op)
                     {
                         case '+':
-                            return double.Parse(string.Format("{0}", val1)) + double.Parse(string.Format("{0}", val2));
+                            return Convert.ToDouble(val1) + Convert.ToDouble(val2);
                         case '-':
-                            return double.Parse(string.Format("{0}", val1)) - double.Parse(string.Format("{0}", val2));
-                        case '*':
-                            return double.Parse(string.Format("{0}", val1)) * double.Parse(string.Format("{0}", val2));
-                        case '/':
-                            return double.Parse(string.Format("{0}", val1)) / double.Parse(string.Format("{0}", val2));
-                        case '>':
-                            return double.Parse(string.Format("{0}", val1)) > double.Parse(string.Format("{0}", val2));
-                        case '<':
-                            return double.Parse(string.Format("{0}", val1)) < double.Parse(string.Format("{0}", val2));
-                        case '=':
-                            return double.Parse(string.Format("{0}", val1)) == double.Parse(string.Format("{0}", val2));
-                        case '!':
-                            return double.Parse(string.Format("{0}", val1)) != double.Parse(string.Format("{0}", val2));
-                    }
+                            return Convert.ToDouble(val1) - Convert.ToDouble(val2);
+                    case '*':
+                            return Convert.ToDouble(val1) * Convert.ToDouble(val2);
+                    case '/':
+                            return Convert.ToDouble(val1) /Convert.ToDouble(val2);
+                    case '>':
+                            return Convert.ToDouble(val1) > Convert.ToDouble(val2);
+                    case '<':
+                            return Convert.ToDouble(val1) < Convert.ToDouble(val2);
+                    case '=':
+                            return Convert.ToDouble(val1) == Convert.ToDouble(val2);
+                    case '!':
+                            return Convert.ToDouble(val1) != Convert.ToDouble(val2);
                 }
+
             }
            
 
