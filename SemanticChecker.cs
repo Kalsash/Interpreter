@@ -12,11 +12,12 @@ namespace SimpleLang
     
     class SemanticChecker:Visitor<SimpleParser.Types>
     {
-        Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
+       // Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
+        Dictionary<string, RunTimeValue> Vars_Dict = VirtSymbolTable.Vars;
         public override SimpleParser.Types VisitIdNode(IdNode id)
         {
             if (Vars_Dict.ContainsKey(id.Name))
-                return Vars_Dict[id.Name].Type;
+                return Vars_Dict[id.Name].tt;
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitIntNumNode(IntNumNode num)
@@ -194,8 +195,7 @@ namespace SimpleLang
                 throw new SemanticException(string.Format("({0},{1}):" +
               " Переменной присвоено неверное значение ", a.lx.StartLine, a.lx.StartColumn + 2));
             }
-            Var v = new Var(a.Expr.Eval(this), 0);
-            SymbolTable.NewVarDef(a.Id.Name, v,a.lx.StartLine,a.lx.EndColumn-1);
+            VirtSymbolTable.NewVarDef(a.Id.Name, new RunTimeValue(0),a.lx.StartLine,a.lx.EndColumn-1);
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitLoopNode(LoopNode l)

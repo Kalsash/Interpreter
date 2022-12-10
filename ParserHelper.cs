@@ -84,7 +84,47 @@ namespace SimpleParser
         }
     }
 
-    public class RunTimeValue
+
+    public static class VirtSymbolTable // Таблица символов
+    {
+        public static Dictionary<string, RunTimeValue> Vars = new Dictionary<string, RunTimeValue>(); // таблица символов
+        public static void NewVarDef(string name, RunTimeValue r, int line, int col)
+        {
+            if (Vars.ContainsKey(name))
+            {
+                if (Vars[name].tt != r.tt)
+                {
+                    if (r.tt == Types.tbool)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+                           " Нельзя типу {2} присвоить тип tbool!", line, col, Vars[name].tt));
+                    }
+                    if (r.tt == Types.tvoid)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+                           " Нельзя типу {2} присвоить тип tvoid!", line, col, Vars[name].tt));
+                    }
+                    if (Vars[name].tt == Types.tint)
+                    {
+                        throw new SemanticException(string.Format("({0},{1}):" +
+                            " Нельзя типу int присвоить тип double!", line, col));
+                    }
+                    Vars[name].tt = Types.tdouble;
+
+                }
+            }
+            else Vars.Add(name, r);
+        }
+        public static void SetValue(string name, RunTimeValue r)
+        {
+            if (Vars.ContainsKey(name))
+            {
+                Vars[name] = r;
+            }
+        }
+    }
+
+        public class RunTimeValue
     {
         public int i;
         public double d;

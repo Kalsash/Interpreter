@@ -24,9 +24,12 @@ namespace ProgramTree
 
     public class IdNode : ExprNode
     {
+
         public string Name { get; set; }
+
         public double Value { get; set; }
-        public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name; }
+       // unsafe public double* p = &Value;
+        public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name;}
         public override T Eval<T>(Visitor<T> v)
         {
             return v.VisitIdNode(this);
