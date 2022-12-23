@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using SimpleScanner;
 using SimpleParser;
 using SimpleLang;
+using System.Diagnostics;
 
 namespace SimpleCompiler
 {
@@ -11,7 +12,11 @@ namespace SimpleCompiler
     {
         public static void Main()
         {
-            Console.WriteLine("Start");
+            Console.WriteLine("Begin");
+
+            Stopwatch stopwatch = new Stopwatch();
+
+            stopwatch.Start();
             ThreeAddress t1 = new ThreeAddress(2);
             ThreeAddress t2 = new ThreeAddress(1);
             ThreeAddress t3 = new ThreeAddress(1);
@@ -34,7 +39,7 @@ namespace SimpleCompiler
                 t1.pda = &s;
                 t1.doubleVal = 0.0; // s = 0.0
                 t2.pia = &n;
-                t2.intVal = 10000000; // n = 10000000
+                t2.intVal = 100000000; // n = 10000000
                 t3.pia = &i;
                 t3.intVal = 1; // i = 1
                 t4.pba = &b;
@@ -71,7 +76,12 @@ namespace SimpleCompiler
 
             op.RunCommands();
 
-                Console.WriteLine(s);
+            stopwatch.Stop();
+            Console.WriteLine("Time: " + stopwatch.ElapsedMilliseconds + " ms");
+
+
+            Console.WriteLine("Value: " + s);
+            Console.WriteLine("End");
                 //Console.WriteLine(n);
                 //Console.WriteLine(i);
                 //Console.WriteLine(b);
