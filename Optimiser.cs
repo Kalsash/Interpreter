@@ -11,6 +11,7 @@ namespace SimpleLang
         public int Size; // size of array
         public int c = 0; // counter
         public ThreeAddress[] Commands; // array of commands
+        
         public Optimiser(int size)
         {
             Size = size;
@@ -19,6 +20,7 @@ namespace SimpleLang
         public void AddCommands(ThreeAddress t)
         {
             Commands[c] = t;
+        
             c++;
         }
         public void RunCommands()
