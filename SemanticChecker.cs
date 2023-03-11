@@ -12,12 +12,13 @@ namespace SimpleLang
     
     class SemanticChecker:Visitor<SimpleParser.Types>
     {
-       // Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
-        Dictionary<string, RunTimeValue> Vars_Dict = VirtSymbolTable.Vars;
+        Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
+        //Dictionary<string, RunTimeValue> Vars_Dict = VirtSymbolTable.Vars;
         public override SimpleParser.Types VisitIdNode(IdNode id)
         {
             if (Vars_Dict.ContainsKey(id.Name))
-                return Vars_Dict[id.Name].tt;
+                return Vars_Dict[id.Name].Type;
+            //return Vars_Dict[id.Name].tt;
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitIntNumNode(IntNumNode num)
@@ -25,7 +26,7 @@ namespace SimpleLang
             return SimpleParser.Types.tint;
         }
         public override SimpleParser.Types VisitRealNumNode(RealNumNode num)
-        {          
+        {
             return SimpleParser.Types.tdouble;
         }
         public override SimpleParser.Types VisitBoolNumNode(BoolNumNode num)
@@ -190,12 +191,15 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitAssignNode(AssignNode a)
         {
-            if (a.Expr.Eval(this) == SimpleParser.Types.tvoid)
+            var t = a.Expr.Eval(this);
+            if (t == SimpleParser.Types.tvoid)
             {
                 throw new SemanticException(string.Format("({0},{1}):" +
               " Переменной присвоено неверное значение ", a.lx.StartLine, a.lx.StartColumn + 2));
             }
-            VirtSymbolTable.NewVarDef(a.Id.Name, new RunTimeValue(0),a.lx.StartLine,a.lx.EndColumn-1);
+            SymbolTable.CommandsSize++;
+            SymbolTable.NewVarDef(a.Id.Name, new Var(t, 0, SymbolTable.MemSize), a.lx.StartLine, a.lx.EndColumn - 1);
+            //VirtSymbolTable.NewVarDef(a.Id.Name, new RunTimeValue(0),a.lx.StartLine,a.lx.EndColumn-1);
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitLoopNode(LoopNode l)
@@ -233,6 +237,7 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitPrintNode(PrintNode p)
         {
+            SymbolTable.CommandsSize++;
             var val = p.Expr.Eval(this);
             if (val == Types.tvoid)
             {

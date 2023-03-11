@@ -24,14 +24,17 @@ namespace SimpleParser
         }
     }
     public enum Types { tint, tdouble, tbool, tvoid };
+
     public class Var
     {
          Types type;
          object value;
-       public Var(Types type, object value)
+        int index = 0;
+       public Var(Types type, object value, int index)
         {
             this.type = type;
             this.value = value;
+            this.index = index;
         }
         public Types Type
         {
@@ -43,10 +46,23 @@ namespace SimpleParser
             get => value;
             set => this.value = value;
         }
+        public int Index
+        {
+            get => index;
+            set => index = value;
+        }
     }
+
+
     public static class SymbolTable // Таблица символов
     {
-        public static Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
+
+        public static  Value[]  mem = new Value[100];
+        unsafe public static int MemSize = 0;
+        unsafe public static int MemCounter = 0;
+        unsafe public static int CommandsSize = 0;
+        unsafe public static int CommandsCounter = 0;
+        unsafe public static Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
         public static void NewVarDef(string name, Var v, int line, int col)
         {
             if (Vars.ContainsKey(name))
@@ -72,7 +88,51 @@ namespace SimpleParser
 
                 }
             }
-            else Vars.Add(name, v);
+            else
+            {
+                Vars.Add(name, v);
+
+                int c1 = 0;
+                int c2 = 0;
+                if (v.Type == Types.tint)
+                {
+                    if (MemSize == 0)
+                    {
+                        mem[MemSize++] = new Value(c1);
+                    }
+                    else
+                        mem[MemSize++] = new Value(c2);
+                }
+                double a1 = 0.0;
+                double a2 = 0.0;
+                if (v.Type == Types.tdouble)
+                {
+                    if (MemSize == 0)
+                    {
+                        mem[MemSize++] = new Value(a1);
+                    }
+                    else
+                    mem[MemSize++] = new Value(a2);
+                }
+                bool b1 = false;
+                bool b2 = false;
+                if (v.Type == Types.tbool)
+                {
+                    if (MemSize == 0)
+                    {
+                        mem[MemSize++] = new Value(b1);
+                    }
+                    else
+                        mem[MemSize++] = new Value(b2);
+                }
+                if (v.Type == Types.tvoid)
+                {
+                    throw new SemanticException(string.Format("({0},{1}):" +
+                             " Нельзя переменной присвоить тип void", line, col));
+                }
+
+            }
+               
         }
   
         public static void SetValue(string name, object ob)
@@ -85,46 +145,36 @@ namespace SimpleParser
     }
 
 
-    public static class VirtSymbolTable // Таблица символов
+
+
+    public unsafe class Value
     {
-        public static Dictionary<string, RunTimeValue> Vars = new Dictionary<string, RunTimeValue>(); // таблица символов
-        public static void NewVarDef(string name, RunTimeValue r, int line, int col)
-        {
-            if (Vars.ContainsKey(name))
-            {
-                if (Vars[name].tt != r.tt)
-                {
-                    if (r.tt == Types.tbool)
-                    {
-                        throw new SemanticException(string.Format("({0},{1}):" +
-                           " Нельзя типу {2} присвоить тип tbool!", line, col, Vars[name].tt));
-                    }
-                    if (r.tt == Types.tvoid)
-                    {
-                        throw new SemanticException(string.Format("({0},{1}):" +
-                           " Нельзя типу {2} присвоить тип tvoid!", line, col, Vars[name].tt));
-                    }
-                    if (Vars[name].tt == Types.tint)
-                    {
-                        throw new SemanticException(string.Format("({0},{1}):" +
-                            " Нельзя типу int присвоить тип double!", line, col));
-                    }
-                    Vars[name].tt = Types.tdouble;
+        public int i = 0;
+        public double d = 0.0;
+        public bool b = false;
 
-                }
-            }
-            else Vars.Add(name, r);
-        }
-        public static void SetValue(string name, RunTimeValue r)
+        unsafe public int* pi { get; set; }
+        unsafe public double* pd { get; set; }
+        unsafe public bool* pb { get; set; }
+        public Value(int x)
         {
-            if (Vars.ContainsKey(name))
-            {
-                Vars[name] = r;
-            }
+            i = x;
+            unsafe { pi = &x; }
+
         }
+        public Value(double x)
+        {
+            d = x;
+            unsafe { pd = &x; }
+        }
+        public Value(bool x)
+        {
+            b = x;
+            unsafe { pb = &x; }
+        }
+
     }
-
-        public class RunTimeValue
+    public class RunTimeValue
     {
         public int i;
         public double d;

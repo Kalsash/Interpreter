@@ -1,16 +1,7 @@
-begin
-  b := 2+3;
-  a := b * 6.5 - @sqrt(64)+5;
-    print(a);
-    print(b);
-  d := @max(a,b);
-  print(d);
-  c:= false | true & a =b;
-  print(c);
-  b:= 3;
-  while (b > 0)
-  begin
-  b:= b-1;
-  print(b)
-  end   
+begin  
+a:=5;
+print(a);
+b:= 6;
+print(a);
+print(b)
 end

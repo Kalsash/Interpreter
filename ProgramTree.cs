@@ -28,8 +28,9 @@ namespace ProgramTree
         public string Name { get; set; }
 
         public double Value { get; set; }
-       // unsafe public double* p = &Value;
-        public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name;}
+        public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name; }
+        // unsafe public double* p = &Value;
+       // public IdNode(string name, LexLocation lx = null) { this.lx = lx; Name = name;}
         public override T Eval<T>(Visitor<T> v)
         {
             return v.VisitIdNode(this);
@@ -112,6 +113,7 @@ namespace ProgramTree
 
     public class AssignNode : StatementNode
     {
+    
         public int AssignCounter = 0; 
         public IdNode Id { get; set; }
         public ExprNode Expr { get; set; }
@@ -181,6 +183,7 @@ namespace ProgramTree
 
     public class BlockNode : StatementNode
     {
+  
         public List<StatementNode> StList = new List<StatementNode>();
         public BlockNode(StatementNode stat, LexLocation lx = null)
         {

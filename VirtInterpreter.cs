@@ -9,23 +9,178 @@ using System.Threading.Tasks;
 
 namespace SimpleLang
 {
-    internal class VirtInterpreter : Visitor<RunTimeValue>
+    internal class VirtInterpreter : Visitor<Value>
     {
-        Dictionary<string, RunTimeValue> Vars_Dict = VirtSymbolTable.Vars;
-        public override RunTimeValue VisitIdNode(IdNode id)
+        Value[] mem = new Value[++SymbolTable.CommandsSize];
+         public Dictionary<string, Var> Vars_Dict = SymbolTable.Vars;
+        Optimiser op = new Optimiser(SymbolTable.CommandsSize);
+        public override Value VisitIdNode(IdNode id)
         {
             if (Vars_Dict.ContainsKey(id.Name))
             {
-                return Vars_Dict[id.Name];
+                return new Value(Vars_Dict[id.Name].Index);
             }
-            return new RunTimeValue(0);
+            return new Value(0);
         }
-        public override RunTimeValue VisitAssignNode(AssignNode a)
+        public override Value VisitIntNumNode(IntNumNode num)
         {
-            a.Id.Eval(this);
+            return new Value(num.Num);
+        }
+        public override Value VisitRealNumNode(RealNumNode num)
+        {
+            return new Value(num.Num);
+        }
+        public override Value VisitBoolNumNode(BoolNumNode num)
+        {
+            return new Value(num.Num);
+        }
+        public override Value VisitAssignNode(AssignNode a)
+        {
+
+            var TypeChecker = new SemanticChecker();
+            var tname = a.Id.Eval(TypeChecker);
+            var tval = a.Expr.Eval(TypeChecker);
             var val = a.Expr.Eval(this);
-            SymbolTable.SetValue(a.Id.Name, val);
-            return new RunTimeValue(0);
+            var val2 = a.Id.Eval(this);
+            if (tname == Types.tint && tval == Types.tint)
+            {
+                op.AddCommands(new ThreeAddress(1));
+                unsafe
+                {
+                    op.Commands[SymbolTable.CommandsCounter].pia = SymbolTable.mem[val2.i].pi; // n
+                    op.Commands[SymbolTable.CommandsCounter++].intVal = val.i; //  n = 10000000
+                }
+            }
+            if (tname== Types.tdouble && tval == Types.tdouble)
+            {
+                op.AddCommands(new ThreeAddress(2));
+                unsafe {
+                    op.Commands[SymbolTable.CommandsCounter].pda = SymbolTable.mem[val2.i].pd; // s
+                    op.Commands[SymbolTable.CommandsCounter++].doubleVal = val.d; // s = 0.0
+
+                }
+            }
+            if (tname == Types.tbool && tval == Types.tbool)
+            {
+                op.AddCommands(new ThreeAddress(3));
+                unsafe
+                {
+                    op.Commands[SymbolTable.CommandsCounter].pba = SymbolTable.mem[val2.i].pb; // s
+                    op.Commands[SymbolTable.CommandsCounter++].boolVal = val.b; // b = false
+
+                }
+            }
+
+            if (op.c == SymbolTable.CommandsSize-1)
+            {
+                op.AddCommands(new ThreeAddress(0));
+                op.RunCommands();
+            }
+            return new Value(0);
+        }
+
+        public override Value VisitBinOpNode(BinOpNode binop)
+        {
+            var TypeChecker = new SemanticChecker();
+            var val1 = binop.Left.Eval(this);
+            var t1 = binop.Left.Eval(TypeChecker);
+            var val2 = binop.Right.Eval(this);
+            var t2 = binop.Right.Eval(TypeChecker);
+
+            int t = 0;
+                unsafe { t = *val1.pi; };
+
+            if (t1 == SimpleParser.Types.tbool && t2 == SimpleParser.Types.tbool)
+            {
+                switch (binop.Op)
+                {
+                    case '&':
+                        return new Value(val1.b && val2.b);
+                    case '|':
+                        return new Value(val1.b || val2.b);
+                }
+            }
+            else
+            {
+                if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
+                {
+                    switch (binop.Op)
+                    {
+                        case '+':
+                            return new Value(val1.i + val2.i);
+                        case '-':
+                            return new Value(val1.i - val2.i);
+                        case '*':
+                            return new Value(val1.i * val2.i);
+                        case '/':
+                            return new Value(val1.i / val2.i);
+                        case '>':
+                            return new Value(val1.i > val2.i);
+                        case '<':
+                            return new Value(val1.i < val2.i);
+                        case '=':
+                            return new Value(val1.i == val2.i);
+                        case '!':
+                            return new Value(val1.i != val2.i);
+                    }
+                }
+                switch (binop.Op)
+                {
+                    case '+':
+                        return new Value(val1.d + val2.d);
+                    case '-':
+                        return new Value(val1.d - val2.d);
+                    case '*':
+                        return new Value(val1.d * val2.d);
+                    case '/':
+                        return new Value(val1.d / val2.d);
+                    case '>':
+                        return new Value(val1.d > val2.d);
+                    case '<':
+                        return new Value(val1.d < val2.d);
+                    case '=':
+                        return new Value(val1.d == val2.d);
+                    case '!':
+                        return new Value(val1.d != val2.d);
+                }
+
+            }
+
+
+
+            return new Value(0);
+        }
+        public override Value VisitBlockNode(BlockNode bl)
+        {
+            foreach (var st in bl.StList)
+                st.Eval(this);
+            return new Value(0);
+        }
+       unsafe public override Value VisitPrintNode(PrintNode p)
+        {
+            var TypeChecker = new SemanticChecker();
+            var tval = p.Expr.Eval(TypeChecker);
+            var val = p.Expr.Eval(this);
+            if (tval == Types.tint)
+            {
+                op.AddCommands(new ThreeAddress(17));
+
+            }
+            if (tval == Types.tdouble)
+            {
+                op.AddCommands(new ThreeAddress(18));
+            }
+            if (tval == Types.tbool)
+            {
+                op.AddCommands(new ThreeAddress(19));
+            }
+            op.Commands[SymbolTable.CommandsCounter++].intVal = val.i;
+            if (op.c == SymbolTable.CommandsSize-1)
+            {
+                op.AddCommands(new ThreeAddress(0));
+                op.RunCommands();
+            }
+            return new Value(0);
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleParser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,13 +36,13 @@ namespace SimpleLang
                         break; // stop
                     case 1:
                         unsafe { *command.pia = command.intVal; }
-                        break; // int = value
+                        break; // int = intVal
                     case 2:
-                        unsafe{*command.pda = command.doubleVal;}
-                        break; // double = value
+                        unsafe {*command.pda = command.doubleVal;}
+                        break; // double = doubleVal
                     case 3:
                         unsafe { *command.pba = command.boolVal; }
-                        break; // bool = value
+                        break; // bool = boolVal
                     case 4:
                         unsafe { *command.pia = *command.pib; }
                         break; // int = int 
@@ -82,6 +83,23 @@ namespace SimpleLang
                     case 16:
                         unsafe { *command.pba = *command.pib >= *command.pic; }
                         break; // bool = int >= int
+                    case 17:
+                 
+                        int t = 0;
+                        unsafe { t = *SymbolTable.mem[command.intVal].pi; }
+                        Console.WriteLine(t);
+                        break; // print(int)
+                    case 18:
+                       // Console.WriteLine("Hello World!");
+                        double temp = 0;
+                        unsafe { temp = *SymbolTable.mem[command.intVal].pd;}
+                        Console.WriteLine(temp);
+                        break; // print(double)
+                    case 19:
+                        bool b = false;
+                        unsafe { b = *SymbolTable.mem[command.intVal].pb; }
+                        Console.WriteLine(b);
+                        break; // print(int)
 
                     default:
                         break;
