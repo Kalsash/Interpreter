@@ -62,6 +62,7 @@ namespace SimpleParser
         unsafe public static int MemCounter = 0;
         unsafe public static int CommandsSize = 0;
         unsafe public static int CommandsCounter = 0;
+        unsafe public static bool IsVar = false;
         unsafe public static Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
         public static void NewVarDef(string name, Var v, int line, int col)
         {
@@ -91,39 +92,17 @@ namespace SimpleParser
             else
             {
                 Vars.Add(name, v);
-
-                int c1 = 0;
-                int c2 = 0;
                 if (v.Type == Types.tint)
                 {
-                    if (MemSize == 0)
-                    {
-                        mem[MemSize++] = new Value(c1);
-                    }
-                    else
-                        mem[MemSize++] = new Value(c2);
+                    mem[MemSize++] = new Value(0);
                 }
-                double a1 = 0.0;
-                double a2 = 0.0;
                 if (v.Type == Types.tdouble)
                 {
-                    if (MemSize == 0)
-                    {
-                        mem[MemSize++] = new Value(a1);
-                    }
-                    else
-                    mem[MemSize++] = new Value(a2);
+                    mem[MemSize++] = new Value(0.0);
                 }
-                bool b1 = false;
-                bool b2 = false;
                 if (v.Type == Types.tbool)
                 {
-                    if (MemSize == 0)
-                    {
-                        mem[MemSize++] = new Value(b1);
-                    }
-                    else
-                        mem[MemSize++] = new Value(b2);
+                    mem[MemSize++] = new Value(false);
                 }
                 if (v.Type == Types.tvoid)
                 {
@@ -149,9 +128,9 @@ namespace SimpleParser
 
     public unsafe class Value
     {
-        public int i = 0;
-        public double d = 0.0;
-        public bool b = false;
+        public int i;
+        public double d;
+        public bool b;
 
         unsafe public int* pi { get; set; }
         unsafe public double* pd { get; set; }
@@ -159,18 +138,18 @@ namespace SimpleParser
         public Value(int x)
         {
             i = x;
-            unsafe { pi = &x; }
+            fixed (int* t = &i) { pi = t; }; 
 
         }
         public Value(double x)
         {
             d = x;
-            unsafe { pd = &x; }
+            fixed (double* t2 = &d) { pd = t2; };
         }
         public Value(bool x)
         {
             b = x;
-            unsafe { pb = &x; }
+            fixed (bool* t3 = &b) { pb = t3; };
         }
 
     }

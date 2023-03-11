@@ -16,22 +16,22 @@ namespace SimpleLang
         Optimiser op = new Optimiser(SymbolTable.CommandsSize);
         public override Value VisitIdNode(IdNode id)
         {
-            if (Vars_Dict.ContainsKey(id.Name))
-            {
-                return new Value(Vars_Dict[id.Name].Index);
-            }
-            return new Value(0);
+            SymbolTable.IsVar = true;
+           return new Value(Vars_Dict[id.Name].Index);
         }
         public override Value VisitIntNumNode(IntNumNode num)
         {
+            SymbolTable.IsVar = false;
             return new Value(num.Num);
         }
         public override Value VisitRealNumNode(RealNumNode num)
         {
+            SymbolTable.IsVar = false;
             return new Value(num.Num);
         }
         public override Value VisitBoolNumNode(BoolNumNode num)
         {
+            SymbolTable.IsVar = false;
             return new Value(num.Num);
         }
         public override Value VisitAssignNode(AssignNode a)
@@ -84,11 +84,9 @@ namespace SimpleLang
             var TypeChecker = new SemanticChecker();
             var val1 = binop.Left.Eval(this);
             var t1 = binop.Left.Eval(TypeChecker);
+    
             var val2 = binop.Right.Eval(this);
             var t2 = binop.Right.Eval(TypeChecker);
-
-            int t = 0;
-                unsafe { t = *val1.pi; };
 
             if (t1 == SimpleParser.Types.tbool && t2 == SimpleParser.Types.tbool)
             {
@@ -107,6 +105,7 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
+                            
                             return new Value(val1.i + val2.i);
                         case '-':
                             return new Value(val1.i - val2.i);
@@ -124,7 +123,8 @@ namespace SimpleLang
                             return new Value(val1.i != val2.i);
                     }
                 }
-                switch (binop.Op)
+                if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tdouble)
+                    switch (binop.Op)
                 {
                     case '+':
                         return new Value(val1.d + val2.d);
@@ -143,6 +143,46 @@ namespace SimpleLang
                     case '!':
                         return new Value(val1.d != val2.d);
                 }
+                if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint)
+                    switch (binop.Op)
+                    {
+                        case '+':
+                            return new Value(val1.d + val2.i);
+                        case '-':
+                            return new Value(val1.d - val2.i);
+                        case '*':
+                            return new Value(val1.d * val2.i);
+                        case '/':
+                            return new Value(val1.d / val2.i);
+                        case '>':
+                            return new Value(val1.d > val2.i);
+                        case '<':
+                            return new Value(val1.d < val2.i);
+                        case '=':
+                            return new Value(val1.d == val2.i);
+                        case '!':
+                            return new Value(val1.d != val2.i);
+                    }
+                if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tdouble)
+                    switch (binop.Op)
+                    {
+                        case '+':
+                            return new Value(val1.i + val2.d);
+                        case '-':
+                            return new Value(val1.i - val2.d);
+                        case '*':
+                            return new Value(val1.i * val2.d);
+                        case '/':
+                            return new Value(val1.i / val2.d);
+                        case '>':
+                            return new Value(val1.i > val2.d);
+                        case '<':
+                            return new Value(val1.i < val2.d);
+                        case '=':
+                            return new Value(val1.i == val2.d);
+                        case '!':
+                            return new Value(val1.i != val2.d);
+                    }
 
             }
 
@@ -150,6 +190,17 @@ namespace SimpleLang
 
             return new Value(0);
         }
+        public override Value VisitIfNode(IfNode f)
+        {
+            var val = f.Expr.Eval(this);
+            if (val.b == true)
+            {
+                f.Stat.Eval(this);
+            }
+            return new Value(0);
+        }
+
+
         public override Value VisitBlockNode(BlockNode bl)
         {
             foreach (var st in bl.StList)
@@ -161,20 +212,41 @@ namespace SimpleLang
             var TypeChecker = new SemanticChecker();
             var tval = p.Expr.Eval(TypeChecker);
             var val = p.Expr.Eval(this);
-            if (tval == Types.tint)
+            if (SymbolTable.IsVar)
             {
-                op.AddCommands(new ThreeAddress(17));
+                if (tval == Types.tint)
+                {
+                    op.AddCommands(new ThreeAddress(20));
+                }
+                if (tval == Types.tdouble)
+                {
+                    op.AddCommands(new ThreeAddress(21));
+                }
+                if (tval == Types.tbool)
+                {
+                    op.AddCommands(new ThreeAddress(22));
+                }
+                op.Commands[SymbolTable.CommandsCounter++].intVal = val.i;
 
             }
-            if (tval == Types.tdouble)
+            else
             {
-                op.AddCommands(new ThreeAddress(18));
+                if (tval == Types.tint)
+                {
+                    op.AddCommands(new ThreeAddress(17));
+                    op.Commands[SymbolTable.CommandsCounter++].intVal = val.i;
+                }
+                if (tval == Types.tdouble)
+                {
+                    op.AddCommands(new ThreeAddress(18));
+                    op.Commands[SymbolTable.CommandsCounter++].doubleVal = val.d;
+                }
+                if (tval == Types.tbool)
+                {
+                    op.AddCommands(new ThreeAddress(19));
+                    op.Commands[SymbolTable.CommandsCounter++].boolVal = val.b;
+                }
             }
-            if (tval == Types.tbool)
-            {
-                op.AddCommands(new ThreeAddress(19));
-            }
-            op.Commands[SymbolTable.CommandsCounter++].intVal = val.i;
             if (op.c == SymbolTable.CommandsSize-1)
             {
                 op.AddCommands(new ThreeAddress(0));

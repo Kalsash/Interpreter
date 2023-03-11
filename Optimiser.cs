@@ -24,17 +24,19 @@ namespace SimpleLang
         
             c++;
         }
-        public void RunCommands()
+        public unsafe void RunCommands()
         {
             for (int i = 0; i < c; i++)
             {
                 var command = Commands[i];
                 switch (command.NumberOfCommand)
                 {
+
                     case 0:
                         i = c;
                         break; // stop
                     case 1:
+                       
                         unsafe { *command.pia = command.intVal; }
                         break; // int = intVal
                     case 2:
@@ -84,22 +86,23 @@ namespace SimpleLang
                         unsafe { *command.pba = *command.pib >= *command.pic; }
                         break; // bool = int >= int
                     case 17:
-                 
-                        int t = 0;
-                        unsafe { t = *SymbolTable.mem[command.intVal].pi; }
-                        Console.WriteLine(t);
+                        Console.WriteLine(command.intVal);
                         break; // print(int)
                     case 18:
-                       // Console.WriteLine("Hello World!");
-                        double temp = 0;
-                        unsafe { temp = *SymbolTable.mem[command.intVal].pd;}
-                        Console.WriteLine(temp);
+                        Console.WriteLine(command.doubleVal);
                         break; // print(double)
                     case 19:
-                        bool b = false;
-                        unsafe { b = *SymbolTable.mem[command.intVal].pb; }
-                        Console.WriteLine(b);
+                        Console.WriteLine(command.boolVal);
                         break; // print(int)
+                    case 20:
+                        Console.WriteLine(SymbolTable.mem[command.intVal].i);
+                        break; // print(intvar)
+                    case 21:
+                        Console.WriteLine(SymbolTable.mem[command.intVal].d);
+                        break; // print(doublevar)
+                    case 22:
+                        Console.WriteLine(SymbolTable.mem[command.intVal].b);
+                        break; // print(boolvar)
 
                     default:
                         break;

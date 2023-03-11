@@ -1,7 +1,8 @@
 begin  
-a:=5;
+a:= 6;
 print(a);
-b:= 6;
-print(a);
-print(b)
+b:= 5;
+print(b);
+c:= true;
+print(c)
 end
