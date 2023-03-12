@@ -126,7 +126,6 @@ namespace SimpleLang
                             op.AddCommands(new ThreeAddress(20));
                             unsafe
                             {
-
                                 op.Commands[SymbolTable.CommandsCounter].pib = val1.pi; // n
                                 op.Commands[SymbolTable.CommandsCounter].pic = val2.pi; // n
                                 op.Commands[SymbolTable.CommandsCounter++].pba = tb.pb; //  n = 10000000
@@ -251,10 +250,34 @@ namespace SimpleLang
         }
         public override Value VisitIfNode(IfNode f)
         {
+            op.AddCommands(new ThreeAddress(22));
             var val = f.Expr.Eval(this);
-            if (val.b == true)
+            int first = SymbolTable.CommandsCounter;
+            unsafe { op.Commands[SymbolTable.CommandsCounter++].pba = val.pb; }
+            f.Stat.Eval(this);
+            op.Commands[first].Goto = SymbolTable.CommandsCounter;
+            if (op.c == SymbolTable.CommandsSize - 1)
             {
-                f.Stat.Eval(this);
+                op.AddCommands(new ThreeAddress(0));
+                op.RunCommands();
+            }
+            return new Value(0);
+        }
+
+        public override Value VisitWhileNode(WhileNode w)
+        {
+            op.AddCommands(new ThreeAddress(22));
+            var val = w.Expr.Eval(this);
+            int first = SymbolTable.CommandsCounter;
+            unsafe { op.Commands[SymbolTable.CommandsCounter++].pba = val.pb; }
+            w.Stat.Eval(this);
+            op.Commands[first].Goto = SymbolTable.CommandsCounter;
+            op.AddCommands(new ThreeAddress(23));
+            op.Commands[SymbolTable.CommandsCounter++].Goto = first-1;
+            if (op.c == SymbolTable.CommandsSize - 1)
+            {
+                op.AddCommands(new ThreeAddress(0));
+                op.RunCommands();
             }
             return new Value(0);
         }
@@ -271,7 +294,6 @@ namespace SimpleLang
             var TypeChecker = new SemanticChecker();
             var tval = p.Expr.Eval(TypeChecker);
             var val = p.Expr.Eval(this);
-
                 if (tval == Types.tint)
                 {
                 op.AddCommands(new ThreeAddress(17));
@@ -287,7 +309,14 @@ namespace SimpleLang
                     op.AddCommands(new ThreeAddress(19));
                     op.Commands[SymbolTable.CommandsCounter++].pba = val.pb;
                 }
-
+            if (SymbolTable.CommandsCounter >= 2)
+            {
+                if (op.Commands[SymbolTable.CommandsCounter - 2].NumberOfCommand == 22 || 
+                    op.Commands[SymbolTable.CommandsCounter - 2].NumberOfCommand == 23)
+                {
+                    return new Value(0);
+                }
+            }
             if (op.c == SymbolTable.CommandsSize-1)
             {
                 op.AddCommands(new ThreeAddress(0));

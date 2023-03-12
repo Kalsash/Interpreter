@@ -74,7 +74,7 @@ namespace SimpleLang
                         i = command.Goto-2;
                         break; // goto
                     case 13:
-                        unsafe { if (*command.pba == true) i = command.Goto - 2; }
+                        unsafe { if (*command.pba == true) i = command.Goto - 2;}
                         break; // if
                     case 14:
                         unsafe { *command.pda = command.doubleVal / *command.pib; }
@@ -88,7 +88,6 @@ namespace SimpleLang
                         break; // bool = int >= int
                     case 17:
                         unsafe { Console.WriteLine(*command.pia); }
-                       // Console.WriteLine(command.intVal);
                         break; // print(int)
                     case 18:
                         unsafe { Console.WriteLine(*command.pda); }
@@ -102,6 +101,12 @@ namespace SimpleLang
                     case 21:
                         unsafe { *command.pda = *command.pdb / *command.pic; }
                         break; // double = doubleVal / int 
+                    case 22:
+                        unsafe { if (*command.pba == false) i = command.Goto; }
+                        break; // if
+                    case 23:
+                        i = command.Goto;
+                        break;
 
                     default:
                         break;

@@ -217,20 +217,24 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitIfNode(IfNode f)
         {
+            SymbolTable.CommandsSize++;
             if (f.Expr.Eval(this) != SimpleParser.Types.tbool)
             {
                 throw new SemanticException(string.Format("({0},{1}):" +
                               "If должен принимать логические высказывания!", f.lx.StartLine, f.lx.StartColumn + 5));
             }
+            f.Stat.Eval(this);
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitWhileNode(WhileNode w)
         {
+            SymbolTable.CommandsSize +=2;
             if (w.Expr.Eval(this) != SimpleParser.Types.tbool)
             {
                 throw new SemanticException(string.Format("({0},{1}):" +
                               "While должен принимать логические высказывания!", w.lx.StartLine, w.lx.StartColumn + 5));
             }
+            w.Stat.Eval(this);
             return SimpleParser.Types.tvoid;
         }
         public override SimpleParser.Types VisitBlockNode(BlockNode bl)

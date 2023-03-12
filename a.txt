@@ -1,7 +1,12 @@
-begin  
+begin 
 a:= 3;
 b:=7;
-c:= 1.0 / 5;
-print(a);
-print(c)
+print(19);
+c:= a <b ;
+  while (c)
+  begin
+  a := a +1;
+  c:= a <b;
+  print(a)
+  end
 end
