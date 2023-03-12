@@ -36,8 +36,9 @@ namespace SimpleLang
                         i = c;
                         break; // stop
                     case 1:
-                       
-                        unsafe { *command.pia = command.intVal; }
+
+                        unsafe { *command.pia = command.intVal;}
+
                         break; // int = intVal
                     case 2:
                         unsafe {*command.pda = command.doubleVal;}
@@ -57,7 +58,7 @@ namespace SimpleLang
                     case 7:
                         unsafe { *command.pda = *command.pib; }
                         break; // double = int
-                    case 8:
+                    case 8:     
                         unsafe { *command.pia = *command.pib + *command.pic; }
                         break; // int = int + int
                     case 9:
@@ -86,23 +87,21 @@ namespace SimpleLang
                         unsafe { *command.pba = *command.pib >= *command.pic; }
                         break; // bool = int >= int
                     case 17:
-                        Console.WriteLine(command.intVal);
+                        unsafe { Console.WriteLine(*command.pia); }
+                       // Console.WriteLine(command.intVal);
                         break; // print(int)
                     case 18:
-                        Console.WriteLine(command.doubleVal);
+                        unsafe { Console.WriteLine(*command.pda); }
                         break; // print(double)
                     case 19:
-                        Console.WriteLine(command.boolVal);
+                        unsafe { Console.WriteLine(*command.pba); }
                         break; // print(int)
                     case 20:
-                        Console.WriteLine(SymbolTable.mem[command.intVal].i);
-                        break; // print(intvar)
+                        unsafe { *command.pba = *command.pib < *command.pic; }
+                        break; // bool = int < int
                     case 21:
-                        Console.WriteLine(SymbolTable.mem[command.intVal].d);
-                        break; // print(doublevar)
-                    case 22:
-                        Console.WriteLine(SymbolTable.mem[command.intVal].b);
-                        break; // print(boolvar)
+                        unsafe { *command.pda = *command.pdb / *command.pic; }
+                        break; // double = doubleVal / int 
 
                     default:
                         break;

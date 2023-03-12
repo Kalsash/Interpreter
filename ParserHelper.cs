@@ -62,6 +62,7 @@ namespace SimpleParser
         unsafe public static int MemCounter = 0;
         unsafe public static int CommandsSize = 0;
         unsafe public static int CommandsCounter = 0;
+        public static bool IsRun = false;
         unsafe public static bool IsVar = false;
         unsafe public static Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
         public static void NewVarDef(string name, Var v, int line, int col)

@@ -1,8 +1,7 @@
 begin  
-a:= 6;
+a:= 3;
+b:=7;
+c:= 1.0 / 5;
 print(a);
-b:= 5;
-print(b);
-c:= true;
 print(c)
 end
