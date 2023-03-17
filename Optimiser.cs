@@ -36,9 +36,7 @@ namespace SimpleLang
                         i = c;
                         break; // stop
                     case 1:
-
                         unsafe { *command.pia = command.intVal;}
-
                         break; // int = intVal
                     case 2:
                         unsafe {*command.pda = command.doubleVal;}

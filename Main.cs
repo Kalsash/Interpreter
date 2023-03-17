@@ -106,7 +106,10 @@ namespace SimpleCompiler
             //Console.WriteLine("Value: " + temp);
             //Console.WriteLine("End");
 
+            Console.WriteLine("Start");
+            Stopwatch stopwatch = new Stopwatch();
 
+            stopwatch.Start();
             string FileName = @"..\..\a.txt";
             try
             {
@@ -122,15 +125,19 @@ namespace SimpleCompiler
                     Console.WriteLine("Ошибка");
                 else
                 {
-                    Console.WriteLine("Синтаксическое дерево построено");
+                  //  Console.WriteLine("Синтаксическое дерево построено");
                     var TypeChecker = new SemanticChecker();
                     parser.root.Eval(TypeChecker);
-                    Console.WriteLine("Типы проверены!");
+                   // Console.WriteLine("Типы проверены!");
                     //var d = new Interpreter();
                     //parser.root.Eval(d);
                     var d = new VirtInterpreter();
                     parser.root.Eval(d);
+
                 }
+                stopwatch.Stop();
+                Console.WriteLine("Time: " + stopwatch.ElapsedMilliseconds + " ms");
+                Console.WriteLine(SymbolTable.mem[0].d);
                 Console.WriteLine("Программа завершена");
             }
 

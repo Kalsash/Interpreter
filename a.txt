@@ -1,12 +1,14 @@
 begin 
-a:= 3;
-b:=7;
-print(19);
-c:= a <b ;
+s:= 0.0;
+n:= 100000000;
+i:= 1;
+t:= 0.0;
+c:= i < n;
   while (c)
   begin
-  a := a +1;
-  c:= a <b;
-  print(a)
+  t:= 1.0/i;
+  s:= s + t;
+  i:= i +1; 
+ c:= i < n
   end
 end
