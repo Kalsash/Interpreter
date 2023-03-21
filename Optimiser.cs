@@ -105,6 +105,25 @@ namespace SimpleLang
                     case 23:
                         i = command.Goto;
                         break;
+                    case 24:
+                        unsafe { *command.pia = *command.pib - *command.pic; }
+                        break; // int = int - int
+                    case 25:
+                        unsafe { *command.pia = *command.pib * *command.pic; }
+                        break; // int = int * int
+                    case 26:
+                        unsafe { *command.pia = *command.pib / *command.pic;}
+                        break; // int = int / int
+                    case 27:
+                        unsafe { *command.pba = *command.pib > *command.pic; }
+                        break; // bool = int > int
+                    case 28:
+                        unsafe { *command.pba = *command.pib == *command.pic; }
+                        break; // bool = int == int
+                    case 29:
+                        unsafe { *command.pba = *command.pib != *command.pic; }
+                        break; // bool = int != int
+
 
                     default:
                         break;

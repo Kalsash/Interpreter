@@ -37,35 +37,22 @@ namespace SimpleLang
             var TypeChecker = new SemanticChecker();
             var tname = a.Id.Eval(TypeChecker);
             var tval = a.Expr.Eval(TypeChecker);
-            var val = a.Expr.Eval(this);
-            var val2 = a.Id.Eval(this);
+            var ExprVal = a.Expr.Eval(this);
+            var idVal = a.Id.Eval(this);
             if (tname == Types.tint && tval == Types.tint)
             {
-                op.AddCommands(new ThreeAddress(4));
-                unsafe
-                {
-                    op.Commands[SymbolTable.CommandsCounter].pia = val2.pi; // n
-                    op.Commands[SymbolTable.CommandsCounter++].pib = val.pi; //  n = 10000000
-                }
+              unsafe{op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi));}
+                SymbolTable.CommandsCounter++;
             }
             if (tname== Types.tdouble && tval == Types.tdouble)
             {
-                op.AddCommands(new ThreeAddress(5));
-                unsafe {
-                    op.Commands[SymbolTable.CommandsCounter].pda = val2.pd; // s
-                    op.Commands[SymbolTable.CommandsCounter++].pdb = val.pd; // s = 0.0
-
-                }
+              unsafe {op.AddCommands(new ThreeAddress(5, idVal.pd, ExprVal.pd));}
+                SymbolTable.CommandsCounter++;
             }
             if (tname == Types.tbool && tval == Types.tbool)
             {
-                op.AddCommands(new ThreeAddress(6));
-                unsafe
-                {
-                    op.Commands[SymbolTable.CommandsCounter].pba = val2.pb; // s
-                    op.Commands[SymbolTable.CommandsCounter++].pbb = val.pb; // b = false
-
-                }
+              unsafe{ op.AddCommands(new ThreeAddress(6, idVal.pb, ExprVal.pb));}
+                SymbolTable.CommandsCounter++;
             }
 
             if (op.c == SymbolTable.CommandsSize-1)
@@ -105,36 +92,37 @@ namespace SimpleLang
                     {
                                            
                         case '+':
-                            op.AddCommands(new ThreeAddress(8));
-                            unsafe
-                            {
-
-                                op.Commands[SymbolTable.CommandsCounter].pib = val1.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter].pic = val2.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter++].pia = ti.pi; //  n = 10000000
-                            }
+                            unsafe{op.AddCommands(new ThreeAddress(8, ti.pi, val1.pi, val2.pi));}
+                            SymbolTable.CommandsCounter++;
                             return ti;
                         case '-':
-                            return new Value(val1.i - val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(24, ti.pi, val1.pi, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return ti;
                         case '*':
-                            return new Value(val1.i * val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(25, ti.pi, val1.pi, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return ti;
                         case '/':
-                            return new Value(val1.i / val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(26, ti.pi, val1.pi, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return ti;
                         case '>':
-                            return new Value(val1.i > val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(27, tb.pb, val1.pi, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '<':
-                            op.AddCommands(new ThreeAddress(20));
-                            unsafe
-                            {
-                                op.Commands[SymbolTable.CommandsCounter].pib = val1.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter].pic = val2.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter++].pba = tb.pb; //  n = 10000000
-                            }
+                            unsafe{op.AddCommands(new ThreeAddress(20, tb.pb, val1.pi, val2.pi));}
+                            SymbolTable.CommandsCounter++;
                             return tb;
                         case '=':
-                            return new Value(val1.i == val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(28, tb.pb, val1.pi, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '!':
-                            return new Value(val1.i != val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(29, tb.pb, val1.pi, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                     }
                 }
                 if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tdouble)
@@ -143,15 +131,9 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
-                            op.AddCommands(new ThreeAddress(9));
                             unsafe
-                            {
-
-                                op.Commands[SymbolTable.CommandsCounter].pdb = val1.pd; // n
-                                op.Commands[SymbolTable.CommandsCounter].pdc = val2.pd; // n
-                                op.Commands[SymbolTable.CommandsCounter++].pda = td.pd; //  n = 10000000
-                            }
-
+                            {op.AddCommands(new ThreeAddress(9,td.pd, val1.pd, val2.pd));}
+                            SymbolTable.CommandsCounter++;
                             return td;
                         case '-':
                             return new Value(val1.d - val2.d);
@@ -176,28 +158,16 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
-                            op.AddCommands(new ThreeAddress(10));
-                            unsafe
-                            {
-
-                                op.Commands[SymbolTable.CommandsCounter].pdb = val1.pd; // n
-                                op.Commands[SymbolTable.CommandsCounter].pic = val2.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter++].pda = td2.pd; //  n = 10000000
-                            }
+                            unsafe{op.AddCommands(new ThreeAddress(10, td2.pd, val1.pd, val2.pi));}
+                            SymbolTable.CommandsCounter++;
                             return td2;
                         case '-':
                             return new Value(val1.d - val2.i);
                         case '*':
                             return new Value(val1.d * val2.i);
                         case '/':
-                            op.AddCommands(new ThreeAddress(21));
-                            unsafe
-                            {
-
-                                op.Commands[SymbolTable.CommandsCounter].pdb = val1.pd; // n
-                                op.Commands[SymbolTable.CommandsCounter].pic = val2.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter++].pda = td2.pd; //  n = 10000000
-                            }
+                            unsafe{ op.AddCommands(new ThreeAddress(21, td2.pd, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
                             return td2;
                         case '>':
                             return new Value(val1.d > val2.i);
@@ -216,14 +186,9 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
-                            op.AddCommands(new ThreeAddress(10));
                             unsafe
-                            {
-
-                                op.Commands[SymbolTable.CommandsCounter].pic = val1.pi; // n
-                                op.Commands[SymbolTable.CommandsCounter].pdb = val2.pd; // n
-                                op.Commands[SymbolTable.CommandsCounter++].pda = td3.pd; //  n = 10000000
-                            }
+                            {op.AddCommands(new ThreeAddress(10,td3.pd, val2.pd, val1.pi));}
+                            SymbolTable.CommandsCounter++;
                             return td3;
                         case '-':
                             return new Value(val1.d - val2.i);
@@ -250,10 +215,11 @@ namespace SimpleLang
         }
         public override Value VisitIfNode(IfNode f)
         {
-            op.AddCommands(new ThreeAddress(22));
+         
             var val = f.Expr.Eval(this);
             int first = SymbolTable.CommandsCounter;
-            unsafe { op.Commands[SymbolTable.CommandsCounter++].pba = val.pb; }
+            unsafe { op.AddCommands(new ThreeAddress(22,val.pb)); }
+            SymbolTable.CommandsCounter++;
             f.Stat.Eval(this);
             op.Commands[first].Goto = SymbolTable.CommandsCounter;
             if (op.c == SymbolTable.CommandsSize - 1)
@@ -266,10 +232,11 @@ namespace SimpleLang
 
         public override Value VisitWhileNode(WhileNode w)
         {
-            op.AddCommands(new ThreeAddress(22));
+            
             var val = w.Expr.Eval(this);
             int first = SymbolTable.CommandsCounter;
-            unsafe { op.Commands[SymbolTable.CommandsCounter++].pba = val.pb; }
+            unsafe { op.AddCommands(new ThreeAddress(22,val.pb));}
+            SymbolTable.CommandsCounter++;
             w.Stat.Eval(this);
             op.Commands[first].Goto = SymbolTable.CommandsCounter;
             op.AddCommands(new ThreeAddress(23));
