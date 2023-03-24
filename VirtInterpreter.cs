@@ -128,33 +128,48 @@ namespace SimpleLang
                 if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tdouble)
                 {
                     var td = new Value(0.0);
+                    var tb = new Value(false);
                     switch (binop.Op)
                     {
                         case '+':
-                            unsafe
-                            {op.AddCommands(new ThreeAddress(9,td.pd, val1.pd, val2.pd));}
+                            unsafe{op.AddCommands(new ThreeAddress(9,td.pd, val1.pd, val2.pd));}
                             SymbolTable.CommandsCounter++;
                             return td;
                         case '-':
-                            return new Value(val1.d - val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(30, td.pd, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return td;
                         case '*':
-                            return new Value(val1.d * val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(31, td.pd, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return td;
                         case '/':
-                            return new Value(val1.d / val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(32, td.pd, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return td;
                         case '>':
-                            return new Value(val1.d > val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(33, tb.pb, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '<':
-                            return new Value(val1.d < val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(34, tb.pb, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '=':
-                            return new Value(val1.d == val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(35, tb.pb, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '!':
-                            return new Value(val1.d != val2.d);
+                            unsafe { op.AddCommands(new ThreeAddress(36, tb.pb, val1.pd, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                     }
                 }
 
-                if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint)
+                if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint  )
                 {
                     var td2 = new Value(0.0);
+                    var tb = new Value(false);
                     switch (binop.Op)
                     {
                         case '+':
@@ -162,48 +177,74 @@ namespace SimpleLang
                             SymbolTable.CommandsCounter++;
                             return td2;
                         case '-':
-                            return new Value(val1.d - val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(37, td2.pd, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return td2;
                         case '*':
-                            return new Value(val1.d * val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(38, td2.pd, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return td2;
                         case '/':
                             unsafe{ op.AddCommands(new ThreeAddress(21, td2.pd, val1.pd, val2.pi)); }
                             SymbolTable.CommandsCounter++;
                             return td2;
                         case '>':
-                            return new Value(val1.d > val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(39, tb.pb, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '<':
-                            return new Value(val1.d < val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(40, tb.pb, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '=':
-                            return new Value(val1.d == val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(41, tb.pb, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '!':
-                            return new Value(val1.d != val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(42, tb.pb, val1.pd, val2.pi)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                     }
                 }
 
                 if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tdouble)
                 {
                     var td3 = new Value(0.0);
+                    var tb = new Value(false);
                     switch (binop.Op)
                     {
                         case '+':
-                            unsafe
-                            {op.AddCommands(new ThreeAddress(10,td3.pd, val2.pd, val1.pi));}
+                            unsafe{op.AddCommands(new ThreeAddress(10,td3.pd, val2.pd, val1.pi));}
                             SymbolTable.CommandsCounter++;
                             return td3;
                         case '-':
-                            return new Value(val1.d - val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(43, td3.pd, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return td3;
                         case '*':
-                            return new Value(val1.d * val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(44, td3.pd, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return td3;
                         case '/':
-                            return new Value(val1.d / val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(45, td3.pd, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return td3;
                         case '>':
-                            return new Value(val1.d > val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(46, tb.pb, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '<':
-                            return new Value(val1.d < val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(47, tb.pb, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '=':
-                            return new Value(val1.d == val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(48, tb.pb, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                         case '!':
-                            return new Value(val1.d != val2.i);
+                            unsafe { op.AddCommands(new ThreeAddress(49, tb.pb, val1.pi, val2.pd)); }
+                            SymbolTable.CommandsCounter++;
+                            return tb;
                     }
                 }
 

@@ -96,5 +96,33 @@ namespace SimpleLang
             this.pdb = pdb;
             this.pic = pic;
         }
+        unsafe public ThreeAddress(int n, bool* pba, double* pdb, double* pdc)
+        {
+            NumberOfCommand = n;
+            this.pba = pba;
+            this.pdb = pdb;
+            this.pdc = pdc;
+        }
+        unsafe public ThreeAddress(int n, bool* pba, double* pdb, int* pic)
+        {
+            NumberOfCommand = n;
+            this.pba = pba;
+            this.pdb = pdb;
+            this.pic = pic;
+        }
+        unsafe public ThreeAddress(int n, double* pda, int* pib, double* pdc)
+        {
+            NumberOfCommand = n;
+            this.pda = pda;
+            this.pib = pib;
+            this.pdc = pdc;
+        }
+        unsafe public ThreeAddress(int n, bool* pba, int* pib, double* pdc)
+        {
+            NumberOfCommand = n;
+            this.pba = pba;
+            this.pib = pib;
+            this.pdc = pdc;
+        }
     }
 }

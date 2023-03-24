@@ -123,7 +123,66 @@ namespace SimpleLang
                     case 29:
                         unsafe { *command.pba = *command.pib != *command.pic; }
                         break; // bool = int != int
-
+                    case 30:
+                        unsafe { *command.pda = *command.pdb - *command.pdc; }
+                        break; // double = double - double
+                    case 31:
+                        unsafe { *command.pda = *command.pdb * *command.pdc; }
+                        break; // double = double * double
+                    case 32:
+                        unsafe { *command.pda = *command.pdb / *command.pdc; }
+                        break; // double = double / double
+                    case 33:
+                        unsafe { *command.pba = *command.pdb > *command.pdc; }
+                        break; // bool = double > double
+                    case 34:
+                        unsafe { *command.pba = *command.pdb < *command.pdc; }
+                        break; // bool = double < double
+                    case 35:
+                        unsafe { *command.pba = *command.pdb == *command.pdc; }
+                        break; // bool = double == double
+                    case 36:
+                        unsafe { *command.pba = *command.pdb != *command.pdc; }
+                        break; // bool = double != double
+                    case 37:
+                        unsafe { *command.pda = *command.pdb - *command.pic; }
+                        break; // double = doubleVal - int 
+                    case 38:
+                        unsafe { *command.pda = *command.pdb * *command.pic; }
+                        break; // double = doubleVal * int 
+                    case 39:
+                        unsafe { *command.pba = *command.pdb > *command.pic; }
+                        break; // bool = double > int
+                    case 40:
+                        unsafe { *command.pba = *command.pdb < *command.pic; }
+                        break; // bool = double < int
+                    case 41:
+                        unsafe { *command.pba = *command.pdb == *command.pic; }
+                        break; // bool = double == int
+                    case 42:
+                        unsafe { *command.pba = *command.pdb != *command.pic; }
+                        break; // bool = double != int
+                    case 43:
+                        unsafe { *command.pda = *command.pib - *command.pdc; }
+                        break; // double = int - double
+                    case 44:
+                        unsafe { *command.pda = *command.pib * *command.pdc; }
+                        break; // double = int * double
+                    case 45:
+                        unsafe { *command.pda = *command.pib / *command.pdc; }
+                        break; // double = int / double
+                    case 46:
+                        unsafe { *command.pba = *command.pib > *command.pdc; }
+                        break; // bool = int > double
+                    case 47:
+                        unsafe { *command.pba = *command.pib < *command.pdc; }
+                        break; // bool = int < double
+                    case 48:
+                        unsafe { *command.pba = *command.pib == *command.pdc; }
+                        break; // bool = int == double
+                    case 49:
+                        unsafe { *command.pba = *command.pib != *command.pdc; }
+                        break; // bool = int != double
 
                     default:
                         break;
