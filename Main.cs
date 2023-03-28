@@ -45,7 +45,8 @@ namespace SimpleCompiler
                 }
                 stopwatch.Stop();
                 Console.WriteLine("Time: " + stopwatch.ElapsedMilliseconds + " ms");
-                //Console.WriteLine(SymbolTable.mem[0].d);
+                Console.WriteLine(SymbolTable.mem[0].d);
+               // Console.WriteLine(SymbolTable.StrCommands);
                 Console.WriteLine("Программа завершена");
             }
 
