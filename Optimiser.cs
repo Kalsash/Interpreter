@@ -201,6 +201,15 @@ namespace SimpleLang
                     case 51:
                         unsafe { *command.pda += *command.pdb; }
                         break; // double += double
+                    case 52:
+                        unsafe { *command.pba = *command.pib < command.intVal; }
+                        break; // bool = int < intVal
+                    case 53:
+                        unsafe { *command.pda += 1.0 / *command.pic; }
+                        break; // double += doubleVal / int
+                    case 54:
+                        unsafe { *command.pia += command.intVal; }
+                        break; // int += intVal
 
                     default:
                         break;

@@ -314,8 +314,8 @@ namespace SimpleLang
             if (op.c == SymbolTable.CommandsSize - 1)
             {
                 op.AddCommands(new ThreeAddress(0));
-                op.RunCommands();
-                //op.PrintCommands();
+                //op.RunCommands();
+                op.PrintCommands();
             }
             return new Value(0);
         }

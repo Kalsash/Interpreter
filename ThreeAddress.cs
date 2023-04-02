@@ -28,6 +28,11 @@ namespace SimpleLang
         {
             NumberOfCommand = n;
         }
+        public ThreeAddress(int n, int Goto)
+        {
+            NumberOfCommand = n;
+            this.Goto = Goto;
+        }
         unsafe public ThreeAddress(int n, int *pia, int *pib, int* pic)
         {
             NumberOfCommand = n;
@@ -45,6 +50,12 @@ namespace SimpleLang
         {
             NumberOfCommand = n;
             this.pia = pia;
+        }
+        unsafe public ThreeAddress(int n, int* pia, int intVal)
+        {
+            NumberOfCommand = n;
+            this.pia = pia;
+            this.intVal = intVal;
         }
         unsafe public ThreeAddress(int n, double* pda, double* pdb, double* pdc)
         {
@@ -123,6 +134,32 @@ namespace SimpleLang
             this.pba = pba;
             this.pib = pib;
             this.pdc = pdc;
+        }
+        unsafe public ThreeAddress(int n, double* pda, double doubleVal)
+        {
+            NumberOfCommand = n;
+            this.pda = pda;
+            this.doubleVal = doubleVal;
+        }
+        unsafe public ThreeAddress(int n, bool* pba, int* pib, int intVal)
+        {
+            NumberOfCommand = n;
+            this.pba = pba;
+            this.pib = pib;
+            this.intVal = intVal;
+        }
+        unsafe public ThreeAddress(int n, bool* pba, int Goto)
+        {
+            NumberOfCommand = n;
+            this.pba = pba;
+            this.Goto = Goto;
+        }
+        unsafe public ThreeAddress(int n, double* pda, double doubleVal, int* pic)
+        {
+            NumberOfCommand = n;
+            this.pda = pda;
+            this.doubleVal = doubleVal;
+            this.pic = pic;
         }
     }
 }
