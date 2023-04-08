@@ -12,6 +12,8 @@ namespace SimpleLang
         public int Size; // size of array
         public int c = 0; // counter
         public ThreeAddress[] Commands; // array of commands
+        SortedSet<int> BasicBlocks = new SortedSet<int>();
+
 
         public static Dictionary<string, string> Values = new Dictionary<string, string>();
         public int ValsCounter = 0;
@@ -35,8 +37,27 @@ namespace SimpleLang
                 Values.Add(s, "val" + ++ValsCounter);
             }
         }
+        public void FindLeaders() 
+        {
+            BasicBlocks.Add(0);
+            for (int i = 1; i < c; i++)
+            {
+                var command = Commands[i];
+                if (command.NumberOfCommand == 22 || command.NumberOfCommand == 23)
+                {
+                    BasicBlocks.Add(command.Goto+1);
+                    BasicBlocks.Add(i + 1);
+                }
+
+            }
+            foreach (var item in BasicBlocks)
+            {
+                Console.WriteLine(item);
+            }
+        }
         public unsafe void RunCommands()
         {
+            FindLeaders();
             for (int i = 0; i < c; i++)
             {
                 var command = Commands[i];
@@ -220,6 +241,7 @@ namespace SimpleLang
 
         public unsafe void PrintCommands()
         {
+            FindLeaders();
             for (int i = 0; i < c; i++)
             {
                 var command = Commands[i];

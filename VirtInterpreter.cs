@@ -151,16 +151,16 @@ namespace SimpleLang
                     switch (binop.Op)
                     {
                         case '+':
-                            //unsafe
-                            //{
+                            unsafe
+                            {
 
-                            //    if (val1.pd == v.pd)
-                            //    {
-                            //        op.AddCommands(new ThreeAddress(51, val1.pd, val2.pd));
-                            //        SymbolTable.CommandsCounter++;
-                            //        return val1;
-                            //    }
-                            //}
+                                if (val1.pd == v.pd)
+                                {
+                                    op.AddCommands(new ThreeAddress(51, val1.pd, val2.pd));
+                                    SymbolTable.CommandsCounter++;
+                                    return val1;
+                                }
+                            }
                             unsafe { op.AddCommands(new ThreeAddress(9, td.pd, val1.pd, val2.pd)); }
                             SymbolTable.CommandsCounter++;
                             return td;
