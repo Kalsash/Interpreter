@@ -515,7 +515,12 @@ namespace SimpleLang
         }
         public unsafe void RunCommands()
         {
-            Preparing();
+            //Preparing();
+            //foreach (var item in Commands)
+            //{
+            //    Console.WriteLine(item.NumberOfCommand);
+            //}
+             Console.WriteLine("Выполнение программы");
             for (int i = 0; i < Size; i++)
             {
                 var command = Commands[i];
@@ -585,13 +590,18 @@ namespace SimpleLang
                         unsafe { Console.WriteLine(*command.pba); }
                         break; // print(int)
                     case 20:
-                        unsafe { *command.pba = *command.pib < *command.pic; }
+                        unsafe
+                        {*command.pba = *command.pib < *command.pic;}
                         break; // bool = int < int
                     case 21:
-                        unsafe { *command.pda = *command.pdb / *command.pic; }
+                        unsafe {
+                         
+                            *command.pda = *command.pdb / *command.pic; }
                         break; // double = doubleVal / int 
                     case 22:
-                        unsafe { if (*command.pba == false) i = command.Goto; }
+                        unsafe
+                        {
+                            if (*command.pba == false) i = command.Goto; }
                         break; // if
                     case 23:
                         i = command.Goto;
