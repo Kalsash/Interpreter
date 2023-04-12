@@ -46,10 +46,6 @@ namespace SimpleLang
             var ExprVal = a.Expr.Eval(this);
             if (tname == Types.tint && tval == Types.tint)
             {
-                //unsafe
-                //{
-                //    SymbolTable.StrCommands += " = " + *ExprVal.pi + " \n";
-                //}
                 unsafe { op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi)); }
                 SymbolTable.CommandsCounter++;
             }
@@ -75,10 +71,8 @@ namespace SimpleLang
         public override Value VisitBinOpNode(BinOpNode binop)
         {
             var TypeChecker = new SemanticChecker();
-           // SymbolTable.StrCommands += "8: ";
             var val1 = binop.Left.Eval(this);
             var t1 = binop.Left.Eval(TypeChecker);
-          //  SymbolTable.StrCommands += binop.Op;
            var val2 = binop.Right.Eval(this);
             var t2 = binop.Right.Eval(TypeChecker);
 
@@ -314,8 +308,8 @@ namespace SimpleLang
             if (op.c == SymbolTable.CommandsSize - 1)
             {
                 op.AddCommands(new ThreeAddress(0));
-                //op.RunCommands();
-                op.PrintCommands();
+                op.RunCommands();
+                //op.PrintCommands();
             }
             return new Value(0);
         }
