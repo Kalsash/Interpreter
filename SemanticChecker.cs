@@ -157,11 +157,11 @@ namespace SimpleLang
         }
         public override SimpleParser.Types VisitBinOpNode(BinOpNode binop)
         {
-            //if (!SymbolTable.IsRun)
-            //{
-            //    SymbolTable.CommandsSize++;
-            //}
-           var t1 = binop.Left.Eval(this);
+            if (!SymbolTable.IsRun)
+            {
+                SymbolTable.CommandsSize++;
+            }
+            var t1 = binop.Left.Eval(this);
            var t2 = binop.Right.Eval(this);
             if (t1 == Types.tvoid || t2 == Types.tvoid)
             {

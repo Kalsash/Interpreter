@@ -23,17 +23,11 @@ namespace SimpleLang
         }
         public override Value VisitIntNumNode(IntNumNode num)
         {
-            //unsafe { op.AddCommands(new ThreeAddress(1, v.pi, num.Num)); }
-            //SymbolTable.CommandsCounter++;
             return new Value(num.Num);
-            //return null;
         }
         public override Value VisitRealNumNode(RealNumNode num)
         {
-            //unsafe { op.AddCommands(new ThreeAddress(2, v.pd, num.Num)); }
-            //SymbolTable.CommandsCounter++;
              return new Value(num.Num);
-            //return null;
         }
         public override Value VisitBoolNumNode(BoolNumNode num)
         {
@@ -48,8 +42,6 @@ namespace SimpleLang
             var idVal = a.Id.Eval(this);
             v = idVal;
             var ExprVal = a.Expr.Eval(this);
-            if (ExprVal != null)
-                {
                 if (tname == Types.tint && tval == Types.tint)
                 {
                     unsafe { op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi)); }
@@ -70,8 +62,7 @@ namespace SimpleLang
                 {
                     op.AddCommands(new ThreeAddress(0));
                     op.RunCommands();
-                }
-            }        
+                }       
             return new Value(0);
         }
 
@@ -109,8 +100,7 @@ namespace SimpleLang
                                 {
                                     op.AddCommands(new ThreeAddress(50, val1.pi, val2.pi));
                                     SymbolTable.CommandsCounter++;
-                                    //return val1;
-                                    return null;
+                                    return val1;
                                 }
                             }
                             unsafe { op.AddCommands(new ThreeAddress(8, ti.pi, val1.pi, val2.pi)); }
@@ -133,11 +123,9 @@ namespace SimpleLang
                             SymbolTable.CommandsCounter++;
                             return tb;
                         case '<':
-                            //unsafe { op.AddCommands(new ThreeAddress(20, tb.pb, val1.pi, val2.pi)); }
-                            unsafe { op.AddCommands(new ThreeAddress(20, v.pb, val1.pi, val2.pi)); }
+                            unsafe { op.AddCommands(new ThreeAddress(20, tb.pb, val1.pi, val2.pi)); }
                             SymbolTable.CommandsCounter++;
-                            //return tb;
-                            return null;
+                            return tb;
                         case '=':
                             unsafe { op.AddCommands(new ThreeAddress(28, tb.pb, val1.pi, val2.pi)); }
                             SymbolTable.CommandsCounter++;
@@ -162,8 +150,7 @@ namespace SimpleLang
                                 {
                                     op.AddCommands(new ThreeAddress(51, val1.pd, val2.pd));
                                     SymbolTable.CommandsCounter++;
-                                    //return val1;
-                                    return null;
+                                    return val1;
                                 }
                             }
                             unsafe { op.AddCommands(new ThreeAddress(9, td.pd, val1.pd, val2.pd)); }
@@ -219,11 +206,9 @@ namespace SimpleLang
                             SymbolTable.CommandsCounter++;
                             return td2;
                         case '/':
-                            // unsafe { op.AddCommands(new ThreeAddress(21, td2.pd, val1.pd, val2.pi)); }
-                            unsafe { op.AddCommands(new ThreeAddress(21, v.pd, val1.pd, val2.pi)); }
+                             unsafe { op.AddCommands(new ThreeAddress(21, td2.pd, val1.pd, val2.pi)); }
                             SymbolTable.CommandsCounter++;
-                            //return td2;
-                            return null;
+                            return td2;
                         case '>':
                             unsafe { op.AddCommands(new ThreeAddress(39, tb.pb, val1.pd, val2.pi)); }
                             SymbolTable.CommandsCounter++;
@@ -320,8 +305,8 @@ namespace SimpleLang
             if (op.c == SymbolTable.CommandsSize - 1)
             {
                 op.AddCommands(new ThreeAddress(0));
-                op.RunCommands();
-                //op.PrintCommands();
+                //op.RunCommands();
+                op.PrintCommands();
             }
             return new Value(0);
         }

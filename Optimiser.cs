@@ -52,9 +52,34 @@ namespace SimpleLang
         }
         public void AddVal(string s)
         {
+            int k = 0;
+            int ind = 0;
             if (!Values.ContainsKey(s))
             {
-                Values.Add(s, "val" + ++ValsCounter);
+                foreach (var item in SymbolTable.mem)
+                {
+                    unsafe
+                    {
+                        if (k++ == SymbolTable.MemSize)
+                        {
+                            break;
+                        }
+                        if (Convert.ToString((ulong)item.pi) == s || Convert.ToString((ulong)item.pd) == s
+                            || Convert.ToString((ulong)item.pb) == s)
+                        {
+                            foreach (var x in SymbolTable.Vars)
+                            {
+                                ind = x.Value.Index;
+                                if (k-1 == ind)
+                                {
+                                    Values.Add(s, x.Key);
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+                Values.Add(s, "temp" + ++ValsCounter);
             }
         }
         public void AddV(string s, string flag)
