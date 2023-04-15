@@ -44,14 +44,42 @@ namespace SimpleLang
             var ExprVal = a.Expr.Eval(this);
                 if (tname == Types.tint && tval == Types.tint)
                 {
-                    unsafe { op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi)); }
-                    SymbolTable.CommandsCounter++;
+                    unsafe {
+
+                    if (idVal.pi == ExprVal.pi)
+                    {
+                        SymbolTable.CommandsSize--;
+                        op.Size--;
+                        return new Value(0);
+                    }
+                    else
+                    {
+                        op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi));
+                        SymbolTable.CommandsCounter++;
+                    }          
                 }
+               
+            }
                 if (tname == Types.tdouble && tval == Types.tdouble)
                 {
-                    unsafe { op.AddCommands(new ThreeAddress(5, idVal.pd, ExprVal.pd)); }
-                    SymbolTable.CommandsCounter++;
+
+                    unsafe {
+                    if (idVal.pd == ExprVal.pd)
+                    {
+                        SymbolTable.CommandsSize--;
+                        op.Size--;
+                        return new Value(0);
+                    }
+                    else
+                    {
+                        op.AddCommands(new ThreeAddress(5, idVal.pd, ExprVal.pd));
+                        SymbolTable.CommandsCounter++;
+                    }
+
                 }
+              
+
+            }
                 if (tname == Types.tbool && tval == Types.tbool)
                 {
                     unsafe { op.AddCommands(new ThreeAddress(6, idVal.pb, ExprVal.pb)); }
@@ -305,8 +333,8 @@ namespace SimpleLang
             if (op.c == SymbolTable.CommandsSize - 1)
             {
                 op.AddCommands(new ThreeAddress(0));
-                //op.RunCommands();
-                op.PrintCommands();
+                op.RunCommands();
+                //op.PrintCommands();
             }
             return new Value(0);
         }

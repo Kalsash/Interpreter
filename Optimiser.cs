@@ -13,7 +13,7 @@ namespace SimpleLang
         public int c = 0; // counter
         public ThreeAddress[] Commands; // array of commands
         SortedSet<int> BasicBlocks = new SortedSet<int>();
-        SortedSet<int> Redundant = new SortedSet<int>();
+        public SortedSet<int> Redundant = new SortedSet<int>();
 
 
 
@@ -39,16 +39,22 @@ namespace SimpleLang
         {
             Commands = Commands.Where((val, idx) => idx != ind).ToArray();
             Size--;
-            foreach (var command in Commands)
+            for (int i = 0; i < Size; i++)
             {
-                if (command.NumberOfCommand == 22 || command.NumberOfCommand == 23)
-                {
-                    command.Goto--;
-                }
-            }
 
-               
-          
+                if (Commands[i].NumberOfCommand == 22 || Commands[i].NumberOfCommand == 23)
+                {
+                    Commands[i].Goto--;
+                }
+            }           
+        }
+
+        public void Print()
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                Console.WriteLine(Commands[i].NumberOfCommand);
+            }                  
         }
         public void AddVal(string s)
         {
@@ -337,7 +343,7 @@ namespace SimpleLang
                     case 51:
                         unsafe
                         {
-                            AddV(Convert.ToString((ulong)command.pda), "fda");
+                            AddV(Convert.ToString((ulong)command.pda), "f");
                             AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
                         }
                         break; // double += double
@@ -393,14 +399,14 @@ namespace SimpleLang
                           
                             s = Vals[Convert.ToString((ulong)command.pba)];
                         }
-                    }
-                    //Console.WriteLine(s);
+                    } 
                     if (s[0] == 't' || s.Length <= 1)
                     {
                         continue;
                     }
+                    //Console.WriteLine(s);
                     ind = int.Parse(s.Substring(3));
-
+                  
                     unsafe
                     {
                         if (Convert.ToString((ulong)command.pic) == "0" && Convert.ToString((ulong)command.pdc) == "0"
@@ -497,6 +503,7 @@ namespace SimpleLang
 
         public void Preparing()
         {
+            //Print();
             FindLeaders();
             int[] Arr = new int[BasicBlocks.Count()];
             int k = 0;
@@ -528,7 +535,7 @@ namespace SimpleLang
             //Redundant.Remove(8);
             //Redundant.Remove(9);
             //Redundant.Remove(10);
-           // Redundant.Remove(1);
+            // Redundant.Remove(1);
             //foreach (var item in Redundant)
             //{
             //    Console.WriteLine(item);
