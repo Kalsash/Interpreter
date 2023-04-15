@@ -12,17 +12,13 @@ namespace SimpleLang
         public int Size; // size of array
         public int c = 0; // counter
         public ThreeAddress[] Commands; // array of commands
-        SortedSet<int> BasicBlocks = new SortedSet<int>();
-        public SortedSet<int> Redundant = new SortedSet<int>();
-
-
-
-
-
-        public static Dictionary<string, string> Values = new Dictionary<string, string>();
-        public static Dictionary<string, string> Vals = new Dictionary<string, string>();
-        public int ValsCounter = 0;
-        public string StrCommands = ""; 
+        SortedSet<int> BasicBlocks = new SortedSet<int>(); // blocks of three address code
+        public SortedSet<int> Redundant = new SortedSet<int>(); // useless commands
+        public Dictionary<string, int> UseFull = new Dictionary<string, int>(); // values in use
+        public static Dictionary<string, string> Values = new Dictionary<string, string>(); // for DefUse
+        public static Dictionary<string, string> Vals = new Dictionary<string, string>(); //for PrintCommands
+        public int ValsCounter = 0;// counter for PrintCommands
+        public string StrCommands = ""; // Str for PrintCommands
 
         public Optimiser(int size)
         {
@@ -37,16 +33,16 @@ namespace SimpleLang
         }
         public void DelCommand(int ind)
         {
+     
             Commands = Commands.Where((val, idx) => idx != ind).ToArray();
             Size--;
             for (int i = 0; i < Size; i++)
             {
-
                 if (Commands[i].NumberOfCommand == 22 || Commands[i].NumberOfCommand == 23)
                 {
                     Commands[i].Goto--;
                 }
-            }           
+            }
         }
 
         public void Print()
@@ -90,6 +86,15 @@ namespace SimpleLang
         }
         public void AddV(string s, string flag)
         {
+            if (flag[0] == 't')
+            {
+                if (!UseFull.ContainsKey(s))
+                {
+                    UseFull.Add(s, c);
+                }
+                else
+                    UseFull[s] = c;
+            }
             if (!Vals.ContainsKey(s))
             {
                 Vals.Add(s, flag);
@@ -250,7 +255,7 @@ namespace SimpleLang
                     case 22:
                         unsafe
                         {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
+                            AddV(Convert.ToString((ulong)command.pba), "t");
                         }
                         break; // if
                     case 23:
@@ -337,6 +342,7 @@ namespace SimpleLang
                         unsafe
                         {
                             AddV(Convert.ToString((ulong)command.pia), "f");
+                            AddV(Convert.ToString((ulong)command.pia), "t");
                             AddV(Convert.ToString((ulong)command.pib), "tib" + c);
                         }
                         break; // int += int
@@ -344,6 +350,7 @@ namespace SimpleLang
                         unsafe
                         {
                             AddV(Convert.ToString((ulong)command.pda), "f");
+                            AddV(Convert.ToString((ulong)command.pda), "t");
                             AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
                         }
                         break; // double += double
@@ -366,6 +373,7 @@ namespace SimpleLang
 
         public void ReplaceCopies(int[] Arr)
         {
+            UseFull.Clear();
             int end = Arr[1] - 1;
             for (int i = 0; i < Arr.Length - 1; i++)
             {
@@ -402,6 +410,10 @@ namespace SimpleLang
                     } 
                     if (s[0] == 't' || s.Length <= 1)
                     {
+                        if (s[0] == 'f')
+                        {
+                            Redundant.Add(c);
+                        }
                         continue;
                     }
                     //Console.WriteLine(s);
@@ -456,6 +468,7 @@ namespace SimpleLang
                         {
                             if (s[1] == 'i')
                             {
+                                UseFull[Convert.ToString((ulong)command.pib)] = -1;
                                 if (s[2] == 'b')
                                 {
                                     *Commands[ind].pib = *command.pib;
@@ -467,6 +480,7 @@ namespace SimpleLang
                             }
                             if (s[1] == 'd')
                             {
+                                UseFull[Convert.ToString((ulong)command.pdb)] = -1;
                                 if (s[2] == 'b')
                                 {
                                     *Commands[ind].pdb = *command.pdb;
@@ -478,6 +492,7 @@ namespace SimpleLang
                             }
                             if (s[1] == 'b')
                             {
+                                UseFull[Convert.ToString((ulong)command.pbb)] = -1;
                                 if (s[2] == 'b')
                                 {
                                     *Commands[ind].pbb = *command.pbb;
@@ -500,6 +515,47 @@ namespace SimpleLang
 
             }
         }
+        public void DelUseless()
+        {
+           int k = 0;
+            foreach (var x in Redundant)
+            {
+                //Console.WriteLine(x);
+                var command = Commands[x - k];
+                int t = -1;
+                unsafe
+                {
+                    if (Convert.ToString((ulong)command.pia) != "0")
+                    {
+                        if (UseFull.ContainsKey(Convert.ToString((ulong)command.pia)))
+                        {
+                            t = UseFull[Convert.ToString((ulong)command.pia)];
+                        }
+                    }
+
+                    if (Convert.ToString((ulong)command.pda) != "0")
+                    {
+                        if (UseFull.ContainsKey(Convert.ToString((ulong)command.pda)))
+                        {
+                            t = UseFull[Convert.ToString((ulong)command.pda)];
+                        }
+                    }
+
+                    if (Convert.ToString((ulong)command.pba) != "0")
+                    {
+                        if (UseFull.ContainsKey(Convert.ToString((ulong)command.pba)))
+                        {
+                            t = UseFull[Convert.ToString((ulong)command.pba)];
+                        }
+                    }
+                }
+
+                if (t == -1)
+                {
+                    DelCommand(x - k++);
+                }
+            }
+        }
 
         public void Preparing()
         {
@@ -513,11 +569,12 @@ namespace SimpleLang
                 // Console.WriteLine(item);
             }
             DefUse(Arr);
+            k = 0;
             while (Redundant.Count != 0)
             {
                 foreach (var item in Redundant)
                 {
-                    DelCommand(item);
+                    DelCommand(item-k++);
                 }
                 BasicBlocks.Clear();
                 Redundant.Clear();
@@ -532,22 +589,14 @@ namespace SimpleLang
                 DefUse(Arr);
             }
             ReplaceCopies(Arr);
-            //Redundant.Remove(8);
-            //Redundant.Remove(9);
-            //Redundant.Remove(10);
-            // Redundant.Remove(1);
-            //foreach (var item in Redundant)
-            //{
-            //    Console.WriteLine(item);
-            //    //DelCommand(item);
-            //}
-            DelCommand(1);
+            DelUseless();
+
 
 
         }
         public unsafe void RunCommands()
         {
-            //Preparing();
+            Preparing();
             //foreach (var item in Commands)
             //{
             //    Console.WriteLine(item.NumberOfCommand);
