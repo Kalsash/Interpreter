@@ -41,6 +41,10 @@ namespace SimpleLang
             {
                 if (Commands[i].NumberOfCommand == 22 || Commands[i].NumberOfCommand == 23)
                 {
+                    if (Commands[i].Goto < ind)
+                    {
+                        break;
+                    }
                     Commands[i].Goto--;
                 }
             }
