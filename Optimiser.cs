@@ -391,22 +391,30 @@ namespace SimpleLang
                 
                     unsafe
                     {
-           
-                        if (Convert.ToString((ulong)command.pia) != "0")
+                        if (command.Count < 3)
                         {
-                            s = Vals[Convert.ToString((ulong)command.pia)];
+                            Redundant.Add(c);
                         }
-
-                        if (Convert.ToString((ulong)command.pda) != "0")
+                        else
+                            continue;
+                        if (command.Count <= 1)
                         {
-                            s = Vals[Convert.ToString((ulong)command.pda)];
+                            continue;
                         }
-          
-                        if (Convert.ToString((ulong)command.pba) != "0")
+                        switch (command.Types[0])
                         {
-                          
-                            s = Vals[Convert.ToString((ulong)command.pba)];
-                        }
+                            case 'i':
+                                s = Vals[Convert.ToString((ulong)command.pia)];
+                                break;
+                            case 'd':
+                                s = Vals[Convert.ToString((ulong)command.pda)];
+                                break;
+                            case 'b':
+                                s = Vals[Convert.ToString((ulong)command.pba)];
+                                break;
+                            default:
+                                break;
+                        }                   
                     } 
                     if (s[0] == 't' || s.Length <= 1)
                     {
@@ -416,19 +424,11 @@ namespace SimpleLang
                         }
                         continue;
                     }
-                    //Console.WriteLine(s);
                     ind = int.Parse(s.Substring(3));
                   
                     unsafe
                     {
-                        if (Convert.ToString((ulong)command.pic) == "0" && Convert.ToString((ulong)command.pdc) == "0"
-                           && Convert.ToString((ulong)command.pbc) == "0")
-                        {
-                            Redundant.Add(c);
-                        }
-                        else
-                            continue;
-                        if (command.NumberOfCommand <= 3)
+                        if (command.Types[1] == '1' || command.Types[1] == '2' || command.Types[1] == '3')
                         {
                             if (s[1] == 'i')
                             {
@@ -507,10 +507,6 @@ namespace SimpleLang
                        
                     }             
                 }
-                //foreach (var item in Redundant)
-                //{
-                //    Console.WriteLine(item);
-                //}
                 Vals.Clear();
 
             }
@@ -520,33 +516,32 @@ namespace SimpleLang
            int k = 0;
             foreach (var x in Redundant)
             {
-                //Console.WriteLine(x);
                 var command = Commands[x - k];
                 int t = -1;
                 unsafe
                 {
-                    if (Convert.ToString((ulong)command.pia) != "0")
+                    switch (command.Types[0])
                     {
-                        if (UseFull.ContainsKey(Convert.ToString((ulong)command.pia)))
-                        {
-                            t = UseFull[Convert.ToString((ulong)command.pia)];
-                        }
-                    }
-
-                    if (Convert.ToString((ulong)command.pda) != "0")
-                    {
-                        if (UseFull.ContainsKey(Convert.ToString((ulong)command.pda)))
-                        {
-                            t = UseFull[Convert.ToString((ulong)command.pda)];
-                        }
-                    }
-
-                    if (Convert.ToString((ulong)command.pba) != "0")
-                    {
-                        if (UseFull.ContainsKey(Convert.ToString((ulong)command.pba)))
-                        {
-                            t = UseFull[Convert.ToString((ulong)command.pba)];
-                        }
+                        case 'i':
+                            if (UseFull.ContainsKey(Convert.ToString((ulong)command.pia)))
+                            {
+                                t = UseFull[Convert.ToString((ulong)command.pia)];
+                            }
+                            break;
+                        case 'd':
+                            if (UseFull.ContainsKey(Convert.ToString((ulong)command.pda)))
+                            {
+                                t = UseFull[Convert.ToString((ulong)command.pda)];
+                            }
+                            break;
+                        case 'b':
+                            if (UseFull.ContainsKey(Convert.ToString((ulong)command.pba)))
+                            {
+                                t = UseFull[Convert.ToString((ulong)command.pba)];
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
 
@@ -597,10 +592,6 @@ namespace SimpleLang
         public unsafe void RunCommands()
         {
             Preparing();
-            //foreach (var item in Commands)
-            //{
-            //    Console.WriteLine(item.NumberOfCommand);
-            //}
              Console.WriteLine("Выполнение программы");
             for (int i = 0; i < Size; i++)
             {
