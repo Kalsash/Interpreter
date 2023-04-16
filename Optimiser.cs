@@ -14,6 +14,7 @@ namespace SimpleLang
         public ThreeAddress[] Commands; // array of commands
         SortedSet<int> BasicBlocks = new SortedSet<int>(); // blocks of three address code
         public SortedSet<int> Redundant = new SortedSet<int>(); // useless commands
+        public SortedSet<int> Temporary = new SortedSet<int>(); // temporary commands
         public Dictionary<string, int> UseFull = new Dictionary<string, int>(); // values in use
         public static Dictionary<string, string> Values = new Dictionary<string, string>(); // for DefUse
         public static Dictionary<string, string> Vals = new Dictionary<string, string>(); //for PrintCommands
@@ -391,12 +392,6 @@ namespace SimpleLang
                 
                     unsafe
                     {
-                        if (command.Count < 3)
-                        {
-                            Redundant.Add(c);
-                        }
-                        else
-                            continue;
                         if (command.Count <= 1)
                         {
                             continue;
@@ -414,7 +409,7 @@ namespace SimpleLang
                                 break;
                             default:
                                 break;
-                        }                   
+                        }        
                     } 
                     if (s[0] == 't' || s.Length <= 1)
                     {
@@ -428,82 +423,112 @@ namespace SimpleLang
                   
                     unsafe
                     {
-                        if (command.Types[1] == '1' || command.Types[1] == '2' || command.Types[1] == '3')
+                        if (command.Count < 3)
                         {
-                            if (s[1] == 'i')
+                            Redundant.Add(c);
+                            if (command.Types[1] == '1' || command.Types[1] == '2' || command.Types[1] == '3')
                             {
-                                if (s[2] == 'b')
+                                if (s[1] == 'i')
                                 {
-                                    *Commands[ind].pib = command.intVal;
+                                    if (s[2] == 'b')
+                                    {
+                                        *Commands[ind].pib = command.intVal;
+                                    }
+                                    if (s[2] == 'c')
+                                    {
+                                        *Commands[ind].pic = command.intVal;
+                                    }
                                 }
-                                if (s[2] == 'c')
+                                if (s[1] == 'd')
                                 {
-                                    *Commands[ind].pic = command.intVal;
+                                    if (s[2] == 'b')
+                                    {
+                                        *Commands[ind].pdb = command.doubleVal;
+                                    }
+                                    if (s[2] == 'c')
+                                    {
+                                        *Commands[ind].pdc = command.doubleVal;
+                                    }
+                                }
+                                if (s[1] == 'b')
+                                {
+                                    if (s[2] == 'b')
+                                    {
+                                        *Commands[ind].pbb = command.boolVal;
+                                    }
+                                    if (s[2] == 'c')
+                                    {
+                                        *Commands[ind].pbc = command.boolVal;
+                                    }
                                 }
                             }
-                            if (s[1] == 'd')
+                            else
                             {
-                                if (s[2] == 'b')
+                                if (s[1] == 'i')
                                 {
-                                    *Commands[ind].pdb = command.doubleVal;
+                                    UseFull[Convert.ToString((ulong)command.pib)] = -1;
+                                    if (s[2] == 'b')
+                                    {
+                                        *Commands[ind].pib = *command.pib;
+                                    }
+                                    if (s[2] == 'c')
+                                    {
+                                        *Commands[ind].pic = *command.pib;
+                                    }
                                 }
-                                if (s[2] == 'c')
+                                if (s[1] == 'd')
                                 {
-                                    *Commands[ind].pdc = command.doubleVal;
+                                    UseFull[Convert.ToString((ulong)command.pdb)] = -1;
+                                    if (s[2] == 'b')
+                                    {
+                                        *Commands[ind].pdb = *command.pdb;
+                                    }
+                                    if (s[2] == 'c')
+                                    {
+                                        *Commands[ind].pdc = *command.pdb;
+                                    }
                                 }
-                            }
-                            if (s[1] == 'b')
-                            {
-                                if (s[2] == 'b')
+                                if (s[1] == 'b')
                                 {
-                                    *Commands[ind].pbb = command.boolVal;
-                                }
-                                if (s[2] == 'c')
-                                {
-                                    *Commands[ind].pbc = command.boolVal;
+                                    UseFull[Convert.ToString((ulong)command.pbb)] = -1;
+                                    if (s[2] == 'b')
+                                    {
+                                        *Commands[ind].pbb = *command.pbb;
+                                    }
+                                    if (s[2] == 'c')
+                                    {
+                                        *Commands[ind].pbc = *command.pbb;
+                                    }
                                 }
                             }
                         }
-                        else 
+                        else
                         {
-                            if (s[1] == 'i')
+                            if (Commands[ind].Count != 2)
                             {
-                                UseFull[Convert.ToString((ulong)command.pib)] = -1;
-                                if (s[2] == 'b')
-                                {
-                                    *Commands[ind].pib = *command.pib;
-                                }
-                                if (s[2] == 'c')
-                                {
-                                    *Commands[ind].pic = *command.pib;
-                                }
+                                continue;
                             }
-                            if (s[1] == 'd')
+                            Temporary.Add(ind);
+                            Redundant.Add(ind);
+                            unsafe
+                            { 
+                            switch (command.Types[0])
                             {
-                                UseFull[Convert.ToString((ulong)command.pdb)] = -1;
-                                if (s[2] == 'b')
-                                {
-                                    *Commands[ind].pdb = *command.pdb;
-                                }
-                                if (s[2] == 'c')
-                                {
-                                    *Commands[ind].pdc = *command.pdb;
-                                }
+                                case 'i':
+                                        command.pia = Commands[ind].pia;
+                                        break;
+                                case 'd':
+                                        command.pda = Commands[ind].pda;
+                                        break;
+                                case 'b':
+                                        command.pba = Commands[ind].pba;
+                                        break;
+                                default:
+                                    break;
                             }
-                            if (s[1] == 'b')
-                            {
-                                UseFull[Convert.ToString((ulong)command.pbb)] = -1;
-                                if (s[2] == 'b')
-                                {
-                                    *Commands[ind].pbb = *command.pbb;
-                                }
-                                if (s[2] == 'c')
-                                {
-                                    *Commands[ind].pbc = *command.pbb;
-                                }
-                            }
-                        }
 
+                            }
+                        }
                        
                     }             
                 }
@@ -513,9 +538,15 @@ namespace SimpleLang
         }
         public void DelUseless()
         {
-           int k = 0;
+            int k = 0;
             foreach (var x in Redundant)
             {
+                //Console.WriteLine(x);
+                if (Temporary.Contains(x))
+                {
+                    DelCommand(x - k++);
+                    continue;
+                }
                 var command = Commands[x - k];
                 int t = -1;
                 unsafe
@@ -782,6 +813,7 @@ namespace SimpleLang
         public unsafe void PrintCommands()
         {
             Preparing();
+           // Print();
             for (int i = 0; i < Size; i++)
             {
                 var command = Commands[i];
@@ -911,7 +943,7 @@ namespace SimpleLang
                         }
                         break; // double = doubleVal / int 
                     case 22:
-                        unsafe { 
+                        unsafe {
                             if (*command.pba == false) i = command.Goto;
                             AddVal(Convert.ToString((ulong)command.pba));
                             StrCommands += "if (" + Values[Convert.ToString((ulong)command.pba)] +
