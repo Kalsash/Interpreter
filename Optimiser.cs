@@ -359,6 +359,15 @@ namespace SimpleLang
                             AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
                         }
                         break; // double += double
+                    case 55:
+                        unsafe
+                        {
+                            AddV(Convert.ToString((ulong)command.pda), "f");
+                            AddV(Convert.ToString((ulong)command.pda), "t");
+                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
+                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
+                        }
+                        break; // double += double / int
 
                     default:
                         break;
@@ -390,10 +399,8 @@ namespace SimpleLang
                     var command = Commands[end];
 
                     c = end--;
-                    string s = "";
+                    string s = " ";
                     int ind = 0;
-
-                
                     unsafe
                     {
                         if (command.Count <= 1)
@@ -406,7 +413,10 @@ namespace SimpleLang
                                 s = Vals[Convert.ToString((ulong)command.pia)];
                                 break;
                             case 'd':
-                                s = Vals[Convert.ToString((ulong)command.pda)];
+                                if (Vals.ContainsKey(Convert.ToString((ulong)command.pda)))
+                                {
+                                    s = Vals[Convert.ToString((ulong)command.pda)];
+                                }
                                 break;
                             case 'b':
                                 s = Vals[Convert.ToString((ulong)command.pba)];
@@ -414,7 +424,7 @@ namespace SimpleLang
                             default:
                                 break;
                         }        
-                    } 
+                    }
                     if (s[0] == 't' || s.Length <= 1)
                     {
                         if (s[0] == 'f')
@@ -485,6 +495,7 @@ namespace SimpleLang
                                     UseFull[Convert.ToString((ulong)command.pdb)] = -1;
                                     if (s[2] == 'b')
                                     {
+                                        //Console.WriteLine(s);
                                         *Commands[ind].pdb = *command.pdb;
                                     }
                                     if (s[2] == 'c')
@@ -510,6 +521,19 @@ namespace SimpleLang
                         {
                             if (Commands[ind].Count != 2)
                             {
+                                continue;
+                            }
+                            if (Commands[ind].NumberOfCommand == 51)
+                            {
+                                if (command.Count <= 2)
+                                {
+                                    continue;
+                                }
+                                Commands[ind].NumberOfCommand = 55;
+                                Commands[ind].pdb = command.pdb;
+                                Commands[ind].pic = command.pic;
+                                Temporary.Add(c);
+                                Redundant.Add(c);
                                 continue;
                             }
                             Temporary.Add(ind);
@@ -540,7 +564,7 @@ namespace SimpleLang
 
             }
         }
-        public void DelUseless()
+        public int DelUseless()
         {
             int k = 0;
             foreach (var x in Redundant)
@@ -585,6 +609,7 @@ namespace SimpleLang
                     DelCommand(x - k++);
                 }
             }
+            return k;
         }
 
         public void Preparing()
@@ -619,7 +644,24 @@ namespace SimpleLang
                 DefUse(Arr);
             }
             ReplaceCopies(Arr);
-            DelUseless();
+            int temp = DelUseless();
+            while (temp != 0)
+            {
+                BasicBlocks.Clear();
+                Redundant.Clear();
+                UseFull.Clear();
+                Temporary.Clear();
+                FindLeaders();
+                Arr = new int[BasicBlocks.Count()];
+                k = 0;
+                foreach (var item in BasicBlocks)
+                {
+                    Arr[k++] = item;
+                    //Console.WriteLine(item);
+                }
+                ReplaceCopies(Arr);
+                temp = DelUseless();
+            }
 
 
 
@@ -806,6 +848,9 @@ namespace SimpleLang
                     case 54:
                         unsafe { *command.pia += command.intVal; }
                         break; // int += intVal
+                    case 55:
+                        unsafe{*command.pda += *command.pdb / *command.pic;}
+                        break; // double += double / int 
 
                     default:
                         break;
@@ -1054,6 +1099,26 @@ namespace SimpleLang
                                 + Values[Convert.ToString((ulong)command.pdb)] + "\n";
                         }
                         break; // double += double
+                    case 52:
+                        unsafe { *command.pba = *command.pib < command.intVal; }
+                        break; // bool = int < intVal
+                    case 53:
+                        unsafe { *command.pda += 1.0 / *command.pic; }
+                        break; // double += doubleVal / int
+                    case 54:
+                        unsafe { *command.pia += command.intVal; }
+                        break; // int += intVal
+                    case 55:
+                        unsafe { 
+                            *command.pda += *command.pdb / *command.pic;
+                            AddVal(Convert.ToString((ulong)command.pda));
+                            AddVal(Convert.ToString((ulong)command.pdb));
+                            AddVal(Convert.ToString((ulong)command.pic));
+                            StrCommands += Values[Convert.ToString((ulong)command.pda)] + " += "
+                            + Values[Convert.ToString((ulong)command.pdb)] + " / " +
+                             Values[Convert.ToString((ulong)command.pic)] + "\n";
+                        }
+                        break; // double += double / int
 
                     default:
                         break;
