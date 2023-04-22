@@ -616,6 +616,10 @@ namespace SimpleLang
         {
             //Print();
             FindLeaders();
+            if (BasicBlocks.Count <= 1)
+            {
+                return;
+            }
             int[] Arr = new int[BasicBlocks.Count()];
             int k = 0;
             foreach (var item in BasicBlocks)
@@ -668,28 +672,34 @@ namespace SimpleLang
         }
         public unsafe void RunCommands()
         {
-            Preparing();
-             Console.WriteLine("Выполнение программы");
+           // Print();
+             Preparing();
+            Console.WriteLine("Выполнение программы");
             for (int i = 0; i < Size; i++)
             {
                 var command = Commands[i];
                 switch (command.NumberOfCommand)
-                {
-
+                {            
                     case 0:
                         i = Size;
                         break; // stop
                     case 1:
-                        unsafe { *command.pia = command.intVal;}
+                        unsafe {
+                            *command.pia = command.intVal;
+                        }
                         break; // int = intVal
                     case 2:
-                        unsafe {*command.pda = command.doubleVal;}
+                        unsafe
+                        {
+                            *command.pda = command.doubleVal;
+                        }
                         break; // double = doubleVal
                     case 3:
                         unsafe { *command.pba = command.boolVal; }
                         break; // bool = boolVal
                     case 4:
-                        unsafe { *command.pia = *command.pib; }
+                        unsafe { *command.pia = *command.pib;                       
+                        }
                         break; // int = int 
                     case 5:
                         unsafe { *command.pda = *command.pdb; }
@@ -740,16 +750,18 @@ namespace SimpleLang
                         break; // print(int)
                     case 20:
                         unsafe
-                        {*command.pba = *command.pib < *command.pic;}
+                        {
+                            *command.pba = *command.pib < *command.pic;}
                         break; // bool = int < int
                     case 21:
                         unsafe {
-                         
+                          
                             *command.pda = *command.pdb / *command.pic; }
-                        break; // double = doubleVal / int 
+                        break; // double = double / int 
                     case 22:
                         unsafe
                         {
+                          
                             if (*command.pba == false) i = command.Goto; }
                         break; // if
                     case 23:
@@ -843,7 +855,7 @@ namespace SimpleLang
                         unsafe { *command.pba = *command.pib < command.intVal; }
                         break; // bool = int < intVal
                     case 53:
-                        unsafe { *command.pda += 1.0 / *command.pic; }
+                        unsafe { *command.pda += command.doubleVal / *command.pic; }
                         break; // double += doubleVal / int
                     case 54:
                         unsafe { *command.pia += command.intVal; }
@@ -851,7 +863,45 @@ namespace SimpleLang
                     case 55:
                         unsafe{*command.pda += *command.pdb / *command.pic;}
                         break; // double += double / int 
-
+                    case 56:
+                        unsafe { *command.pda = command.intVal; }
+                        break; // double = intVal
+                    case 57:
+                        unsafe { *command.pba = *command.pbb && *command.pbc; }
+                        break; // bool = bool && bool
+                    case 58:
+                        unsafe { *command.pba = *command.pbb || *command.pbc; }
+                        break; // bool = bool || bool
+                    case 59:
+                        unsafe { *command.pia -= *command.pib; }
+                        break; // int -= int
+                    case 60:
+                        unsafe { *command.pia *= *command.pib; }
+                        break; // int *= int
+                    case 61:
+                        unsafe { *command.pia /= *command.pib; }
+                        break; // int /= int
+                    case 62:
+                        unsafe { *command.pda -= *command.pdb; }
+                        break; // double -= double
+                    case 63:
+                        unsafe { *command.pda *= *command.pdb; }
+                        break; // double *= double
+                    case 64:
+                        unsafe { *command.pda /= *command.pdb; }
+                        break; // double /= double
+                    case 65:
+                        unsafe { *command.pda += *command.pib; }
+                        break; // double += int
+                    case 66:
+                        unsafe { *command.pda -= *command.pib; }
+                        break; // double -= int
+                    case 67:
+                        unsafe { *command.pda *= *command.pib; }
+                        break; // double *= int
+                    case 68:
+                        unsafe { *command.pda /= *command.pib; }
+                        break; // double /= int
                     default:
                         break;
                 }
@@ -874,13 +924,26 @@ namespace SimpleLang
                         Console.WriteLine(StrCommands);
                         break; // stop
                     case 1:
-                        unsafe { *command.pia = command.intVal; }
+                        unsafe {
+                            *command.pia = command.intVal;
+                            AddVal(Convert.ToString((ulong)command.pia));
+                            StrCommands += Values[Convert.ToString((ulong)command.pia)] + " = "
+                                + command.intVal + "\n";
+                        }
                         break; // int = intVal
                     case 2:
-                        unsafe { *command.pda = command.doubleVal; }
+                        unsafe { *command.pda = command.doubleVal;
+                            AddVal(Convert.ToString((ulong)command.pda));
+                            StrCommands += Values[Convert.ToString((ulong)command.pda)] + " = "
+                                + command.doubleVal + "\n";
+                        }
                         break; // double = doubleVal
                     case 3:
-                        unsafe { *command.pba = command.boolVal; }
+                        unsafe { *command.pba = command.boolVal;
+                            AddVal(Convert.ToString((ulong)command.pba));
+                            StrCommands += Values[Convert.ToString((ulong)command.pba)] + " = "
+                                + command.boolVal + "\n";
+                        }
                         break; // bool = boolVal
                     case 4:
                         unsafe {
@@ -947,7 +1010,13 @@ namespace SimpleLang
                         unsafe { if (*command.pba == true) i = command.Goto - 2; }
                         break; // if
                     case 14:
-                        unsafe { *command.pda = command.doubleVal / *command.pib; }
+                        unsafe {*command.pda = command.doubleVal / *command.pic;
+                            AddVal(Convert.ToString((ulong)command.pda));
+                            AddVal(Convert.ToString((ulong)command.pic));
+                            StrCommands += Values[Convert.ToString((ulong)command.pda)] + " = "
+                                + command.doubleVal + " / " +
+                                 Values[Convert.ToString((ulong)command.pic)] + "\n";
+                        }
                         break; // double = doubleVal / int 
                     case 15:
                         unsafe { *command.pia = *command.pib + command.intVal; }
@@ -1119,6 +1188,19 @@ namespace SimpleLang
                              Values[Convert.ToString((ulong)command.pic)] + "\n";
                         }
                         break; // double += double / int
+                    case 56:
+                        unsafe { *command.pda = command.intVal;
+                            AddVal(Convert.ToString((ulong)command.pda));
+                            StrCommands += Values[Convert.ToString((ulong)command.pda)] + " = "
+                                + command.intVal + "\n";
+                        }
+                        break; // double = intVal
+                    case 57:
+                        unsafe { *command.pba = *command.pbb && *command.pbc; }
+                        break; // bool = bool && bool
+                    case 58:
+                        unsafe { *command.pba = *command.pbb || *command.pbc; }
+                        break; // bool = bool || bool
 
                     default:
                         break;
