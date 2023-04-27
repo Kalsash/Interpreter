@@ -618,6 +618,51 @@ namespace SimpleLang
                             AddV(Convert.ToString((ulong)command.pib), "tib" + c);
                         }
                         break; // double /= int
+                    case 69:
+                        unsafe { *command.pia += *command.pib + *command.pic; }
+                        break; // int += int + int 
+                    case 70:
+                        unsafe { *command.pia += *command.pib - *command.pic; }
+                        break; // int += int - int
+                    case 71:
+                        unsafe { *command.pia += *command.pib * *command.pic; }
+                        break; // int += int * int 
+                    case 72:
+                        unsafe { *command.pia += *command.pib + *command.pic; }
+                        break; // int += int / int
+                    case 73:
+                        unsafe { *command.pda += *command.pdb + *command.pdc; }
+                        break; // double += double + double
+                    case 74:
+                        unsafe { *command.pda += *command.pdb - *command.pdc; }
+                        break; // double += double - double 
+                    case 75:
+                        unsafe { *command.pda += *command.pdb * *command.pdc; }
+                        break; // double += double * double 
+                    case 76:
+                        unsafe { *command.pda += *command.pdb / *command.pdc; }
+                        break; // double += double / double
+                    case 77:
+                        unsafe { *command.pda += *command.pib + *command.pdc; }
+                        break; // double += int + double
+                    case 78:
+                        unsafe { *command.pda += *command.pib - *command.pdc; }
+                        break; // double += int - double
+                    case 79:
+                        unsafe { *command.pda += *command.pib * *command.pdc; }
+                        break; // double += int * double
+                    case 80:
+                        unsafe { *command.pda += *command.pib / *command.pdc; }
+                        break; // double += int / double
+                    case 81:
+                        unsafe { *command.pda += *command.pdb + *command.pic; }
+                        break; // double += double + int 
+                    case 82:
+                        unsafe { *command.pda += *command.pdb - *command.pic; }
+                        break; // double += double - int 
+                    case 83:
+                        unsafe { *command.pda += *command.pdb * *command.pic; }
+                        break; // double += double * int 
 
                     default:
                         break;
@@ -773,19 +818,35 @@ namespace SimpleLang
                             {
                                 continue;
                             }
-                            if (Commands[ind].NumberOfCommand == 51)
+                            if (Commands[ind].NumberOfCommand >= 59 && Commands[ind].NumberOfCommand <=68 
+                                || Commands[ind].NumberOfCommand == 51 || Commands[ind].NumberOfCommand == 50)
                             {
                                 if (command.Count <= 2)
                                 {
                                     continue;
                                 }
-                                Commands[ind].NumberOfCommand = 55;
-                                Commands[ind].pdb = command.pdb;
-                                Commands[ind].pic = command.pic;
+                                switch (Commands[ind].NumberOfCommand)
+                                {
+                                    case 50:
+                                    case 59-61:
+
+                                        break;
+                                    case 51:
+                                        if (command.NumberOfCommand == 21)
+                                        {
+                                            Commands[ind].NumberOfCommand = 55;
+                                            Commands[ind].pdb = command.pdb;
+                                            Commands[ind].pic = command.pic;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
                                 Temporary.Add(c);
                                 Redundant.Add(c);
                                 continue;
                             }
+                             
                             Temporary.Add(ind);
                             Redundant.Add(ind);
                             unsafe
@@ -1150,6 +1211,51 @@ namespace SimpleLang
                     case 68:
                         unsafe { *command.pda /= *command.pib; }
                         break; // double /= int
+                    case 69:
+                        unsafe { *command.pia += *command.pib + *command.pic; }
+                        break; // int += int + int 
+                    case 70:
+                        unsafe { *command.pia += *command.pib - *command.pic; }
+                        break; // int += int - int
+                    case 71:
+                        unsafe { *command.pia += *command.pib * *command.pic; }
+                        break; // int += int * int 
+                    case 72:
+                        unsafe { *command.pia += *command.pib + *command.pic; }
+                        break; // int += int / int
+                    case 73:
+                        unsafe { *command.pda += *command.pdb + *command.pdc; }
+                        break; // double += double + double
+                    case 74:
+                        unsafe { *command.pda += *command.pdb - *command.pdc; }
+                        break; // double += double - double 
+                    case 75:
+                        unsafe { *command.pda += *command.pdb * *command.pdc; }
+                        break; // double += double * double 
+                    case 76:
+                        unsafe { *command.pda += *command.pdb / *command.pdc; }
+                        break; // double += double / double
+                    case 77:
+                        unsafe { *command.pda += *command.pib + *command.pdc; }
+                        break; // double += int + double
+                    case 78:
+                        unsafe { *command.pda += *command.pib - *command.pdc; }
+                        break; // double += int - double
+                    case 79:
+                        unsafe { *command.pda += *command.pib * *command.pdc; }
+                        break; // double += int * double
+                    case 80:
+                        unsafe { *command.pda += *command.pib / *command.pdc; }
+                        break; // double += int / double
+                    case 81:
+                        unsafe { *command.pda += *command.pdb + *command.pic; }
+                        break; // double += double + int 
+                    case 82:
+                        unsafe { *command.pda += *command.pdb - *command.pic; }
+                        break; // double += double - int 
+                    case 83:
+                        unsafe { *command.pda += *command.pdb * *command.pic; }
+                        break; // double += double * int 
                     default:
                         break;
                 }
@@ -1449,6 +1555,81 @@ namespace SimpleLang
                     case 58:
                         unsafe { *command.pba = *command.pbb || *command.pbc; }
                         break; // bool = bool || bool
+                    case 59:
+                        unsafe { *command.pia -= *command.pib; }
+                        break; // int -= int
+                    case 60:
+                        unsafe { *command.pia *= *command.pib; }
+                        break; // int *= int
+                    case 61:
+                        unsafe { *command.pia /= *command.pib; }
+                        break; // int /= int
+                    case 62:
+                        unsafe { *command.pda -= *command.pdb; }
+                        break; // double -= double
+                    case 63:
+                        unsafe { *command.pda *= *command.pdb; }
+                        break; // double *= double
+                    case 64:
+                        unsafe { *command.pda /= *command.pdb; }
+                        break; // double /= double
+                    case 65:
+                        unsafe { *command.pda += *command.pib; }
+                        break; // double += int
+                    case 66:
+                        unsafe { *command.pda -= *command.pib; }
+                        break; // double -= int
+                    case 67:
+                        unsafe { *command.pda *= *command.pib; }
+                        break; // double *= int
+                    case 68:
+                        unsafe { *command.pda /= *command.pib; }
+                        break; // double /= int
+                    case 69:
+                        unsafe { *command.pia += *command.pib + *command.pic; }
+                        break; // int += int + int 
+                    case 70:
+                        unsafe { *command.pia += *command.pib - *command.pic; }
+                        break; // int += int - int
+                    case 71:
+                        unsafe { *command.pia += *command.pib * *command.pic; }
+                        break; // int += int * int 
+                    case 72:
+                        unsafe { *command.pia += *command.pib + *command.pic; }
+                        break; // int += int / int
+                    case 73:
+                        unsafe { *command.pda += *command.pdb + *command.pdc; }
+                        break; // double += double + double
+                    case 74:
+                        unsafe { *command.pda += *command.pdb - *command.pdc; }
+                        break; // double += double - double 
+                    case 75:
+                        unsafe { *command.pda += *command.pdb * *command.pdc; }
+                        break; // double += double * double 
+                    case 76:
+                        unsafe { *command.pda += *command.pdb / *command.pdc; }
+                        break; // double += double / double
+                    case 77:
+                        unsafe { *command.pda += *command.pib + *command.pdc; }
+                        break; // double += int + double
+                    case 78:
+                        unsafe { *command.pda += *command.pib - *command.pdc; }
+                        break; // double += int - double
+                    case 79:
+                        unsafe { *command.pda += *command.pib * *command.pdc; }
+                        break; // double += int * double
+                    case 80:
+                        unsafe { *command.pda += *command.pib / *command.pdc; }
+                        break; // double += int / double
+                    case 81:
+                        unsafe { *command.pda += *command.pdb + *command.pic; }
+                        break; // double += double + int 
+                    case 82:
+                        unsafe { *command.pda += *command.pdb - *command.pic; }
+                        break; // double += double - int 
+                    case 83:
+                        unsafe { *command.pda += *command.pdb * *command.pic; }
+                        break; // double += double * int 
 
                     default:
                         break;
