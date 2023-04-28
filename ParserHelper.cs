@@ -193,7 +193,9 @@ namespace SimpleParser
             }
             return 0;
         }
+
     }
+
     public class LexException : Exception
     {
         public LexException(string msg) : base(msg) { }

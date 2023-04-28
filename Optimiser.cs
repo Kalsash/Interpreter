@@ -12,7 +12,6 @@ namespace SimpleLang
         public int Size; // size of array
         public int c = 0; // counter
         public ThreeAddress[] Commands; // array of commands
-        SortedSet<int> BasicBlocks = new SortedSet<int>(); // blocks of three address code
         public SortedSet<int> Redundant = new SortedSet<int>(); // useless commands
         public SortedSet<int> Temporary = new SortedSet<int>(); // temporary commands
         public Dictionary<string, int> UseFull = new Dictionary<string, int>(); // values in use
@@ -20,7 +19,9 @@ namespace SimpleLang
         public static Dictionary<string, string> Vals = new Dictionary<string, string>(); //for PrintCommands
         public int ValsCounter = 0;// counter for PrintCommands
         public string StrCommands = ""; // Str for PrintCommands
-
+        int[] ArrBlocks; // blocks of three address code
+        SortedSet<int>[] DefArr;
+        SortedSet<int>[] KillArr;
         public Optimiser(int size)
         {
             Size = size;
@@ -125,6 +126,7 @@ namespace SimpleLang
         }
         public void FindLeaders() 
         {
+            SortedSet<int> BasicBlocks = new SortedSet<int>();
             BasicBlocks.Add(0);
             for (int i = 1; i < Size; i++)
             {
@@ -135,6 +137,15 @@ namespace SimpleLang
                     BasicBlocks.Add(i + 1);
                 }
             }
+            var Arr = new int[BasicBlocks.Count()];
+           int k = 0;
+            foreach (var item in BasicBlocks)
+            {
+                Arr[k++] = item;
+                //Console.WriteLine(item);
+            }
+            ArrBlocks = Arr;
+
         }
         public void CollectMarks(int end, int i, int[] Arr)
         {
@@ -670,8 +681,9 @@ namespace SimpleLang
 
             }
         }
-        public void DefUse(int[] Arr)
+        public void DefUse()
         {
+            var Arr = ArrBlocks;
             int end = Arr[1] - 1;
             for (int i = 0; i < Arr.Length - 1; i++)
             {
@@ -680,8 +692,9 @@ namespace SimpleLang
             }
         }
 
-        public void ReplaceCopies(int[] Arr)
+        public void ReplaceCopies()
         {
+            var Arr = ArrBlocks;
             UseFull.Clear();
             int end = Arr[1] - 1;
             for (int i = 0; i < Arr.Length - 1; i++)
@@ -922,60 +935,133 @@ namespace SimpleLang
             return k;
         }
 
+        public Graph CreateGraph()
+        {
+            var g = new Graph(ArrBlocks.Length);
+            for (int i = 0; i < ArrBlocks.Length; i++)
+            {
+                //g.AddEdge(ArrBlocks[i], )
+            }
+            g.AddEdge(2, 3);
+           // g.PrintEdges();
+           // Console.WriteLine(g.VertexSize);
+            return g;
+        }
+
+        public void KillDef()
+        {
+          SortedSet<int> Def = new SortedSet<int>();
+            SortedSet<int> Kill = new SortedSet<int>();
+           DefArr = new SortedSet<int>[ArrBlocks.Length];
+           KillArr = new SortedSet<int>[ArrBlocks.Length];
+            int end = ArrBlocks[1] - 1;
+            int k = 0;
+            for (int i = 0; i < ArrBlocks.Length - 1; i++)
+            {
+                DefArr[i] = new SortedSet<int>();
+                KillArr[i] = new SortedSet<int>();
+                var Defs = new SortedSet<String>();
+                k = ArrBlocks[i];
+                end = ArrBlocks[i + 1] - 1;
+                while (k != end+1)
+                {
+                    if (Commands[k].Count >= 2)
+                    {
+                        unsafe 
+                        {
+                            var s = "";
+                            switch (Commands[k].Types[0])
+                            {
+                                case 'i':
+                                    s = Convert.ToString((ulong)Commands[k].pia);
+                                    break;
+                                case 'd':
+                                    s = Convert.ToString((ulong)Commands[k].pda);
+                                    break;
+                                case 'b':
+                                    s = Convert.ToString((ulong)Commands[k].pba);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (!Defs.Contains(s))
+                            {
+                                DefArr[i].Add(k);
+                                Defs.Add(s);
+                            }
+
+                            for (int j = 0; j < Size; j++)
+                            {
+                                var s1 = "";
+                                if (Commands[j].Count <= 1)
+                                {
+                                    continue;
+                                }
+                                switch (Commands[j].Types[0])
+                                {
+                                    case 'i':
+                                        s1 = Convert.ToString((ulong)Commands[j].pia);
+                                        break;
+                                    case 'd':
+                                        s1 = Convert.ToString((ulong)Commands[j].pda);
+                                        break;
+                                    case 'b':
+                                        s1 = Convert.ToString((ulong)Commands[j].pba);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (s == s1 && !DefArr[i].Contains(j))
+                                {
+                                    KillArr[i].Add(j);
+                                }
+                            }
+                        }
+                    
+                    
+                    }
+                    k++;
+                }
+
+            }
+
+        }
+
         public void Preparing()
         {
             FindLeaders();
-            if (BasicBlocks.Count <= 1)
+            if (ArrBlocks.Length <= 1)
             {
                 return;
-            }
-            int[] Arr = new int[BasicBlocks.Count()];
+            }          
+            DefUse();
             int k = 0;
-            foreach (var item in BasicBlocks)
-            {
-                Arr[k++] = item;
-                // Console.WriteLine(item);
-            }
-            DefUse(Arr);
-            k = 0;
             while (Redundant.Count != 0)
             {
                 foreach (var item in Redundant)
                 {
                     DelCommand(item-k++);
                 }
-                BasicBlocks.Clear();
                 Redundant.Clear();
                 FindLeaders();
-                Arr = new int[BasicBlocks.Count()];
-                k = 0;
-                foreach (var item in BasicBlocks)
-                {
-                    Arr[k++] = item;
-                    //Console.WriteLine(item);
-                }
-                DefUse(Arr);
+                DefUse();
             }
-            ReplaceCopies(Arr);
+            ReplaceCopies();
             int temp = DelUseless();
             while (temp != 0)
             {
-                BasicBlocks.Clear();
                 Redundant.Clear();
                 UseFull.Clear();
                 Temporary.Clear();
-                FindLeaders();
-                Arr = new int[BasicBlocks.Count()];
-                k = 0;
-                foreach (var item in BasicBlocks)
-                {
-                    Arr[k++] = item;
-                    //Console.WriteLine(item);
-                }
-                ReplaceCopies(Arr);
+                FindLeaders();            
+                ReplaceCopies();
                 temp = DelUseless();
             }
-
+            // KillDef();
+            //foreach (var item in KillArr[2])
+            //{
+            //    Console.WriteLine(item);
+            //}
 
 
         }
