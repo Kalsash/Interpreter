@@ -26,5 +26,17 @@ namespace SimpleLang
                 Console.WriteLine(edge.Item1+ " " + edge.Item2);
             }
         }
+        public SortedSet<int> P(int v)
+        {
+           var s = new SortedSet<int>();
+            foreach (var edge in Edges)
+            {
+                if (edge.Item2 == v && edge.Item1 != edge.Item2)
+                {
+                    s.Add(edge.Item1);
+                }
+            }
+            return s;
+        }
     }
 }

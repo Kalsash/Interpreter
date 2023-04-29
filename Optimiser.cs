@@ -20,8 +20,11 @@ namespace SimpleLang
         public int ValsCounter = 0;// counter for PrintCommands
         public string StrCommands = ""; // Str for PrintCommands
         int[] ArrBlocks; // blocks of three address code
-        SortedSet<int>[] DefArr;
+        SortedSet<int>[] GenArr;
         SortedSet<int>[] KillArr;
+        SortedSet<int>[] IN;
+        SortedSet<int>[] OUT;
+
         public Optimiser(int size)
         {
             Size = size;
@@ -29,12 +32,12 @@ namespace SimpleLang
         }
         public void AddCommands(ThreeAddress t)
         {
-            Commands[c] = t;       
+            Commands[c] = t;
             c++;
         }
         public void DelCommand(int ind)
         {
-     
+
             Commands = Commands.Where((val, idx) => idx != ind).ToArray();
             Size--;
             for (int i = 0; i < Size; i++)
@@ -55,7 +58,7 @@ namespace SimpleLang
             for (int i = 0; i < Size; i++)
             {
                 Console.WriteLine(Commands[i].NumberOfCommand);
-            }                  
+            }
         }
         public void AddVal(string s)
         {
@@ -77,7 +80,7 @@ namespace SimpleLang
                             foreach (var x in SymbolTable.Vars)
                             {
                                 ind = x.Value.Index;
-                                if (k-1 == ind)
+                                if (k - 1 == ind)
                                 {
                                     Values.Add(s, x.Key);
                                 }
@@ -118,13 +121,13 @@ namespace SimpleLang
                         Vals[s] = "f" + t.Substring(1);
                     }
                     else
-                    Vals[s] = flag;
+                        Vals[s] = flag;
                 }
-            
+
             }
-    
+
         }
-        public void FindLeaders() 
+        public void FindLeaders()
         {
             SortedSet<int> BasicBlocks = new SortedSet<int>();
             BasicBlocks.Add(0);
@@ -133,12 +136,12 @@ namespace SimpleLang
                 var command = Commands[i];
                 if (command.NumberOfCommand == 22 || command.NumberOfCommand == 23)
                 {
-                    BasicBlocks.Add(command.Goto+1);
+                    BasicBlocks.Add(command.Goto + 1);
                     BasicBlocks.Add(i + 1);
                 }
             }
             var Arr = new int[BasicBlocks.Count()];
-           int k = 0;
+            int k = 0;
             foreach (var item in BasicBlocks)
             {
                 Arr[k++] = item;
@@ -194,7 +197,7 @@ namespace SimpleLang
                         }
                         break; // bool = bool
                     case 7:
-                        unsafe { 
+                        unsafe {
                             AddV(Convert.ToString((ulong)command.pda), "f");
                             AddV(Convert.ToString((ulong)command.pib), "tib" + c);
                         }
@@ -217,14 +220,14 @@ namespace SimpleLang
                         }
                         break; // double = double + double
                     case 10:
-                        unsafe { 
+                        unsafe {
                             AddV(Convert.ToString((ulong)command.pda), "f");
                             AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
                             AddV(Convert.ToString((ulong)command.pdc), "tic" + c);
                         }
                         break; // double = double + int
                     case 11:
-                        unsafe { 
+                        unsafe {
                             *command.pda = *command.pib + *command.pic;
                             AddV(Convert.ToString((ulong)command.pda), "f");
                             AddV(Convert.ToString((ulong)command.pdb), "tib" + c);
@@ -234,7 +237,7 @@ namespace SimpleLang
                     case 12:
                         break; // goto
                     case 13:
-                        unsafe { AddV(Convert.ToString((ulong)command.pba), "f");}
+                        unsafe { AddV(Convert.ToString((ulong)command.pba), "f"); }
                         break; // if
                     case 14:
                         unsafe {
@@ -243,13 +246,13 @@ namespace SimpleLang
                         }
                         break; // double = doubleVal / int 
                     case 15:
-                        unsafe { 
+                        unsafe {
                             AddV(Convert.ToString((ulong)command.pia), "f");
                             AddV(Convert.ToString((ulong)command.pib), "tib" + c);
                         }
                         break; // int = int + intVal
                     case 16:
-                        unsafe { 
+                        unsafe {
                             *command.pba = *command.pib >= *command.pic;
                             AddV(Convert.ToString((ulong)command.pba), "f");
                             AddV(Convert.ToString((ulong)command.pib), "tib" + c);
@@ -330,7 +333,7 @@ namespace SimpleLang
                         }
                         break; // bool = int != int
                     case 30:
-                        unsafe { 
+                        unsafe {
                             AddV(Convert.ToString((ulong)command.pda), "f");
                             AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
                             AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
@@ -731,7 +734,7 @@ namespace SimpleLang
                                 break;
                             default:
                                 break;
-                        }        
+                        }
                     }
                     if (s[0] == 't' || s.Length <= 1)
                     {
@@ -742,7 +745,7 @@ namespace SimpleLang
                         continue;
                     }
                     ind = int.Parse(s.Substring(3));
-                  
+
                     unsafe
                     {
                         if (command.Count < 3)
@@ -831,7 +834,7 @@ namespace SimpleLang
                             {
                                 continue;
                             }
-                            if (Commands[ind].NumberOfCommand >= 59 && Commands[ind].NumberOfCommand <=68 
+                            if (Commands[ind].NumberOfCommand >= 59 && Commands[ind].NumberOfCommand <= 68
                                 || Commands[ind].NumberOfCommand == 51 || Commands[ind].NumberOfCommand == 50)
                             {
                                 if (command.Count <= 2)
@@ -841,7 +844,7 @@ namespace SimpleLang
                                 switch (Commands[ind].NumberOfCommand)
                                 {
                                     case 50:
-                                    case 59-61:
+                                    case 59 - 61:
 
                                         break;
                                     case 51:
@@ -859,30 +862,30 @@ namespace SimpleLang
                                 Redundant.Add(c);
                                 continue;
                             }
-                             
+
                             Temporary.Add(ind);
                             Redundant.Add(ind);
                             unsafe
-                            { 
-                            switch (command.Types[0])
                             {
-                                case 'i':
+                                switch (command.Types[0])
+                                {
+                                    case 'i':
                                         command.pia = Commands[ind].pia;
                                         break;
-                                case 'd':
+                                    case 'd':
                                         command.pda = Commands[ind].pda;
                                         break;
-                                case 'b':
+                                    case 'b':
                                         command.pba = Commands[ind].pba;
                                         break;
-                                default:
-                                    break;
-                            }
+                                    default:
+                                        break;
+                                }
 
                             }
                         }
-                       
-                    }             
+
+                    }
                 }
                 Vals.Clear();
 
@@ -937,37 +940,71 @@ namespace SimpleLang
 
         public Graph CreateGraph()
         {
-            var g = new Graph(ArrBlocks.Length);
+            var g = new Graph(ArrBlocks.Length + 2);
             for (int i = 0; i < ArrBlocks.Length; i++)
             {
                 //g.AddEdge(ArrBlocks[i], )
             }
-            g.AddEdge(2, 3);
-           // g.PrintEdges();
-           // Console.WriteLine(g.VertexSize);
+            g.AddEdge(-1, 0);
+            int p = 0;
+            for (int i = 1; i < Size; i++)
+            {
+                var command = Commands[i];
+                if (command.NumberOfCommand == 22)
+                {
+                    for (int j = 0; j < ArrBlocks.Length; j++)
+                    {
+                        if (Commands[ArrBlocks[j]].NumberOfCommand == 22)
+                        {
+                            g.AddEdge(p, j);
+                            g.AddEdge(j, j + 1);
+                            g.AddEdge(j, j + 2);
+                            p += 2;
+                            break;
+                        }
+                    }
+                }
+                if (command.NumberOfCommand == 23)
+                {
+                    for (int j = 0; j < ArrBlocks.Length; j++)
+                    {
+                        if (ArrBlocks[j] == command.Goto + 1)
+                        {
+                            g.AddEdge(p, j);
+                            p++;
+                            break;
+                        }
+                    }
+                }
+                if (command.NumberOfCommand == 0)
+                {
+                    g.AddEdge(p, -2);
+                    p++;
+                }
+            }
             return g;
         }
 
-        public void KillDef()
+        public void GenKill()
         {
-          SortedSet<int> Def = new SortedSet<int>();
+            SortedSet<int> Gen = new SortedSet<int>();
             SortedSet<int> Kill = new SortedSet<int>();
-           DefArr = new SortedSet<int>[ArrBlocks.Length];
-           KillArr = new SortedSet<int>[ArrBlocks.Length];
+            GenArr = new SortedSet<int>[ArrBlocks.Length];
+            KillArr = new SortedSet<int>[ArrBlocks.Length];
             int end = ArrBlocks[1] - 1;
             int k = 0;
             for (int i = 0; i < ArrBlocks.Length - 1; i++)
             {
-                DefArr[i] = new SortedSet<int>();
+                GenArr[i] = new SortedSet<int>();
                 KillArr[i] = new SortedSet<int>();
                 var Defs = new SortedSet<String>();
                 k = ArrBlocks[i];
                 end = ArrBlocks[i + 1] - 1;
-                while (k != end+1)
+                while (k != end + 1)
                 {
                     if (Commands[k].Count >= 2)
                     {
-                        unsafe 
+                        unsafe
                         {
                             var s = "";
                             switch (Commands[k].Types[0])
@@ -986,7 +1023,7 @@ namespace SimpleLang
                             }
                             if (!Defs.Contains(s))
                             {
-                                DefArr[i].Add(k);
+                                GenArr[i].Add(k);
                                 Defs.Add(s);
                             }
 
@@ -1011,20 +1048,158 @@ namespace SimpleLang
                                     default:
                                         break;
                                 }
-                                if (s == s1 && !DefArr[i].Contains(j))
+                                if (s == s1 && !GenArr[i].Contains(j))
                                 {
                                     KillArr[i].Add(j);
                                 }
                             }
                         }
-                    
-                    
+
+
                     }
                     k++;
                 }
 
             }
+            GenArr[ArrBlocks.Length-1] = new SortedSet<int>();
+            KillArr[ArrBlocks.Length-1] = new SortedSet<int>();
 
+        }
+
+        public SortedSet<int> SetUnion(SortedSet<int> s1, SortedSet<int> s2)
+        {
+            var s3 = new SortedSet<int> { };
+            foreach (var item in s1)
+            {
+                s3.Add(item);
+            }
+            foreach (var item in s2)
+            {
+                if (!s3.Contains(item))
+                {
+                    s3.Add(item);
+                }
+            }
+            return s3;
+        }
+        public SortedSet<int> DiffUnion(SortedSet<int> s1, SortedSet<int> s2)
+        {
+            var s3 = new SortedSet<int> { };
+            foreach (var item in s1)
+            {
+              s3.Add(item);
+            }
+            foreach (var item in s2)
+            {
+                if (s3.Contains(item))
+                {
+                    s3.Remove(item);
+                }
+            }
+            return s3;
+        }
+        public void ReachingDefinitions(Graph g)
+        {
+             IN = new SortedSet<int>[ArrBlocks.Length+2];
+             OUT = new SortedSet<int>[ArrBlocks.Length+2];
+            SortedSet<int>[] TempOUT = new SortedSet<int>[ArrBlocks.Length + 2];
+            for (int i = 0; i < ArrBlocks.Length+2; i++)
+            {
+                OUT[i] = new SortedSet<int> { };
+            }
+            int k = 0;
+            while (k != 100)
+            {
+                k++;
+                TempOUT = OUT;
+                for (int i = 0; i < ArrBlocks.Length-1; i++)
+                {
+                    var s = new SortedSet<int> { };
+                    IN[i] = new SortedSet<int> { };
+                    OUT[i] = new SortedSet<int> { };
+                    s = g.P(i);
+                    foreach (var item in s)
+                    {
+                        if (item < 0)
+                        {
+                            continue;
+                        }
+                        IN[i] = SetUnion(IN[i], OUT[item]);
+                    }
+                    var t = DiffUnion(IN[i], KillArr[i]); 
+                    OUT[i] = SetUnion(t, GenArr[i]);
+                }
+            }
+
+        }
+
+        public void PrintGen()
+        {
+            Console.WriteLine("Gen");
+            for (int i = 0; i < GenArr.Length; i++)
+            {
+                if (GenArr[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in GenArr[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+        public void PrintKill()
+        {
+            Console.WriteLine("Kill");
+            for (int i = 0; i < KillArr.Length; i++)
+            {
+                if (KillArr[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in KillArr[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+        public void PrintIN()
+        {
+            Console.WriteLine("IN");
+            for (int i = 0; i < IN.Length; i++)
+            {
+                if (IN[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in IN[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+        public void PrintOUT()
+        {
+            Console.WriteLine("OUT");
+            for (int i = 0; i < OUT.Length; i++)
+            {
+                if (OUT[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in OUT[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
         }
 
         public void Preparing()
@@ -1057,11 +1232,18 @@ namespace SimpleLang
                 ReplaceCopies();
                 temp = DelUseless();
             }
-            // KillDef();
-            //foreach (var item in KillArr[2])
+            GenKill();
+            //foreach (var item in ArrBlocks)
             //{
             //    Console.WriteLine(item);
             //}
+            var g = CreateGraph();
+            // g.PrintEdges();
+            //PrintGen();
+            //PrintKill();
+            ReachingDefinitions(g);
+            //PrintIN();
+            //PrintOUT();
 
 
         }
