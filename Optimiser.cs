@@ -22,8 +22,12 @@ namespace SimpleLang
         int[] ArrBlocks; // blocks of three address code
         SortedSet<int>[] GenArr;
         SortedSet<int>[] KillArr;
+        SortedSet<string>[] DefArr;
+        SortedSet<string>[] UseArr;
         SortedSet<int>[] IN;
         SortedSet<int>[] OUT;
+        SortedSet<string>[] ActiveIN;
+        SortedSet<string>[] ActiveOUT;
 
         public Optimiser(int size)
         {
@@ -853,6 +857,8 @@ namespace SimpleLang
                                             Commands[ind].NumberOfCommand = 55;
                                             Commands[ind].pdb = command.pdb;
                                             Commands[ind].pic = command.pic;
+                                            Commands[ind].Count = 3;
+                                            Commands[ind].Types = "ddi";
                                         }
                                         break;
                                     default:
@@ -1065,10 +1071,116 @@ namespace SimpleLang
             KillArr[ArrBlocks.Length-1] = new SortedSet<int>();
 
         }
+        public void GlobalDefUse()
+        {
+            DefArr = new SortedSet<string>[ArrBlocks.Length];
+            UseArr = new SortedSet<string>[ArrBlocks.Length];
+            int end = ArrBlocks[1] - 1;
+            int k = 0;
+            for (int i = 0; i < ArrBlocks.Length - 1; i++)
+            {
+                DefArr[i] = new SortedSet<string>();
+                UseArr[i] = new SortedSet<string>();
+                k = ArrBlocks[i];
+                end = ArrBlocks[i + 1] - 1;
+                while (k != end + 1)
+                {
+                    if (Commands[k].Count >= 2)
+                    {
+                        unsafe
+                        {
+                            var s = "";
+                            switch (Commands[k].Types[0])
+                            {
+                                case 'i':
+                                    s = Convert.ToString((ulong)Commands[k].pia);
+                                    break;
+                                case 'd':
+                                    s = Convert.ToString((ulong)Commands[k].pda);
+                                    break;
+                                case 'b':
+                                    s = Convert.ToString((ulong)Commands[k].pba);
+                                    break;
+                                default:
+                                    break;
+                            }
+                                DefArr[i].Add(s);
+                            if (Commands[k].NumberOfCommand == 50 || Commands[k].NumberOfCommand == 55)
+                            {
+                                UseArr[i].Add(s);
+                            }
+                            switch (Commands[k].Types[1])
+                            {
+                                case 'i':
+                                    s = Convert.ToString((ulong)Commands[k].pib);
+                                    break;
+                                case 'd':
+                                    s = Convert.ToString((ulong)Commands[k].pdb);
+                                    break;
+                                case 'b':
+                                    s = Convert.ToString((ulong)Commands[k].pbb);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (!DefArr[i].Contains(s))
+                            {
+                                UseArr[i].Add(s);
+                            }
+                            if (Commands[k].Count == 3)
+                            {
+                                switch (Commands[k].Types[2])
+                                {
+                                    case 'i':
+                                        s = Convert.ToString((ulong)Commands[k].pic);
+                                        break;
+                                    case 'd':
+                                        s = Convert.ToString((ulong)Commands[k].pdc);
+                                        break;
+                                    case 'b':
+                                        s = Convert.ToString((ulong)Commands[k].pbc);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (!DefArr[i].Contains(s))
+                                {
+                                    UseArr[i].Add(s);
+                                }
+                            }
+
+                         
+                        }
+
+
+                    }
+                    k++;
+                }
+
+            }
+        }
+
 
         public SortedSet<int> SetUnion(SortedSet<int> s1, SortedSet<int> s2)
         {
             var s3 = new SortedSet<int> { };
+            foreach (var item in s1)
+            {
+                s3.Add(item);
+            }
+            foreach (var item in s2)
+            {
+                if (!s3.Contains(item))
+                {
+                    s3.Add(item);
+                }
+            }
+            return s3;
+        }
+
+        public SortedSet<string> SetUnion(SortedSet<string> s1, SortedSet<string> s2)
+        {
+            var s3 = new SortedSet<string> { };
             foreach (var item in s1)
             {
                 s3.Add(item);
@@ -1088,6 +1200,22 @@ namespace SimpleLang
             foreach (var item in s1)
             {
               s3.Add(item);
+            }
+            foreach (var item in s2)
+            {
+                if (s3.Contains(item))
+                {
+                    s3.Remove(item);
+                }
+            }
+            return s3;
+        }
+        public SortedSet<string> DiffUnion(SortedSet<string> s1, SortedSet<string> s2)
+        {
+            var s3 = new SortedSet<string> { };
+            foreach (var item in s1)
+            {
+                s3.Add(item);
             }
             foreach (var item in s2)
             {
@@ -1133,6 +1261,41 @@ namespace SimpleLang
 
         }
 
+        public void LiveVariable(Graph g)
+        {
+            ActiveIN = new SortedSet<string>[ArrBlocks.Length + 2];
+            ActiveOUT = new SortedSet<string>[ArrBlocks.Length + 2];
+            SortedSet<string>[] TempOUT = new SortedSet<string>[ArrBlocks.Length + 2];
+            for (int i = 0; i < ArrBlocks.Length + 2; i++)
+            {
+                ActiveIN[i] = new SortedSet<string> { };
+            }
+            int k = 0;
+            while (k != 100)
+            {
+                k++;
+                TempOUT = ActiveIN;
+                for (int i = 0; i < ArrBlocks.Length - 1; i++)
+                {
+                    var s = new SortedSet<int> { };
+                    ActiveIN[i] = new SortedSet<string> { };
+                    ActiveOUT[i] = new SortedSet<string> { };
+                    s = g.S(i);
+                    foreach (var item in s)
+                    {
+                        if (item < 0)
+                        {
+                            continue;
+                        }
+                        ActiveOUT[i] = SetUnion(ActiveOUT[i], ActiveIN[item]);
+                    }
+                    var t = DiffUnion(ActiveOUT[i], DefArr[i]);
+                    ActiveIN[i] = SetUnion(t, UseArr[i]);
+                }
+            }
+
+        }
+
         public void PrintGen()
         {
             Console.WriteLine("Gen");
@@ -1167,6 +1330,42 @@ namespace SimpleLang
                 Console.WriteLine();
             }
         }
+
+        public void PrintDef()
+        {
+            Console.WriteLine("Def");
+            for (int i = 0; i < DefArr.Length; i++)
+            {
+                if (DefArr[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in DefArr[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintUse()
+        {
+            Console.WriteLine("Use");
+            for (int i = 0; i < UseArr.Length; i++)
+            {
+                if (UseArr[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in UseArr[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
         public void PrintIN()
         {
             Console.WriteLine("IN");
@@ -1195,6 +1394,42 @@ namespace SimpleLang
                 }
                 Console.Write(i + ": ");
                 foreach (var x in OUT[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintActiveIN()
+        {
+            Console.WriteLine("ActiveIN");
+            for (int i = 0; i < ActiveIN.Length; i++)
+            {
+                if (ActiveIN[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in ActiveIN[i])
+                {
+                    Console.Write(x + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintActiveOUT()
+        {
+            Console.WriteLine("ActiveOUT");
+            for (int i = 0; i < ActiveOUT.Length; i++)
+            {
+                if (ActiveOUT[i] == null)
+                {
+                    continue;
+                }
+                Console.Write(i + ": ");
+                foreach (var x in ActiveOUT[i])
                 {
                     Console.Write(x + " ");
                 }
@@ -1241,9 +1476,17 @@ namespace SimpleLang
             // g.PrintEdges();
             //PrintGen();
             //PrintKill();
-            ReachingDefinitions(g);
+            //ReachingDefinitions(g);
             //PrintIN();
             //PrintOUT();
+            //GlobalDefUse();
+            //PrintDef();
+            //PrintUse();
+            //LiveVariable(g);
+            //PrintActiveIN();
+            //PrintActiveOUT();
+
+
 
 
         }
