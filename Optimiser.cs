@@ -522,6 +522,7 @@ namespace SimpleLang
                         unsafe
                         {
                             AddV(Convert.ToString((ulong)command.pda), "f");
+                            AddV(Convert.ToString((ulong)command.pda), "tda" + c);
                             AddV(Convert.ToString((ulong)command.pic), "tic" + c);
                         }
                         break; // double += doubleVal / int
@@ -947,7 +948,6 @@ namespace SimpleLang
                             break;
                     }
                 }
-
                 if (t == -1)
                 {
                     DelCommand(x - k++);
@@ -1475,16 +1475,17 @@ namespace SimpleLang
                 Redundant.Clear();
                 UseFull.Clear();
                 Temporary.Clear();
-                FindLeaders();            
+                FindLeaders();
                 ReplaceCopies();
                 temp = DelUseless();
             }
-            GenKill();
+           // Print();
+            //  GenKill();
             //foreach (var item in ArrBlocks)
             //{
             //    Console.WriteLine(item);
             //}
-            var g = CreateGraph();
+            // var g = CreateGraph();
             // g.PrintEdges();
             //PrintGen();
             //PrintKill();
@@ -2055,7 +2056,13 @@ namespace SimpleLang
                         unsafe { *command.pba = *command.pib < command.intVal; }
                         break; // bool = int < intVal
                     case 53:
-                        unsafe { *command.pda += 1.0 / *command.pic; }
+                        unsafe { *command.pda += command.doubleVal / *command.pic;
+                            AddVal(Convert.ToString((ulong)command.pda));
+                            AddVal(Convert.ToString((ulong)command.pic));
+                            StrCommands += Values[Convert.ToString((ulong)command.pda)] + " += "
+                                + command.doubleVal + " / " 
+                                + Values[Convert.ToString((ulong)command.pic)] + "\n";
+                        }
                         break; // double += doubleVal / int
                     case 54:
                         unsafe { *command.pia += command.intVal;

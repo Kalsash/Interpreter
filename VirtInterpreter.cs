@@ -156,23 +156,23 @@ namespace SimpleLang
             var ti = new Value(0);
             var td = new Value(0.0);
             var tb = new Value(false);
-            //if (c1 == true)
-            //{
-            //    if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint)
-            //    {
-            //        switch (binop.Op)
-            //        {
-            //            case '/':
-            //                unsafe
-            //                {
-            //                    op.AddCommands(new ThreeAddress(14, td.pd, val1.d, val2.pi));
-            //                }
-            //                SymbolTable.CommandsCounter++;
-            //                return td;
+            if (c1 == true)
+            {
+                if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint)
+                {
+                    switch (binop.Op)
+                    {
+                        case '/':
+                            unsafe
+                            {
+                                op.AddCommands(new ThreeAddress(14, td.pd, val1.d, val2.pi));
+                            }
+                            SymbolTable.CommandsCounter++;
+                            return td;
 
-            //        }
-            //    }
-            //}
+                    }
+                }
+            }
 
             if (c2 == true)
             {
@@ -193,7 +193,7 @@ namespace SimpleLang
                                 SymbolTable.CommandsCounter++;
                                 return ti;
                             }
-                      
+
 
                     }
                 }
@@ -527,7 +527,7 @@ namespace SimpleLang
             {
                 op.AddCommands(new ThreeAddress(0));
                 op.RunCommands();
-               // op.PrintCommands();
+                //op.PrintCommands();
             }
             return new Value(0);
         }
