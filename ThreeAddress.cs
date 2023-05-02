@@ -68,6 +68,15 @@ namespace SimpleLang
             Count = 2;
             Types = "i1";
         }
+        unsafe public ThreeAddress(int n, int* pia, int* pib,int intVal)
+        {
+            NumberOfCommand = n;
+            this.pia = pia;
+            this.pib = pib;
+            this.intVal = intVal;
+            Count = 3;
+            Types = "ii1";
+        }
         unsafe public ThreeAddress(int n, double* pda, double* pdb, double* pdc)
         {
             NumberOfCommand = n;

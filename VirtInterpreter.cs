@@ -46,7 +46,7 @@ namespace SimpleLang
             var idVal = a.Id.Eval(this);
             v = idVal;
             var ExprVal = a.Expr.Eval(this);
-            IsNum = false;
+            //IsNum = false;
             if (IsNum)
             {
                 if (tname == Types.tint)
@@ -163,7 +163,9 @@ namespace SimpleLang
             //        switch (binop.Op)
             //        {
             //            case '/':
-            //                unsafe { op.AddCommands(new ThreeAddress(14, td.pd, val1.d, val2.pi));
+            //                unsafe
+            //                {
+            //                    op.AddCommands(new ThreeAddress(14, td.pd, val1.d, val2.pi));
             //                }
             //                SymbolTable.CommandsCounter++;
             //                return td;
@@ -171,6 +173,31 @@ namespace SimpleLang
             //        }
             //    }
             //}
+
+            if (c2 == true)
+            {
+                if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
+                {
+                    switch (binop.Op)
+                    {
+                        case '+':
+                            unsafe
+                            {
+                                if (val1.pd == v.pd)
+                                {
+                                    op.AddCommands(new ThreeAddress(54, val1.pi, val2.i));
+                                    SymbolTable.CommandsCounter++;
+                                    return val1;
+                                }
+                                op.AddCommands(new ThreeAddress(15, ti.pi, val1.pi, val2.i));
+                                SymbolTable.CommandsCounter++;
+                                return ti;
+                            }
+                      
+
+                    }
+                }
+            }
             if (t1 == SimpleParser.Types.tbool && t2 == SimpleParser.Types.tbool)
             {
                 switch (binop.Op)
@@ -500,7 +527,7 @@ namespace SimpleLang
             {
                 op.AddCommands(new ThreeAddress(0));
                 op.RunCommands();
-                //op.PrintCommands();
+               // op.PrintCommands();
             }
             return new Value(0);
         }

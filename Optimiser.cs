@@ -838,6 +838,18 @@ namespace SimpleLang
                             {
                                 continue;
                             }
+
+                            if (command.NumberOfCommand == 14 && Commands[ind].NumberOfCommand == 51)
+                            {
+                                Commands[ind].NumberOfCommand = 53;
+                                Commands[ind].doubleVal = command.doubleVal;
+                                Commands[ind].pic = command.pic;
+                                Commands[ind].Count = 3;
+                                Commands[ind].Types = "d2i";
+                                Temporary.Add(c);
+                                Redundant.Add(c);
+                                continue;
+                            }
                             if (Commands[ind].NumberOfCommand >= 59 && Commands[ind].NumberOfCommand <= 68
                                 || Commands[ind].NumberOfCommand == 51 || Commands[ind].NumberOfCommand == 50)
                             {
@@ -1884,7 +1896,13 @@ namespace SimpleLang
                         }
                         break; // double = doubleVal / int 
                     case 15:
-                        unsafe { *command.pia = *command.pib + command.intVal; }
+                        unsafe { *command.pia = *command.pib + command.intVal;
+                            AddVal(Convert.ToString((ulong)command.pia));
+                            AddVal(Convert.ToString((ulong)command.pib));
+                            StrCommands += Values[Convert.ToString((ulong)command.pia)] + " = "
+                                + Values[Convert.ToString((ulong)command.pib)] + " + " +
+                               command.intVal + "\n";
+                        }
 
                         break; // int = int + intVal
                     case 16:
@@ -2040,7 +2058,11 @@ namespace SimpleLang
                         unsafe { *command.pda += 1.0 / *command.pic; }
                         break; // double += doubleVal / int
                     case 54:
-                        unsafe { *command.pia += command.intVal; }
+                        unsafe { *command.pia += command.intVal;
+                            AddVal(Convert.ToString((ulong)command.pia));
+                            StrCommands += Values[Convert.ToString((ulong)command.pia)] + " += "+
+                            command.intVal + "\n";
+                        }
                         break; // int += intVal
                     case 55:
                         unsafe { 
