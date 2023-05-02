@@ -756,6 +756,7 @@ namespace SimpleLang
                         if (command.Count < 3)
                         {
                             Redundant.Add(c);
+
                             if (command.Types[1] == '1' || command.Types[1] == '2' || command.Types[1] == '3')
                             {
                                 if (s[1] == 'i')
@@ -766,8 +767,16 @@ namespace SimpleLang
                                     }
                                     if (s[2] == 'c')
                                     {
-                                        *Commands[ind].pic = command.intVal;
-                                    }
+                                        // *Commands[ind].pic = command.intVal;
+                                        for (int j = 0; j < Size; j++)
+                                        {
+                                            if (Commands[j].NumberOfCommand == 20)
+                                            {
+                                                Commands[j].intVal = command.intVal;
+                                                Commands[j].NumberOfCommand = 52;
+                                            }
+                                        }
+                                     }
                                 }
                                 if (s[1] == 'd')
                                 {
@@ -2053,7 +2062,13 @@ namespace SimpleLang
                         }
                         break; // double += double
                     case 52:
-                        unsafe { *command.pba = *command.pib < command.intVal; }
+                        unsafe { *command.pba = *command.pib < command.intVal;
+                            AddVal(Convert.ToString((ulong)command.pba));
+                            AddVal(Convert.ToString((ulong)command.pib));
+                            StrCommands += Values[Convert.ToString((ulong)command.pba)] + " = "
+                                + Values[Convert.ToString((ulong)command.pib)] + " < " +
+                                 command.intVal + "\n";
+                        }
                         break; // bool = int < intVal
                     case 53:
                         unsafe { *command.pda += command.doubleVal / *command.pic;
