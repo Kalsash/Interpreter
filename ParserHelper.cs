@@ -57,7 +57,7 @@ namespace SimpleParser
     public static class SymbolTable // Таблица символов
     {
 
-        public static  Value[]  mem = new Value[100];
+        public static  Value[]  mem = new Value[2];
         unsafe public static int MemSize = 0;
         unsafe public static int MemCounter = 0;
         unsafe public static int CommandsSize = 0;
@@ -66,6 +66,16 @@ namespace SimpleParser
         public static bool IsRun = false;
         unsafe public static bool IsVar = false;
         unsafe public static Dictionary<string, Var> Vars = new Dictionary<string, Var>(); // таблица символов
+
+        public static void ResizeMem()
+        {
+            Value[] mem2 = new Value[mem.Length*2];
+            for (int i = 0; i < mem.Length; i++)
+            {
+                mem2[i] = mem[i];
+            }
+            mem = mem2;
+        }
         public static void NewVarDef(string name, Var v, int line, int col)
         {
             if (Vars.ContainsKey(name))
@@ -94,6 +104,10 @@ namespace SimpleParser
             else
             {
                 Vars.Add(name, v);
+                if (MemSize == mem.Length)
+                {
+                    ResizeMem();
+                }
                 if (v.Type == Types.tint)
                 {
                     mem[MemSize++] = new Value(0);
