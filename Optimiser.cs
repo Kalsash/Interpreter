@@ -17,6 +17,7 @@ namespace SimpleLang
         public Dictionary<string, int> UseFull = new Dictionary<string, int>(); // values in use
         public static Dictionary<string, string> Values = new Dictionary<string, string>(); // for DefUse
         public static Dictionary<string, string> Vals = new Dictionary<string, string>(); //for PrintCommands
+        public static Dictionary<string, SortedSet<string>>[] GlobalUse; // for GlobalUse
         public int ValsCounter = 0;// counter for PrintCommands
         public string StrCommands = ""; // Str for PrintCommands
         int[] ArrBlocks; // blocks of three address code
@@ -28,6 +29,8 @@ namespace SimpleLang
         SortedSet<int>[] OUT;
         SortedSet<string>[] ActiveIN;
         SortedSet<string>[] ActiveOUT;
+        SortedSet<int>[]Constants;
+        SortedSet<string>[] DefCon;
 
         public Optimiser(int size)
         {
@@ -130,6 +133,20 @@ namespace SimpleLang
 
             }
 
+        }
+
+        public void AddGlobal(string s, string s2, int k)
+        {
+            int ind = int.Parse(s2.Substring(2));
+            if (DefCon[k].Contains(s))
+            {
+                if (!GlobalUse[k].ContainsKey(s))
+                {
+                    var st = new SortedSet<string>();
+                    st.Add(s2);
+                    GlobalUse[k].Add(s,st);
+                }
+            }
         }
         public void FindLeaders()
         {
@@ -702,8 +719,11 @@ namespace SimpleLang
 
         public void ReplaceCopies()
         {
-            var Arr = ArrBlocks;
+            Redundant.Clear();
+            Temporary.Clear();
             UseFull.Clear();
+            var Arr = ArrBlocks;
+
             int end = Arr[1] - 1;
             for (int i = 0; i < Arr.Length - 1; i++)
             {
@@ -767,15 +787,16 @@ namespace SimpleLang
                                     }
                                     if (s[2] == 'c')
                                     {
-                                        // *Commands[ind].pic = command.intVal;
-                                        for (int j = 0; j < Size; j++)
-                                        {
-                                            if (Commands[j].NumberOfCommand == 20)
-                                            {
-                                                Commands[j].intVal = command.intVal;
-                                                Commands[j].NumberOfCommand = 52;
-                                            }
-                                        }
+                                        Commands[ind].intVal = command.intVal;
+                                        Commands[ind].NumberOfCommand = 52;
+                                        //for (int j = 0; j < Size; j++)
+                                        //{
+                                        //    if (Commands[j].NumberOfCommand == 20)
+                                        //    {
+                                        //        Commands[j].intVal = command.intVal;
+                                        //        Commands[j].NumberOfCommand = 52;
+                                        //    }
+                                        //}
                                      }
                                 }
                                 if (s[1] == 'd')
@@ -1096,50 +1117,62 @@ namespace SimpleLang
         {
             DefArr = new SortedSet<string>[ArrBlocks.Length];
             UseArr = new SortedSet<string>[ArrBlocks.Length];
+            GlobalUse = new Dictionary<string, SortedSet<string>>[ArrBlocks.Length];
             int end = ArrBlocks[1] - 1;
             int k = 0;
             for (int i = 0; i < ArrBlocks.Length - 1; i++)
             {
                 DefArr[i] = new SortedSet<string>();
                 UseArr[i] = new SortedSet<string>();
+                GlobalUse[i] = new Dictionary<string, SortedSet<string>>();
                 k = ArrBlocks[i];
                 end = ArrBlocks[i + 1] - 1;
-                while (k != end + 1)
+                while (ArrBlocks[i] - 1 != end)
                 {
+                    k = end--;
                     if (Commands[k].Count >= 2)
                     {
                         unsafe
                         {
                             var s = "";
+                            var t = "";
                             switch (Commands[k].Types[0])
                             {
                                 case 'i':
                                     s = Convert.ToString((ulong)Commands[k].pia);
+                                    t = "i";
                                     break;
                                 case 'd':
                                     s = Convert.ToString((ulong)Commands[k].pda);
+                                    t = "d";
                                     break;
                                 case 'b':
                                     s = Convert.ToString((ulong)Commands[k].pba);
+                                    t = "b";
                                     break;
                                 default:
                                     break;
                             }
                                 DefArr[i].Add(s);
+
                             if (Commands[k].NumberOfCommand == 50 || Commands[k].NumberOfCommand == 55)
                             {
                                 UseArr[i].Add(s);
+                                AddGlobal(s,t+"b"+ k, i);
                             }
                             switch (Commands[k].Types[1])
                             {
                                 case 'i':
                                     s = Convert.ToString((ulong)Commands[k].pib);
+                                    t = "i";
                                     break;
                                 case 'd':
                                     s = Convert.ToString((ulong)Commands[k].pdb);
+                                    t = "d";
                                     break;
                                 case 'b':
                                     s = Convert.ToString((ulong)Commands[k].pbb);
+                                    t = "b";
                                     break;
                                 default:
                                     break;
@@ -1147,6 +1180,7 @@ namespace SimpleLang
                             if (!DefArr[i].Contains(s))
                             {
                                 UseArr[i].Add(s);
+                                AddGlobal(s, t + "b"+ k, i);
                             }
                             if (Commands[k].Count == 3)
                             {
@@ -1154,12 +1188,15 @@ namespace SimpleLang
                                 {
                                     case 'i':
                                         s = Convert.ToString((ulong)Commands[k].pic);
+                                        t = "i";
                                         break;
                                     case 'd':
                                         s = Convert.ToString((ulong)Commands[k].pdc);
+                                        t = "i";
                                         break;
                                     case 'b':
                                         s = Convert.ToString((ulong)Commands[k].pbc);
+                                        t = "i";
                                         break;
                                     default:
                                         break;
@@ -1167,6 +1204,7 @@ namespace SimpleLang
                                 if (!DefArr[i].Contains(s))
                                 {
                                     UseArr[i].Add(s);
+                                    AddGlobal(s, t + "c"+ k, i);
                                 }
                             }
 
@@ -1296,7 +1334,7 @@ namespace SimpleLang
             {
                 k++;
                 TempOUT = ActiveIN;
-                for (int i = 0; i < ArrBlocks.Length - 1; i++)
+                for (int i = ArrBlocks.Length - 2; i>=0 ; i--)
                 {
                     var s = new SortedSet<int> { };
                     ActiveIN[i] = new SortedSet<string> { };
@@ -1458,6 +1496,149 @@ namespace SimpleLang
             }
         }
 
+        public void GetConstants()
+        {
+            Constants = new SortedSet<int>[ArrBlocks.Length];
+            DefCon = new SortedSet<string>[ArrBlocks.Length];
+            for (int i = 0; i < OUT.Length; i++)
+            {
+                if (OUT[i] != null)
+                {
+                    if (OUT[i].Count > 1)
+                    {
+                        Constants[i] = DiffUnion(OUT[i], GenArr[i]);
+                        DefCon[i] = new SortedSet<string>();
+                        var s = "";
+                        foreach (var item in Constants[i])
+                        {
+                            unsafe 
+                            {
+                                switch (Commands[item].Types[0])
+                                {
+                                    case 'i':
+                                        s = Convert.ToString((ulong)Commands[item].pia);
+                                        break;
+                                    case 'd':
+                                        s = Convert.ToString((ulong)Commands[item].pda);
+                                        break;
+                                    case 'b':
+                                        s = Convert.ToString((ulong)Commands[item].pba);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            DefCon[i].Add(s);
+                            Temporary.Add(item);
+
+                        }
+                    }
+
+                }
+            }
+        }
+
+        public void LiveGlobal()
+        {
+            for (int i = 0; i < GlobalUse.Length; i++)
+            {
+                if (ActiveIN[i] == null)
+                {
+                    continue;
+                }
+                var dict = GlobalUse[i];
+                foreach (var x in ActiveIN[i])
+                {
+                    if (dict.ContainsKey(x))
+                    {
+                        foreach (var item in dict[x])
+                        {
+                            foreach (var num in Constants[i])
+                            {
+                                var s = "";
+                                unsafe {
+                                    switch (Commands[num].Types[0])
+                                    {
+                                        case 'i':
+                                            s = Convert.ToString((ulong)Commands[num].pia);
+                                            break;
+                                        case 'd':
+                                            s = Convert.ToString((ulong)Commands[num].pda);
+                                            break;
+                                        case 'b':
+                                            s = Convert.ToString((ulong)Commands[num].pba);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                if (x == s)
+                                {
+                                    ReplaceGlobal(item,num);
+                                }
+
+                            }
+     
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ReplaceGlobal(string s, int n)
+        {
+            var command = Commands[n];
+            c = n;
+            int ind = int.Parse(s.Substring(2));
+            unsafe
+            {
+                if (command.Count < 3)
+                {
+                    Redundant.Add(c);
+
+                    if (command.Types[1] == '1' || command.Types[1] == '2' || command.Types[1] == '3')
+                    {
+                        if (s[0] == 'i')
+                        {
+                            if (s[1] == 'b')
+                            {
+                                *Commands[ind].pib = command.intVal;
+                            }
+                            if (s[1] == 'c')
+                            {
+                                Commands[ind].intVal = command.intVal;
+                                Commands[ind].NumberOfCommand = 52;
+                            }
+                        }
+                        if (s[0] == 'd')
+                        {
+                            if (s[1] == 'b')
+                            {
+                                *Commands[ind].pdb = command.doubleVal;
+                            }
+                            if (s[1] == 'c')
+                            {
+                                *Commands[ind].pdc = command.doubleVal;
+                            }
+                        }
+                        if (s[0] == 'b')
+                        {
+                            if (s[1] == 'b')
+                            {
+                                *Commands[ind].pbb = command.boolVal;
+                            }
+                            if (s[1] == 'c')
+                            {
+                                *Commands[ind].pbc = command.boolVal;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
         public void Preparing()
         {
             FindLeaders();
@@ -1481,33 +1662,43 @@ namespace SimpleLang
             int temp = DelUseless();
             while (temp != 0)
             {
-                Redundant.Clear();
-                UseFull.Clear();
-                Temporary.Clear();
                 FindLeaders();
                 ReplaceCopies();
                 temp = DelUseless();
             }
-           // Print();
-            //  GenKill();
-            //foreach (var item in ArrBlocks)
-            //{
-            //    Console.WriteLine(item);
-            //}
-            // var g = CreateGraph();
+            Redundant.Clear();
+            Temporary.Clear();
+            UseFull.Clear();
+            GenKill();
+             var g = CreateGraph();
             // g.PrintEdges();
             //PrintGen();
             //PrintKill();
-            //ReachingDefinitions(g);
+            ReachingDefinitions(g);
             //PrintIN();
             //PrintOUT();
-            //GlobalDefUse();
+            GetConstants();
+            //foreach (var item in Constants[2])
+            //{
+            //    Console.WriteLine(item);
+            //}
+
+            GlobalDefUse();
             //PrintDef();
             //PrintUse();
-            //LiveVariable(g);
-            //PrintActiveIN();
+            LiveVariable(g);
+           // PrintActiveIN();
             //PrintActiveOUT();
-
+            //foreach (var dict in GlobalUse[2])
+            //{
+            //    Console.WriteLine(dict.Key);
+            //    foreach (var item in dict.Value)
+            //    {
+            //        Console.WriteLine(item);
+            //    }
+            //}
+            LiveGlobal();
+            temp = DelUseless();
 
 
 
