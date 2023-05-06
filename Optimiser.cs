@@ -1705,8 +1705,8 @@ namespace SimpleLang
         }
         public unsafe void RunCommands()
         {
-             //Print();
-            Preparing();
+            //Print();
+            //Preparing();
             Run r = new Run();
             r.Execute(Commands, Size);
 
@@ -1726,6 +1726,8 @@ namespace SimpleLang
                         i = Size;
                         Console.WriteLine(StrCommands);
                         break; // stop
+
+
                     case 1:
                         unsafe {
                             *command.pia = command.intVal;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleParser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,9 @@ namespace SimpleLang
     internal class ThreeAddress
     {
         public int NumberOfCommand;
-       unsafe public int* pia { get; set; }
+
+        public Toks Tok = Toks.empty;
+        unsafe public int* pia { get; set; }
         unsafe public int* pib { get; set; }
         unsafe public int* pic { get; set; }
         unsafe public double* pda { get; set; }
