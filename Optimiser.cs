@@ -789,7 +789,7 @@ namespace SimpleLang
                                     {
                                         Commands[ind].intVal = command.intVal;
                                         Commands[ind].NumberOfCommand = 52;
-                                         Commands[ind].Tok = Toks.pbaapiolvi;
+                                        // Commands[ind].Tok = Toks.pbaapiolvi;
                                         //for (int j = 0; j < Size; j++)
                                         //{
                                         //    if (Commands[j].NumberOfCommand == 20)
@@ -871,20 +871,20 @@ namespace SimpleLang
                                 continue;
                             }
 
-                            if (command.NumberOfCommand == 14 && Commands[ind].NumberOfCommand == 51)
-                            {
-                                Commands[ind].NumberOfCommand = 53;
-                                Commands[ind].doubleVal = command.doubleVal;
-                                Commands[ind].pic = command.pic;
-                                Commands[ind].Count = 3;
-                                Commands[ind].Types = "d2i";
-                                Commands[ind].Tok = Toks.pdapvdodpi;
-                                Temporary.Add(c);
-                                Redundant.Add(c);
-                                continue;
-                            }
-                            if (Commands[ind].NumberOfCommand >= 59 && Commands[ind].NumberOfCommand <= 68
-                                || Commands[ind].NumberOfCommand == 51 || Commands[ind].NumberOfCommand == 50)
+                            //if (command.NumberOfCommand == 14 && Commands[ind].NumberOfCommand == 51)
+                            //{
+                            //    Commands[ind].NumberOfCommand = 53;
+                            //    Commands[ind].doubleVal = command.doubleVal;
+                            //    Commands[ind].pic = command.pic;
+                            //    Commands[ind].Count = 3;
+                            //    Commands[ind].Types = "d2i";
+                            //    //Commands[ind].Tok = Toks.pdapvdodpi;
+                            //    Temporary.Add(c);
+                            //    Redundant.Add(c);
+                            //    continue;
+                            //}
+
+                            if (Commands[ind].NumberOfCommand == 51)
                             {
                                 if (command.Count <= 2)
                                 {
@@ -897,15 +897,16 @@ namespace SimpleLang
 
                                         break;
                                     case 51:
-                                        if (command.NumberOfCommand == 21)
-                                        {
+                                        //if (command.NumberOfCommand == 21)
+                                        //{
                                             Commands[ind].NumberOfCommand = 55;
                                             Commands[ind].pdb = command.pdb;
                                             Commands[ind].pic = command.pic;
                                             Commands[ind].Count = 3;
                                             Commands[ind].Types = "ddi";
+                                            Commands[ind].Tok = Toks.pdappdodpi;
                                             
-                                        }
+                                        //}
                                         break;
                                     default:
                                         break;
@@ -1611,7 +1612,7 @@ namespace SimpleLang
                             {
                                 Commands[ind].intVal = command.intVal;
                                 Commands[ind].NumberOfCommand = 52;
-                                Commands[ind].Tok = Toks.pbaapiolvi;
+                                //Commands[ind].Tok = Toks.pbaapiolvi;
                             }
                         }
                         if (s[0] == 'd')
@@ -1634,6 +1635,22 @@ namespace SimpleLang
                             if (s[1] == 'c')
                             {
                                 *Commands[ind].pbc = command.boolVal;
+                            }
+                        }
+                    }
+
+                    if (command.Types[1] == '4')
+                    {
+                        if (s[0] == 'i')
+                        {
+                            if (s[1] == 'b')
+                            {
+                                *Commands[ind].pib = command.intVal;
+                            }
+                            if (s[1] == 'c')
+                            {
+                                *Commands[ind].pic = *command.pib;
+                                //Commands[ind].Tok = Toks.pbaapiolvi;
                             }
                         }
                     }
@@ -1675,6 +1692,7 @@ namespace SimpleLang
                 ReplaceCopies();
                 temp = DelUseless();
             }
+            //Print();
             Redundant.Clear();
             Temporary.Clear();
             UseFull.Clear();
@@ -1691,7 +1709,7 @@ namespace SimpleLang
 
             LiveGlobal();
             temp = DelUseless();
-           // Print();
+            //Print();
 
 
 

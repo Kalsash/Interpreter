@@ -46,7 +46,7 @@ namespace SimpleLang
             var idVal = a.Id.Eval(this);
             v = idVal;
             var ExprVal = a.Expr.Eval(this);
-            //IsNum = false;
+            IsNum = false;
             if (IsNum)
             {
                 if (tname == Types.tint)
@@ -159,6 +159,8 @@ namespace SimpleLang
 
             string operation = "__";
             string assign = "aa";
+            c1 = false;
+            c2 = false;
             switch (binop.Op)
             {
                 case '+':
@@ -265,7 +267,7 @@ namespace SimpleLang
                     }
                     else
                     {
-                        unsafe { op.AddCommands(new ThreeAddress(27, tb.pb, val1.pi, val2.pi, assign, operation));
+                        unsafe { op.AddCommands(new ThreeAddress(20, tb.pb, val1.pi, val2.pi, assign, operation));
                         }
                         SymbolTable.CommandsCounter++;
                         return tb;
