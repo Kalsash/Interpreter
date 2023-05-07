@@ -54,7 +54,7 @@ namespace SimpleLang
                     unsafe
                     {
 
-                        op.AddCommands(new ThreeAddress(1, idVal.pi, ExprVal.i));
+                        op.AddCommands(new ThreeAddress(1, idVal.pi, ExprVal.i, "aa","__"));
                         SymbolTable.CommandsCounter++;
                     }
                 }
@@ -64,14 +64,14 @@ namespace SimpleLang
                     {
                         unsafe
                         {
-                            op.AddCommands(new ThreeAddress(2, idVal.pd, ExprVal.d));
+                            op.AddCommands(new ThreeAddress(2, idVal.pd, ExprVal.d, "aa", "__"));
                             SymbolTable.CommandsCounter++;
                         }
                     }
                     else
                         unsafe
                         {
-                            op.AddCommands(new ThreeAddress(56, idVal.pd, ExprVal.i));
+                            op.AddCommands(new ThreeAddress(56, idVal.pd, ExprVal.i, "aa", "__"));
                             SymbolTable.CommandsCounter++;
                         }
                 }
@@ -79,7 +79,7 @@ namespace SimpleLang
                 {
                     unsafe
                     {
-                        op.AddCommands(new ThreeAddress(3, idVal.pb, ExprVal.b));
+                        op.AddCommands(new ThreeAddress(3, idVal.pb, ExprVal.b, "aa", "__"));
                         SymbolTable.CommandsCounter++;
                     }
                 }
@@ -100,7 +100,7 @@ namespace SimpleLang
                         }
                         else
                         {
-                            op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi));
+                            op.AddCommands(new ThreeAddress(4, idVal.pi, ExprVal.pi, "aa", "__"));
                             SymbolTable.CommandsCounter++;
                         }
                     }
@@ -119,7 +119,7 @@ namespace SimpleLang
                         }
                         else
                         {
-                            op.AddCommands(new ThreeAddress(5, idVal.pd, ExprVal.pd));
+                            op.AddCommands(new ThreeAddress(5, idVal.pd, ExprVal.pd, "aa", "__"));
                             SymbolTable.CommandsCounter++;
                         }
 
@@ -129,7 +129,7 @@ namespace SimpleLang
                 }
                 if (tname == Types.tbool && tval == Types.tbool)
                 {
-                    unsafe { op.AddCommands(new ThreeAddress(6, idVal.pb, ExprVal.pb)); }
+                    unsafe { op.AddCommands(new ThreeAddress(6, idVal.pb, ExprVal.pb, "aa", "__")); }
                     SymbolTable.CommandsCounter++;
                 }
 
@@ -156,6 +156,48 @@ namespace SimpleLang
             var ti = new Value(0);
             var td = new Value(0.0);
             var tb = new Value(false);
+
+            string operation = "__";
+            string assign = "aa";
+            switch (binop.Op)
+            {
+                case '+':
+                    operation = "op";
+                    assign = "ap";
+                    break;
+                case '-':
+                    operation = "on";
+                    assign = "an";
+                    break;
+                case '*':
+                    operation = "om";
+                    assign = "am";
+                    break;
+                case '/':
+                    operation = "od";
+                    assign = "ad";
+                    break;
+                case '<':
+                    operation = "ol";
+                    break;
+                case '>':
+                    operation = "ob";
+                    break;
+                case '=':
+                    operation = "oe";
+                    break;
+                case '!':
+                    operation = "ow";
+                    break;
+                case '|':
+                    operation = "oo";
+                    break;
+                case '&':
+                    operation = "oa";
+                    break;
+                default:
+                    break;
+            }
             if (c1 == true)
             {
                 if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint)
@@ -165,7 +207,7 @@ namespace SimpleLang
                         case '/':
                             unsafe
                             {
-                                op.AddCommands(new ThreeAddress(14, td.pd, val1.d, val2.pi));
+                                op.AddCommands(new ThreeAddress(14, td.pd, val1.d, val2.pi,"aa",operation));
                             }
                             SymbolTable.CommandsCounter++;
                             return td;
@@ -178,315 +220,124 @@ namespace SimpleLang
             {
                 if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
                 {
-                    switch (binop.Op)
-                    {
-                        case '+':
                             unsafe
                             {
-                                if (val1.pd == v.pd)
+                                if (val1.pi == v.pi)
                                 {
-                                    op.AddCommands(new ThreeAddress(54, val1.pi, val2.i));
+                                    op.AddCommands(new ThreeAddress(54, val1.pi, val2.i, assign, operation));
                                     SymbolTable.CommandsCounter++;
                                     return val1;
                                 }
-                                op.AddCommands(new ThreeAddress(15, ti.pi, val1.pi, val2.i));
-                                SymbolTable.CommandsCounter++;
+                                op.AddCommands(new ThreeAddress(15, ti.pi, val1.pi, val2.i, "aa", operation));
+                        SymbolTable.CommandsCounter++;
                                 return ti;
                             }
 
-
-                    }
                 }
             }
             if (t1 == SimpleParser.Types.tbool && t2 == SimpleParser.Types.tbool)
             {
-                switch (binop.Op)
-                {
-                    case '&':
                         unsafe
                         {
-                            op.AddCommands(new ThreeAddress(57, tb.pb, val1.pb, val2.pb));
-                        }
-                        SymbolTable.CommandsCounter++;
-                        return tb;
-                    case '|':
-                        unsafe
-                        {
-                            op.AddCommands(new ThreeAddress(58, tb.pb, val1.pb, val2.pb));
-                        }
-                        SymbolTable.CommandsCounter++;
-                        return tb;
+                            op.AddCommands(new ThreeAddress(57, tb.pb, val1.pb, val2.pb, "aa", operation));
                 }
+                        SymbolTable.CommandsCounter++;
+                        return tb;
             }
             else
             {
                 if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tint)
                 {
-                    switch (binop.Op)
+                    if (assign != "aa")
                     {
-
-                        case '+':
-                            unsafe
+                        unsafe
+                        {
+                            if (val1.pi == v.pi)
                             {
-                             if (val1.pi == v.pi)
-                                {
-                                    op.AddCommands(new ThreeAddress(50, val1.pi, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(8, ti.pi, val1.pi, val2.pi));
+                                op.AddCommands(new ThreeAddress(50, val1.pi, val2.pi, assign, operation));
                                 SymbolTable.CommandsCounter++;
-                                return ti;
+                                return val1;
                             }
-                        case '-':
-                            unsafe
-                            {
-                                if (val1.pi == v.pi)
-                                {
-                                    op.AddCommands(new ThreeAddress(59, val1.pi, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(24, ti.pi, val1.pi, val2.pi));
-                                SymbolTable.CommandsCounter++;
-                                return ti;
-                            }
-                        case '*':
-                            unsafe
-                            {
-                                if (val1.pi == v.pi)
-                                {
-                                    op.AddCommands(new ThreeAddress(60, val1.pi, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(25, ti.pi, val1.pi, val2.pi));
-                                SymbolTable.CommandsCounter++;
-                                return ti;
-                            }
-                        case '/':
-                            unsafe
-                            {
-                                if (val1.pi == v.pi)
-                                {
-                                    op.AddCommands(new ThreeAddress(61, val1.pi, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(26, ti.pi, val1.pi, val2.pi));
-                                SymbolTable.CommandsCounter++;
-                                return ti;
-                            }
-                        case '>':
-                            unsafe { op.AddCommands(new ThreeAddress(27, tb.pb, val1.pi, val2.pi)); }
+                            op.AddCommands(new ThreeAddress(8, ti.pi, val1.pi, val2.pi, "aa", operation));
                             SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '<':
-                            unsafe { op.AddCommands(new ThreeAddress(20, tb.pb, val1.pi, val2.pi));
-                            }
-                            SymbolTable.CommandsCounter++;
-                             
-                            return tb;
-                        case '=':
-                            unsafe { op.AddCommands(new ThreeAddress(28, tb.pb, val1.pi, val2.pi)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '!':
-                            unsafe { op.AddCommands(new ThreeAddress(29, tb.pb, val1.pi, val2.pi)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
+                            return ti;
+                        }
+                    }
+                    else
+                    {
+                        unsafe { op.AddCommands(new ThreeAddress(27, tb.pb, val1.pi, val2.pi, assign, operation));
+                        }
+                        SymbolTable.CommandsCounter++;
+                        return tb;
                     }
                 }
                 if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tdouble)
                 {
-                    switch (binop.Op)
+                    if (assign != "aa")
                     {
-                        case '+':
-                            unsafe
+                        unsafe
+                        {
+                            if (val1.pd == v.pd)
                             {
-
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(51, val1.pd, val2.pd));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(9, td.pd, val1.pd, val2.pd));
+                                op.AddCommands(new ThreeAddress(51, val1.pd, val2.pd, assign, operation));
                                 SymbolTable.CommandsCounter++;
-                                return td;
+                                return val1;
                             }
-                        case '-':
-                            unsafe
-                            {
-
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(62, val1.pd, val2.pd));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(30, td.pd, val1.pd, val2.pd));
-                                SymbolTable.CommandsCounter++;
-                                return td;
-                            }
-                        case '*':
-                            unsafe
-                            {
-
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(63, val1.pd, val2.pd));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(31, td.pd, val1.pd, val2.pd));
-                                SymbolTable.CommandsCounter++;
-                                return td;
-                            }
-                        case '/':
-                            unsafe
-                            {
-
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(64, val1.pd, val2.pd));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(32, td.pd, val1.pd, val2.pd));
-                                SymbolTable.CommandsCounter++;
-                                return td;
-                            }
-                        case '>':
-                            unsafe { op.AddCommands(new ThreeAddress(33, tb.pb, val1.pd, val2.pd)); }
+                            op.AddCommands(new ThreeAddress(9, td.pd, val1.pd, val2.pd, "aa", operation));
                             SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '<':
-                            unsafe { op.AddCommands(new ThreeAddress(34, tb.pb, val1.pd, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '=':
-                            unsafe { op.AddCommands(new ThreeAddress(35, tb.pb, val1.pd, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '!':
-                            unsafe { op.AddCommands(new ThreeAddress(36, tb.pb, val1.pd, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
+                            return td;
+                        }
+                    }
+                    else
+                    {
+                        unsafe { op.AddCommands(new ThreeAddress(34, tb.pb, val1.pd, val2.pd, assign, operation));
+                        }
+                        SymbolTable.CommandsCounter++;
+                        return tb;
                     }
                 }
 
                 if (t1 == SimpleParser.Types.tdouble && t2 == SimpleParser.Types.tint)
                 {
-                    switch (binop.Op)
+                    if (assign != "aa")
                     {
-                        case '+':
-                            unsafe
+                        unsafe
+                        {
+                            if (val1.pd == v.pd)
                             {
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(65, val1.pd, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(10, td.pd, val1.pd, val2.pi));
+                                op.AddCommands(new ThreeAddress(65, val1.pd, val2.pi, assign, operation));
                                 SymbolTable.CommandsCounter++;
-                                return td;
+                                return val1;
                             }
-                        case '-':
-                            unsafe
-                            {
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(66, val1.pd, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(37, td.pd, val1.pd, val2.pi));
-                                SymbolTable.CommandsCounter++;
-                                return td;
-                            }
-                        case '*':
-                            unsafe
-                            {
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(67, val1.pd, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(38, td.pd, val1.pd, val2.pi));
-                                SymbolTable.CommandsCounter++;
-                                return td;
-                            }
-                        case '/':
-                            unsafe
-                            {
-                                if (val1.pd == v.pd)
-                                {
-                                    op.AddCommands(new ThreeAddress(68, val1.pd, val2.pi));
-                                    SymbolTable.CommandsCounter++;
-                                    return val1;
-                                }
-                                op.AddCommands(new ThreeAddress(21, td.pd, val1.pd, val2.pi));
-                                SymbolTable.CommandsCounter++;
-                                return td;
-                            }
-                        case '>':
-                            unsafe { op.AddCommands(new ThreeAddress(39, tb.pb, val1.pd, val2.pi)); }
+                                op.AddCommands(new ThreeAddress(10, td.pd, val1.pd, val2.pi, "aa", operation));
                             SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '<':
-                            unsafe { op.AddCommands(new ThreeAddress(40, tb.pb, val1.pd, val2.pi)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '=':
-                            unsafe { op.AddCommands(new ThreeAddress(41, tb.pb, val1.pd, val2.pi)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '!':
-                            unsafe { op.AddCommands(new ThreeAddress(42, tb.pb, val1.pd, val2.pi)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
+                            return td;
+                        }
+                    }
+                    else
+                    {
+                            unsafe { op.AddCommands(new ThreeAddress(40, tb.pb, val1.pd, val2.pi, assign, operation));
+                        }
+                        SymbolTable.CommandsCounter++;
+                        return tb;
                     }
                 }
 
                 if (t1 == SimpleParser.Types.tint && t2 == SimpleParser.Types.tdouble)
                 {
-                    switch (binop.Op)
+                    if (assign != "aa")
                     {
-                        case '+':
-                            unsafe { op.AddCommands(new ThreeAddress(10, td.pd, val2.pd, val1.pi)); }
+                            unsafe { op.AddCommands(new ThreeAddress(10, td.pd, val2.pd, val1.pi, "aa", operation));
+                            }
                             SymbolTable.CommandsCounter++;
                             return td;
-                        case '-':
-                            unsafe { op.AddCommands(new ThreeAddress(43, td.pd, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return td;
-                        case '*':
-                            unsafe { op.AddCommands(new ThreeAddress(44, td.pd, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return td;
-                        case '/':
-                            unsafe { op.AddCommands(new ThreeAddress(45, td.pd, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return td;
-                        case '>':
-                            unsafe { op.AddCommands(new ThreeAddress(46, tb.pb, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '<':
-                            unsafe { op.AddCommands(new ThreeAddress(47, tb.pb, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '=':
-                            unsafe { op.AddCommands(new ThreeAddress(48, tb.pb, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
-                        case '!':
-                            unsafe { op.AddCommands(new ThreeAddress(49, tb.pb, val1.pi, val2.pd)); }
-                            SymbolTable.CommandsCounter++;
-                            return tb;
+                    }
+                    else
+                    {
+                        unsafe { op.AddCommands(new ThreeAddress(47, tb.pb, val1.pi, val2.pd, assign, operation));
+                        }
+                        SymbolTable.CommandsCounter++;
+                        return tb;
                     }
                 }
 

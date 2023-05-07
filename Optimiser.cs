@@ -64,7 +64,7 @@ namespace SimpleLang
         {
             for (int i = 0; i < Size; i++)
             {
-                Console.WriteLine(Commands[i].NumberOfCommand);
+                Console.WriteLine(Commands[i].Tok);
             }
         }
         public void AddVal(string s)

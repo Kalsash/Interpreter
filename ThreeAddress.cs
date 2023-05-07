@@ -12,6 +12,10 @@ namespace SimpleLang
         public int NumberOfCommand;
 
         public Toks Tok = Toks.empty;
+
+        public string Assign = "aa";
+
+        public string Operation = "__";
         unsafe public int* pia { get; set; }
         unsafe public int* pib { get; set; }
         unsafe public int* pic { get; set; }
@@ -29,6 +33,78 @@ namespace SimpleLang
         public int Goto;
         public int Count = 0;
         public string Types = "";
+
+        public Toks CreateToken()
+        {
+            if (Count < 2)
+            {
+                return Toks.empty;
+            }
+            Toks t = Toks.empty;
+            string s = "p";
+            s += Types[0];
+            s += Assign;
+                switch (Types[1])
+                {
+                 case 'i':
+                    s += "pi";
+                     break;
+                 case 'd':
+                    s += "pd";
+                     break;
+                case 'b':
+                    s += "pb";
+                    break;
+                case '1':
+                    s += "vi";
+                    break;
+                case '2':
+                    s += "vd";
+                    break;
+                case '3':
+                    s += "vb";
+                    break;
+                default:
+                        break;
+                }
+            if (Count == 2)
+            {
+
+                Enum.TryParse(s, out t);
+
+                return t;
+            }
+            s += Operation;
+            switch (Types[2])
+            {
+                case 'i':
+                    s += "pi";
+                    break;
+                case 'd':
+                    s += "pd";
+                    break;
+                case 'b':
+                    s += "pb";
+                    break;
+                case '1':
+                    s += "vi";
+                    break;
+                case '2':
+                    s += "vd";
+                    break;
+                case '3':
+                    s += "vb";
+                    break;
+                default:
+                    break;
+            }
+            if (Count == 3)
+            {
+                Enum.TryParse(s, out t);
+                return t;
+            }
+            return Toks.empty;
+        }
         public ThreeAddress(int n)
         {
             NumberOfCommand = n;
@@ -39,7 +115,7 @@ namespace SimpleLang
             this.Goto = Goto;
         }
 
-        unsafe public ThreeAddress(int n, int *pia, int *pib, int* pic)
+        unsafe public ThreeAddress(int n, int *pia, int *pib, int* pic, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pia = pia;
@@ -47,14 +123,20 @@ namespace SimpleLang
             this.pic = pic;
             Count = 3;
             Types = "iii";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, int* pia, int* pib)
+        unsafe public ThreeAddress(int n, int* pia, int* pib, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pia = pia;
             this.pib = pib;
             Count = 2;
             Types = "ii";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
         unsafe public ThreeAddress(int n, int* pia)
         {
@@ -62,16 +144,20 @@ namespace SimpleLang
             this.pia = pia;
             Count = 1;
             Types = "i";
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, int* pia, int intVal)
+        unsafe public ThreeAddress(int n, int* pia, int intVal, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pia = pia;
             this.intVal = intVal;
             Count = 2;
             Types = "i1";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, int* pia, int* pib,int intVal)
+        unsafe public ThreeAddress(int n, int* pia, int* pib,int intVal, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pia = pia;
@@ -79,8 +165,11 @@ namespace SimpleLang
             this.intVal = intVal;
             Count = 3;
             Types = "ii1";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, double* pdb, double* pdc)
+        unsafe public ThreeAddress(int n, double* pda, double* pdb, double* pdc, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
@@ -88,22 +177,31 @@ namespace SimpleLang
             this.pdc = pdc;
             Count = 3;
             Types = "ddd";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, int* pib)
+        unsafe public ThreeAddress(int n, double* pda, int* pib, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
             this.pib = pib;
             Count = 2;
             Types = "di";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, double* pdb)
+        unsafe public ThreeAddress(int n, double* pda, double* pdb, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
             this.pdb = pdb;
             Count = 2;
             Types = "dd";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
         unsafe public ThreeAddress(int n, double* pda)
         {
@@ -111,8 +209,9 @@ namespace SimpleLang
             this.pda = pda;
             Count = 1;
             Types = "d";
+            Tok = CreateToken();
         }
-       unsafe public ThreeAddress(int n, bool* pba, bool* pbb, bool* pbc)
+       unsafe public ThreeAddress(int n, bool* pba, bool* pbb, bool* pbc, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
@@ -120,14 +219,20 @@ namespace SimpleLang
             this.pbc = pbc;
             Count = 3;
             Types = "bbb";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, bool* pbb)
+        unsafe public ThreeAddress(int n, bool* pba, bool* pbb, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
             this.pbb = pbb;
             Count = 2;
             Types = "bb";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
         unsafe public ThreeAddress(int n, bool* pba)
         {
@@ -135,16 +240,20 @@ namespace SimpleLang
             this.pba = pba;
             Count = 1;
             Types = "b";
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, bool boolVal)
+        unsafe public ThreeAddress(int n, bool* pba, bool boolVal, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
             this.boolVal = boolVal;
             Count = 2;
             Types = "b";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, int* pib, int* pic)
+        unsafe public ThreeAddress(int n, bool* pba, int* pib, int* pic, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
@@ -152,8 +261,11 @@ namespace SimpleLang
             this.pic = pic;
             Count = 3;
             Types = "bii";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, double* pdb, int* pic)
+        unsafe public ThreeAddress(int n, double* pda, double* pdb, int* pic, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
@@ -161,8 +273,11 @@ namespace SimpleLang
             this.pic = pic;
             Count = 3;
             Types = "ddi";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, double* pdb, double* pdc)
+        unsafe public ThreeAddress(int n, bool* pba, double* pdb, double* pdc, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
@@ -170,8 +285,11 @@ namespace SimpleLang
             this.pdc = pdc;
             Count = 3;
             Types = "bdd";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, double* pdb, int* pic)
+        unsafe public ThreeAddress(int n, bool* pba, double* pdb, int* pic, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
@@ -179,8 +297,11 @@ namespace SimpleLang
             this.pic = pic;
             Count = 3;
             Types = "bdi";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, int* pib, double* pdc)
+        unsafe public ThreeAddress(int n, double* pda, int* pib, double* pdc, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
@@ -188,8 +309,11 @@ namespace SimpleLang
             this.pdc = pdc;
             Count = 3;
             Types = "did";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, int* pib, double* pdc)
+        unsafe public ThreeAddress(int n, bool* pba, int* pib, double* pdc, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
@@ -197,16 +321,22 @@ namespace SimpleLang
             this.pdc = pdc;
             Count = 3;
             Types = "bid";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, double doubleVal)
+        unsafe public ThreeAddress(int n, double* pda, double doubleVal, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
             this.doubleVal = doubleVal;
             Count = 2;
             Types = "d2";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, bool* pba, int* pib, int intVal)
+        unsafe public ThreeAddress(int n, bool* pba, int* pib, int intVal, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pba = pba;
@@ -214,6 +344,9 @@ namespace SimpleLang
             this.intVal = intVal;
             Count = 3;
             Types = "bi1";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
         unsafe public ThreeAddress(int n, bool* pba, int Goto)
         {
@@ -222,8 +355,9 @@ namespace SimpleLang
             this.Goto = Goto;
             Count = 1;
             Types = "b";
+            Tok = CreateToken();
         }
-        unsafe public ThreeAddress(int n, double* pda, double doubleVal, int* pic)
+        unsafe public ThreeAddress(int n, double* pda, double doubleVal, int* pic, string Assign, string Operation)
         {
             NumberOfCommand = n;
             this.pda = pda;
@@ -231,6 +365,9 @@ namespace SimpleLang
             this.pic = pic;
             Count = 3;
             Types = "d2i";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
         }
 
     }

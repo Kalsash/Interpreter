@@ -18,7 +18,7 @@ namespace SimpleLang
             for (int i = 0; i < Size; i++)
             {
                 var command = Commands[i];
-               // Console.WriteLine(command.token);
+               // Console.WriteLine(command.Tok);
                 switch (command.NumberOfCommand)
                 {
                     case 0:
