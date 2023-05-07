@@ -279,6 +279,17 @@ namespace SimpleLang
             this.Operation = Operation;
             Tok = CreateToken();
         }
+        unsafe public ThreeAddress(int n,int* pia, double* pdb, string Assign, string Operation)
+        {
+            NumberOfCommand = n;
+            this.pia = pia;
+            this.pdb = pdb;
+            Count = 2;
+            Types = "id";
+            this.Assign = Assign;
+            this.Operation = Operation;
+            Tok = CreateToken();
+        }
         unsafe public ThreeAddress(int n, double* pda, double* pdb, int* pic, string Assign, string Operation)
         {
             NumberOfCommand = n;

@@ -285,6 +285,12 @@ namespace SimpleLang
                                 SymbolTable.CommandsCounter++;
                                 return val1;
                             }
+                            if (val2.pd == v.pd)
+                            {
+                                op.AddCommands(new ThreeAddress(151, val2.pd, val1.pd, assign, operation));
+                                SymbolTable.CommandsCounter++;
+                                return val2;
+                            }
                             op.AddCommands(new ThreeAddress(9, td.pd, val1.pd, val2.pd, "aa", operation));
                             SymbolTable.CommandsCounter++;
                             return td;
@@ -311,7 +317,14 @@ namespace SimpleLang
                                 SymbolTable.CommandsCounter++;
                                 return val1;
                             }
-                                op.AddCommands(new ThreeAddress(10, td.pd, val1.pd, val2.pi, "aa", operation));
+                            if (val2.pd == v.pd)
+                            {
+                                op.AddCommands(new ThreeAddress(165, val2.pd, val1.pi, assign, operation));
+                                SymbolTable.CommandsCounter++;
+                                return val2;
+                            }
+
+                            op.AddCommands(new ThreeAddress(10, td.pd, val1.pd, val2.pi, "aa", operation));
                             SymbolTable.CommandsCounter++;
                             return td;
                         }
@@ -329,10 +342,25 @@ namespace SimpleLang
                 {
                     if (assign != "aa")
                     {
-                            unsafe { op.AddCommands(new ThreeAddress(10, td.pd, val2.pd, val1.pi, "aa", operation));
+                            unsafe 
+                        {
+                            if (val1.pd == v.pd)
+                            {
+                                op.AddCommands(new ThreeAddress(265, val1.pi, val2.pd, assign, operation));
+                                SymbolTable.CommandsCounter++;
+                                return val1;
                             }
+                            if (val2.pd == v.pd)
+                            {
+                                op.AddCommands(new ThreeAddress(365, val2.pi, val1.pd, assign, operation));
+                                SymbolTable.CommandsCounter++;
+                                return val2;
+                            }
+                            op.AddCommands(new ThreeAddress(10, td.pd, val2.pd, val1.pi, "aa", operation));
                             SymbolTable.CommandsCounter++;
                             return td;
+                        }
+
                     }
                     else
                     {
