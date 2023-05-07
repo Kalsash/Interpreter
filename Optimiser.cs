@@ -1709,7 +1709,7 @@ namespace SimpleLang
 
             LiveGlobal();
             temp = DelUseless();
-            //Print();
+            Print();
 
 
 

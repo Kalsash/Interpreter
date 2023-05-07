@@ -38,6 +38,18 @@ namespace SimpleLang
         {
             if (Count < 2)
             {
+                if (NumberOfCommand == 0)
+                {
+                    return Toks.end;
+                }
+                if (NumberOfCommand == 22)
+                {
+                    return Toks.iff;
+                }
+                if (NumberOfCommand == 23)
+                {
+                    return Toks.got;
+                }
                 return Toks.empty;
             }
             Toks t = Toks.empty;
@@ -108,11 +120,13 @@ namespace SimpleLang
         public ThreeAddress(int n)
         {
             NumberOfCommand = n;
+            Tok = CreateToken();
         }
         public ThreeAddress(int n, int Goto)
         {
             NumberOfCommand = n;
             this.Goto = Goto;
+            Tok = CreateToken();
         }
 
         unsafe public ThreeAddress(int n, int *pia, int *pib, int* pic, string Assign, string Operation)

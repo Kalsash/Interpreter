@@ -19,40 +19,17 @@ namespace SimpleLang
             {
                 var command = Commands[i];
                // Console.WriteLine(command.Tok);
-                switch (command.NumberOfCommand)
-                {
-                    case 0:
-                        i = Size;
-                        break; // stop                
-                    case 12:
-                        i = command.Goto - 2;
-                        break; // goto
-                    case 13:
-                        unsafe { if (*command.pba == true) i = command.Goto - 2; }
-                        break; // if                 
-                    case 17:
-                        unsafe { Console.WriteLine(*command.pia); }
-                        break; // print(int)
-                    case 18:
-                        unsafe { Console.WriteLine(*command.pda); }
-                        break; // print(double)
-                    case 19:
-                        unsafe { Console.WriteLine(*command.pba); }
-                        break; // print(int)
-                    case 22:
-                        unsafe
+                switch (command.Tok)
                         {
-
-                            if (*command.pba == false) i = command.Goto;
-                        }
-                        break; // if
-                    case 23:
-                        i = command.Goto;
-                        break;
-
-                    default:
-                        switch (command.Tok)
-                        {
+                            case Toks.end:
+                                i = Size;
+                                break; // stop
+                            case Toks.iff:
+                                if (*command.pba == false) i = command.Goto;
+                                break;
+                            case Toks.got:
+                                i = command.Goto;
+                                break;
                             case Toks.pbaapb:
                                 *command.pba = *command.pbb;
                                 break;
@@ -456,10 +433,7 @@ namespace SimpleLang
                                 *command.pia += *command.pib + *command.pic;
                                 break;
                         }
-
-
-                        break;
-                }
+ 
             }
         }
     }
