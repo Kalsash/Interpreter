@@ -49,7 +49,7 @@ namespace SimpleLang
             Size--;
             for (int i = 0; i < Size; i++)
             {
-                if (Commands[i].NumberOfCommand == 22 || Commands[i].NumberOfCommand == 23)
+                if (Commands[i].Tok == Toks.iff || Commands[i].Tok == Toks.got)
                 {
                     if (Commands[i].Goto < ind)
                     {
@@ -155,7 +155,7 @@ namespace SimpleLang
             for (int i = 1; i < Size; i++)
             {
                 var command = Commands[i];
-                if (command.NumberOfCommand == 22 || command.NumberOfCommand == 23)
+                if (command.Tok == Toks.iff || command.Tok==Toks.got)
                 {
                     BasicBlocks.Add(command.Goto + 1);
                     BasicBlocks.Add(i + 1);
@@ -166,7 +166,6 @@ namespace SimpleLang
             foreach (var item in BasicBlocks)
             {
                 Arr[k++] = item;
-                //Console.WriteLine(item);
             }
             ArrBlocks = Arr;
 
@@ -176,532 +175,108 @@ namespace SimpleLang
             end = Arr[i + 1] - 1;
             while (Arr[i] - 1 != end)
             {
-
                 var command = Commands[end];
-
                 c = end--;
-                //Console.WriteLine(c);
-
-                switch (command.NumberOfCommand)
+                if (command.Count < 2)
                 {
-                    case 0:
-                        i = c;
-                        break; // stop
-                    case 1:
-                        unsafe { AddV(Convert.ToString((ulong)command.pia), "f"); }
-                        break; // int = intVal
-                    case 2:
-                        unsafe { AddV(Convert.ToString((ulong)command.pda), "f"); }
-                        break; // double = doubleVal
-                    case 3:
-                        unsafe { AddV(Convert.ToString((ulong)command.pba), "f"); }
-                        break; // bool = boolVal
-                    case 4:
-                        unsafe
+                    if (command.Tok == Toks.iff)
+                    {
+                        unsafe { AddV(Convert.ToString((ulong)command.pba), "t"); }
+                    }
+                    continue;
+                }
+                if (command.Assign != "aa")
+                {
+                    unsafe
+                    {
+                        switch (command.Types[0])
                         {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
+                            case 'i':
+                                AddV(Convert.ToString((ulong)command.pia), "f");
+                                AddV(Convert.ToString((ulong)command.pia), "t");
+                                break;
+                            case 'd':
+                                AddV(Convert.ToString((ulong)command.pda), "f");
+                                AddV(Convert.ToString((ulong)command.pda), "t");
+                                break;
+                            case 'b':
+                                AddV(Convert.ToString((ulong)command.pba), "f");
+                                AddV(Convert.ToString((ulong)command.pba), "t");
+                                break;
+                            default:
+                                break;
                         }
-                        break; // int = int 
-                    case 5:
-                        unsafe
+                        switch (command.Types[1])
                         {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                        }
-                        break; // double = double
-                    case 6:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pbb), "tbb" + c);
-                        }
-                        break; // bool = bool
-                    case 7:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // double = int
-                    case 8:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
+                            case 'i':
+                                AddV(Convert.ToString((ulong)command.pib), "tib" + c);
+                                break;
+                            case 'd':
+                                AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
+                                break;
+                            case 'b':
+                                AddV(Convert.ToString((ulong)command.pbb), "tbb" + c);
+                                break;
+                            default:
+                                break;
                         }
 
-                        break; // int = int + int
-                    case 9:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = double + double
-                    case 10:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tic" + c);
-                        }
-                        break; // double = double + int
-                    case 11:
-                        unsafe {
-                            *command.pda = *command.pib + *command.pic;
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tic" + c);
-                        }
-                        break; // double = int + int
-                    case 12:
-                        break; // goto
-                    case 13:
-                        unsafe { AddV(Convert.ToString((ulong)command.pba), "f"); }
-                        break; // if
-                    case 14:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // double = doubleVal / int 
-                    case 15:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // int = int + intVal
-                    case 16:
-                        unsafe {
-                            *command.pba = *command.pib >= *command.pic;
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = int >= int
-                    case 17:
-                        break; // print(int)
-                    case 18:
-                        break; // print(double)
-                    case 19:
-                        break; // print(int)
-                    case 20:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = int < int
-                    case 21:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // double = doubleVal / int 
-                    case 22:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "t");
-                        }
-                        break; // if
-                    case 23:
-                        break;
-                    case 24:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // int = int - int
-                    case 25:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // int = int * int
-                    case 26:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // int = int / int
-                    case 27:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = int > int
-                    case 28:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = int == int
-                    case 29:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = int != int
-                    case 30:
-                        unsafe {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = double - double
-                    case 31:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = double * double
-                    case 32:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = double / double
-                    case 33:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = double > double
-                    case 34:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = double < double
-                    case 35:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = double == double
-                    case 36:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = double != double
-                    case 37:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // double = double - int 
-                    case 38:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // double = double * int 
-                    case 39:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = double > int
-                    case 40:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = double < int
-                    case 41:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = double == int
-                    case 42:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // bool = double != int
-                    case 43:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = int - double
-                    case 44:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = int * double
-                    case 45:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // double = int / double
-                    case 46:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = int > double
-                    case 47:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = int < double
-                    case 48:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = int == double
-                    case 49:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                            AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
-                        }
-                        break; // bool = int != double
-                    case 50:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pia), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // int += int
-                    case 51:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                        }
-                        break; // double += double
-                    case 52:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // bool = int < intVal
-                    case 53:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "tda" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // double += doubleVal / int
-                    case 54:
-                        unsafe { AddV(Convert.ToString((ulong)command.pia), "f"); }
-                        break; // int += intVal
-                    case 55:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                            AddV(Convert.ToString((ulong)command.pic), "tic" + c);
-                        }
-                        break; // double += double / int
-                    case 56:
-                        unsafe { AddV(Convert.ToString((ulong)command.pda), "f"); }
-                        break; // double = intVal
-                    case 57:
-                        unsafe { *command.pba = *command.pbb && *command.pbc;
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pbb), "tbb");
-                            AddV(Convert.ToString((ulong)command.pbc), "tbc" + c);
-                        }
-                        break; // bool = bool && bool
-                    case 58:
-                        unsafe
-                        {
-                            *command.pba = *command.pbb && *command.pbc;
-                            AddV(Convert.ToString((ulong)command.pba), "f");
-                            AddV(Convert.ToString((ulong)command.pbb), "tbb");
-                            AddV(Convert.ToString((ulong)command.pbc), "tbc" + c);
-                        }
-                        break; // bool = bool || bool
-                    case 59:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pia), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // int -= int
-                    case 60:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pia), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // int *= int
-                    case 61:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pia), "f");
-                            AddV(Convert.ToString((ulong)command.pia), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // int /= int
-                    case 62:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                        }
-                        break; // double -= double
-                    case 63:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                        }
-                        break; // double *= double
-                    case 64:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
-                        }
-                        break; // double /= double
-                    case 65:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // double += int
-                    case 66:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // double -= int
-                    case 67:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // double *= int
-                    case 68:
-                        unsafe
-                        {
-                            AddV(Convert.ToString((ulong)command.pda), "f");
-                            AddV(Convert.ToString((ulong)command.pda), "t");
-                            AddV(Convert.ToString((ulong)command.pib), "tib" + c);
-                        }
-                        break; // double /= int
-                    case 69:
-                        unsafe { *command.pia += *command.pib + *command.pic; }
-                        break; // int += int + int 
-                    case 70:
-                        unsafe { *command.pia += *command.pib - *command.pic; }
-                        break; // int += int - int
-                    case 71:
-                        unsafe { *command.pia += *command.pib * *command.pic; }
-                        break; // int += int * int 
-                    case 72:
-                        unsafe { *command.pia += *command.pib + *command.pic; }
-                        break; // int += int / int
-                    case 73:
-                        unsafe { *command.pda += *command.pdb + *command.pdc; }
-                        break; // double += double + double
-                    case 74:
-                        unsafe { *command.pda += *command.pdb - *command.pdc; }
-                        break; // double += double - double 
-                    case 75:
-                        unsafe { *command.pda += *command.pdb * *command.pdc; }
-                        break; // double += double * double 
-                    case 76:
-                        unsafe { *command.pda += *command.pdb / *command.pdc; }
-                        break; // double += double / double
-                    case 77:
-                        unsafe { *command.pda += *command.pib + *command.pdc; }
-                        break; // double += int + double
-                    case 78:
-                        unsafe { *command.pda += *command.pib - *command.pdc; }
-                        break; // double += int - double
-                    case 79:
-                        unsafe { *command.pda += *command.pib * *command.pdc; }
-                        break; // double += int * double
-                    case 80:
-                        unsafe { *command.pda += *command.pib / *command.pdc; }
-                        break; // double += int / double
-                    case 81:
-                        unsafe { *command.pda += *command.pdb + *command.pic; }
-                        break; // double += double + int 
-                    case 82:
-                        unsafe { *command.pda += *command.pdb - *command.pic; }
-                        break; // double += double - int 
-                    case 83:
-                        unsafe { *command.pda += *command.pdb * *command.pic; }
-                        break; // double += double * int 
+                    }
 
-                    default:
-                        break;
+                }
+                else
+                {
+                    unsafe
+                    {
+                        switch (command.Types[0])
+                        {
+                            case 'i':
+                                AddV(Convert.ToString((ulong)command.pia), "f");
+                                break;
+                            case 'd':
+                                AddV(Convert.ToString((ulong)command.pda), "f");
+                                break;
+                            case 'b':
+                                AddV(Convert.ToString((ulong)command.pba), "f");
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (command.Types[1])
+                        {
+                            case 'i':
+                                AddV(Convert.ToString((ulong)command.pib), "tib" + c);
+                                break;
+                            case 'd':
+                                AddV(Convert.ToString((ulong)command.pdb), "tdb" + c);
+                                break;
+                            case 'b':
+                                AddV(Convert.ToString((ulong)command.pbb), "tbb" + c);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                unsafe
+                {
+                    if (command.Count == 3)
+                    {
+                        switch (command.Types[2])
+                        {
+                            case 'i':
+                                AddV(Convert.ToString((ulong)command.pic), "tic" + c);
+                                break;
+                            case 'd':
+                                AddV(Convert.ToString((ulong)command.pdc), "tdc" + c);
+                                break;
+                            case 'b':
+                                AddV(Convert.ToString((ulong)command.pbc), "tbc" + c);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
 
             }
@@ -1662,16 +1237,11 @@ namespace SimpleLang
 
         public void Preparing()
         {
-            //Print();
             FindLeaders();
             if (ArrBlocks.Length <= 1)
             {
                 return;
-            }
-            //foreach (var item in ArrBlocks)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            } 
             DefUse();
             int k = 0;
             while (Redundant.Count != 0)
