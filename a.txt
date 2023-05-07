@@ -1,14 +1,17 @@
 begin 
+s:= 2.0;
 s:= 0.0;
+h:= 9;
+g:= 1;
 n:= 100000000;
-i:= 1;
-t:= 0.0;
+i:= g;
+t:= 5.0;
 c:= i < n;
   while (c)
   begin
   t:= 1.0/i;
   s:= s + t;
   i:= i +1; 
-  c:= i < n
+ c:= i < n
   end
 end

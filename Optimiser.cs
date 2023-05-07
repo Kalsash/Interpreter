@@ -64,7 +64,7 @@ namespace SimpleLang
         {
             for (int i = 0; i < Size; i++)
             {
-                Console.WriteLine(Commands[i].Tok);
+                Console.WriteLine("("+ i + ")"+Commands[i].Tok +  "->" + Commands[i].NumberOfCommand);
             }
         }
         public void AddVal(string s)
@@ -789,6 +789,7 @@ namespace SimpleLang
                                     {
                                         Commands[ind].intVal = command.intVal;
                                         Commands[ind].NumberOfCommand = 52;
+                                         Commands[ind].Tok = Toks.pbaapiolvi;
                                         //for (int j = 0; j < Size; j++)
                                         //{
                                         //    if (Commands[j].NumberOfCommand == 20)
@@ -877,6 +878,7 @@ namespace SimpleLang
                                 Commands[ind].pic = command.pic;
                                 Commands[ind].Count = 3;
                                 Commands[ind].Types = "d2i";
+                                Commands[ind].Tok = Toks.pdapvdodpi;
                                 Temporary.Add(c);
                                 Redundant.Add(c);
                                 continue;
@@ -902,6 +904,7 @@ namespace SimpleLang
                                             Commands[ind].pic = command.pic;
                                             Commands[ind].Count = 3;
                                             Commands[ind].Types = "ddi";
+                                            
                                         }
                                         break;
                                     default:
@@ -1608,6 +1611,7 @@ namespace SimpleLang
                             {
                                 Commands[ind].intVal = command.intVal;
                                 Commands[ind].NumberOfCommand = 52;
+                                Commands[ind].Tok = Toks.pbaapiolvi;
                             }
                         }
                         if (s[0] == 'd')
@@ -1641,18 +1645,23 @@ namespace SimpleLang
 
         public void Preparing()
         {
+            //Print();
             FindLeaders();
             if (ArrBlocks.Length <= 1)
             {
                 return;
-            }          
+            }
+            //foreach (var item in ArrBlocks)
+            //{
+            //    Console.WriteLine(item);
+            //}
             DefUse();
             int k = 0;
             while (Redundant.Count != 0)
             {
                 foreach (var item in Redundant)
                 {
-                    DelCommand(item-k++);
+                    DelCommand(item - k++);
                 }
                 Redundant.Clear();
                 FindLeaders();
@@ -1670,35 +1679,20 @@ namespace SimpleLang
             Temporary.Clear();
             UseFull.Clear();
             GenKill();
-             var g = CreateGraph();
-            // g.PrintEdges();
-            //PrintGen();
-            //PrintKill();
+            var g = CreateGraph();
+
             ReachingDefinitions(g);
-            //PrintIN();
-            //PrintOUT();
+
             GetConstants();
-            //foreach (var item in Constants[2])
-            //{
-            //    Console.WriteLine(item);
-            //}
 
             GlobalDefUse();
-            //PrintDef();
-            //PrintUse();
+
             LiveVariable(g);
-           // PrintActiveIN();
-            //PrintActiveOUT();
-            //foreach (var dict in GlobalUse[2])
-            //{
-            //    Console.WriteLine(dict.Key);
-            //    foreach (var item in dict.Value)
-            //    {
-            //        Console.WriteLine(item);
-            //    }
-            //}
+
             LiveGlobal();
             temp = DelUseless();
+           // Print();
+
 
 
 
@@ -1706,7 +1700,7 @@ namespace SimpleLang
         public unsafe void RunCommands()
         {
             //Print();
-            //Preparing();
+            Preparing();
             Run r = new Run();
             r.Execute(Commands, Size);
 
