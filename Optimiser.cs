@@ -137,7 +137,6 @@ namespace SimpleLang
 
         public void AddGlobal(string s, string s2, int k)
         {
-            int ind = int.Parse(s2.Substring(2));
             if (DefCon[k].Contains(s))
             {
                 if (!GlobalUse[k].ContainsKey(s))
@@ -347,7 +346,7 @@ namespace SimpleLang
                     }
                     ind = int.Parse(s.Substring(3));
 
-                    if (ind < Arr[i] - 1 || ind > e)
+                    if (ind < Arr[i] - 1 || ind > e+1)
                     {
                         continue;
                     }
@@ -592,20 +591,16 @@ namespace SimpleLang
         public Graph CreateGraph()
         {
             var g = new Graph(ArrBlocks.Length + 2);
-            for (int i = 0; i < ArrBlocks.Length; i++)
-            {
-                //g.AddEdge(ArrBlocks[i], )
-            }
             g.AddEdge(-1, 0);
             int p = 0;
             for (int i = 1; i < Size; i++)
             {
                 var command = Commands[i];
-                if (command.NumberOfCommand == 22)
+                if (command.Tok == Toks.iff)
                 {
                     for (int j = 0; j < ArrBlocks.Length; j++)
                     {
-                        if (Commands[ArrBlocks[j]].NumberOfCommand == 22)
+                        if (Commands[ArrBlocks[j]].Tok == Toks.iff)
                         {
                             g.AddEdge(p, j);
                             g.AddEdge(j, j + 1);
@@ -615,7 +610,7 @@ namespace SimpleLang
                         }
                     }
                 }
-                if (command.NumberOfCommand == 23)
+                if (command.Tok == Toks.got)
                 {
                     for (int j = 0; j < ArrBlocks.Length; j++)
                     {
@@ -627,7 +622,7 @@ namespace SimpleLang
                         }
                     }
                 }
-                if (command.NumberOfCommand == 0)
+                if (command.Tok == Toks.end)
                 {
                     g.AddEdge(p, -2);
                     p++;
@@ -648,7 +643,7 @@ namespace SimpleLang
             {
                 GenArr[i] = new SortedSet<int>();
                 KillArr[i] = new SortedSet<int>();
-                var Defs = new SortedSet<String>();
+                var Defs = new SortedSet<string>();
                 k = ArrBlocks[i];
                 end = ArrBlocks[i + 1] - 1;
                 while (k != end + 1)
@@ -758,7 +753,7 @@ namespace SimpleLang
                             }
                                 DefArr[i].Add(s);
 
-                            if (Commands[k].NumberOfCommand == 50 || Commands[k].NumberOfCommand == 55)
+                            if (Commands[k].Assign != "aa")
                             {
                                 UseArr[i].Add(s);
                                 AddGlobal(s,t+"b"+ k, i);
@@ -1238,18 +1233,39 @@ namespace SimpleLang
                         }
                     }
 
-                    if (command.Types[1] == '4')
+                    else 
                     {
                         if (s[0] == 'i')
                         {
                             if (s[1] == 'b')
                             {
-                                *Commands[ind].pib = command.intVal;
+                                *Commands[ind].pib = *command.pib;
                             }
                             if (s[1] == 'c')
                             {
                                 *Commands[ind].pic = *command.pib;
-                                //Commands[ind].Tok = Toks.pbaapiolvi;
+                            }
+                        }
+                        if (s[0] == 'd')
+                        {
+                            if (s[1] == 'b')
+                            {
+                                *Commands[ind].pdb = *command.pdb;
+                            }
+                            if (s[1] == 'c')
+                            {
+                                *Commands[ind].pdc = *command.pdb;
+                            }
+                        }
+                        if (s[0] == 'b')
+                        {
+                            if (s[1] == 'b')
+                            {
+                                *Commands[ind].pbb = *command.pbb;
+                            }
+                            if (s[1] == 'c')
+                            {
+                                *Commands[ind].pbc = *command.pbb;
                             }
                         }
                     }
@@ -1286,7 +1302,6 @@ namespace SimpleLang
                 ReplaceCopies();
                 temp = DelUseless();
             }
-            //Print();
             Redundant.Clear();
             Temporary.Clear();
             UseFull.Clear();
