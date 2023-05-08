@@ -21,7 +21,16 @@ namespace SimpleLang
                // Console.WriteLine(command.Tok);
                 switch (command.Tok)
                         {
-                            case Toks.end:
+                    case Toks.printint:
+                        Console.WriteLine(*command.pia);
+                        break;
+                    case Toks.printdouble:
+                        Console.WriteLine(*command.pda);
+                        break;
+                    case Toks.printbool:
+                        Console.WriteLine(*command.pba);
+                        break;
+                    case Toks.end:
                                 i = Size;
                                 break; // stop
                             case Toks.iff:

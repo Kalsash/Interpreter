@@ -427,23 +427,24 @@ namespace SimpleLang
             var val = p.Expr.Eval(this);
             if (tval == Types.tint)
             {
-                op.AddCommands(new ThreeAddress(17));
-                op.Commands[SymbolTable.CommandsCounter++].pia = val.pi;
+                op.AddCommands(new ThreeAddress(17, val.pi));
+                op.Commands[SymbolTable.CommandsCounter].Tok = Toks.printint;
+
             }
             if (tval == Types.tdouble)
             {
-                op.AddCommands(new ThreeAddress(18));
-                op.Commands[SymbolTable.CommandsCounter++].pda = val.pd;
+                op.AddCommands(new ThreeAddress(18, val.pd));
+                op.Commands[SymbolTable.CommandsCounter].Tok = Toks.printdouble;
             }
             if (tval == Types.tbool)
             {
-                op.AddCommands(new ThreeAddress(19));
-                op.Commands[SymbolTable.CommandsCounter++].pba = val.pb;
+                op.AddCommands(new ThreeAddress(19, val.pb));
+                op.Commands[SymbolTable.CommandsCounter].Tok = Toks.printbool;
             }
             if (SymbolTable.CommandsCounter >= 2)
             {
-                if (op.Commands[SymbolTable.CommandsCounter - 2].NumberOfCommand == 22 ||
-                    op.Commands[SymbolTable.CommandsCounter - 2].NumberOfCommand == 23)
+                if (op.Commands[SymbolTable.CommandsCounter - 2].Tok == Toks.iff ||
+                    op.Commands[SymbolTable.CommandsCounter - 2].Tok == Toks.got)
                 {
                     return new Value(0);
                 }

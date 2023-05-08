@@ -1276,6 +1276,7 @@ namespace SimpleLang
             FindLeaders();
             if (ArrBlocks.Length <= 1)
             {
+                Print();
                 return;
             } 
             DefUse();
@@ -1314,7 +1315,7 @@ namespace SimpleLang
 
             LiveGlobal();
             temp = DelUseless();
-            //Print();
+            Print();
 
 
 
