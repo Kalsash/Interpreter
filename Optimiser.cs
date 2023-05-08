@@ -305,6 +305,7 @@ namespace SimpleLang
                 end = Arr[i + 1] - 1;
                 CollectMarks(end, i, Arr);
                 end = Arr[i + 1] - 2;
+                int e = end;
                 while (Arr[i] - 1 != end)
                 {
                     var command = Commands[end];
@@ -346,6 +347,10 @@ namespace SimpleLang
                     }
                     ind = int.Parse(s.Substring(3));
 
+                    if (ind < Arr[i] - 1 || ind > e)
+                    {
+                        continue;
+                    }
                     unsafe
                     {
                         if (command.Count < 3)
@@ -417,7 +422,6 @@ namespace SimpleLang
                                     UseFull[Convert.ToString((ulong)command.pdb)] = -1;
                                     if (s[2] == 'b')
                                     {
-                                        //Console.WriteLine(s);
                                         *Commands[ind].pdb = *command.pdb;
                                     }
                                     if (s[2] == 'c')
@@ -446,51 +450,71 @@ namespace SimpleLang
                                 continue;
                             }
 
-                            //if (command.NumberOfCommand == 14 && Commands[ind].NumberOfCommand == 51)
-                            //{
-                            //    Commands[ind].NumberOfCommand = 53;
-                            //    Commands[ind].doubleVal = command.doubleVal;
-                            //    Commands[ind].pic = command.pic;
-                            //    Commands[ind].Count = 3;
-                            //    Commands[ind].Types = "d2i";
-                            //    //Commands[ind].Tok = Toks.pdapvdodpi;
-                            //    Temporary.Add(c);
-                            //    Redundant.Add(c);
-                            //    continue;
-                            //}
-
-                            if (Commands[ind].NumberOfCommand == 51)
+                            if (Commands[ind].Assign != command.Assign)
                             {
                                 if (command.Count <= 2)
                                 {
                                     continue;
                                 }
-                                switch (Commands[ind].NumberOfCommand)
+                                string tok = "";
+                                switch (command.Types[0])
                                 {
-                                    case 50:
-                                    case 59 - 61:
-
+                                    case 'i':
+                                        tok += "pi";
                                         break;
-                                    case 51:
-                                        //if (command.NumberOfCommand == 21)
-                                        //{
-                                            Commands[ind].NumberOfCommand = 55;
-                                            Commands[ind].pdb = command.pdb;
-                                            Commands[ind].pic = command.pic;
-                                            Commands[ind].Count = 3;
-                                            Commands[ind].Types = "ddi";
-                                            Commands[ind].Tok = Toks.pdappdodpi;
-                                            
-                                        //}
+                                    case 'd':
+                                        tok += "pd";
                                         break;
-                                    default:
+                                    case 'b':
+                                        tok += "pb";
                                         break;
                                 }
+                                tok += Commands[ind].Assign;
+                             switch (command.Types[1])
+                                {
+                                    case 'i':
+                                        tok += "pi";
+                                        Commands[ind].pib = command.pib;
+                                        break;
+                                    case 'd':
+                                        tok += "pd";
+                                        Commands[ind].pdb = command.pdb;
+                                        break;
+                                    case 'b':
+                                        tok += "pb";
+                                        Commands[ind].pbb = command.pbb;
+                                        break;
+                                }
+                                tok += command.Operation;
+                                switch (command.Types[2])
+                                {
+                                    case 'i':
+                                        tok += "pi";
+                                        Commands[ind].pic = command.pic;
+                                        break;
+                                    case 'd':
+                                        tok += "pd";
+                                        Commands[ind].pdc = command.pdc;
+                                        break;
+                                    case 'b':
+                                        tok += "pb";
+                                        Commands[ind].pbc = command.pbc;
+                                        break;
+                                }
+                                Commands[ind].NumberOfCommand = 55;
+                                Commands[ind].Count = 3;
+                                var type = "";
+                                type += tok[1];
+                                type += tok[5];
+                                type += tok[9];
+                                Commands[ind].Types = type;
+                                Toks tt = Toks.empty;
+                                Enum.TryParse(tok, out tt);
+                                Commands[ind].Tok = tt;
                                 Temporary.Add(c);
                                 Redundant.Add(c);
                                 continue;
                             }
-
                             Temporary.Add(ind);
                             Redundant.Add(ind);
                             unsafe
