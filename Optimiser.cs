@@ -892,10 +892,8 @@ namespace SimpleLang
             {
                 OUT[i] = new SortedSet<int> { };
             }
-            int k = 0;
-            while (k != 100)
+            while (TempOUT != OUT)
             {
-                k++;
                 TempOUT = OUT;
                 for (int i = 0; i < ArrBlocks.Length-1; i++)
                 {
@@ -927,10 +925,8 @@ namespace SimpleLang
             {
                 ActiveIN[i] = new SortedSet<string> { };
             }
-            int k = 0;
-            while (k != 100)
+            while (TempOUT != ActiveIN)
             {
-                k++;
                 TempOUT = ActiveIN;
                 for (int i = ArrBlocks.Length - 2; i>=0 ; i--)
                 {
@@ -1318,7 +1314,7 @@ namespace SimpleLang
 
             LiveGlobal();
             temp = DelUseless();
-            Print();
+            //Print();
 
 
 
