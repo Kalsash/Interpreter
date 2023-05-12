@@ -1315,12 +1315,157 @@ namespace SimpleLang
 
             LiveGlobal();
             temp = DelUseless();
-            Print();
+            //Print();
+            PrintOptimisedCommands();
 
 
 
 
         }
+        public unsafe void PrintOptimisedCommands()
+        {
+            string StrOpt = "";
+            for (int i = 0; i < Size; i++)
+            {
+
+                var command = Commands[i];
+                switch (command.Tok)
+                {
+                    case Toks.printint:
+                        break;
+                    case Toks.printdouble:
+                        break;
+                    case Toks.printbool:
+                        break;
+                    case Toks.end:
+                        StrOpt += "(" + i + ")"+ "end \n";
+                        break;
+                    case Toks.got:
+                        StrOpt += "(" + i  + ")"+ "goto "+ command.Goto + "\n";
+                        break;
+                    case Toks.iff:
+                        AddVal(Convert.ToString((ulong)command.pba));
+                       
+                        StrOpt += "(" + i + ")" + "if ("+ Values[Convert.ToString((ulong)command.pba)]  
+                            + " == false) goto " + (command.Goto+1) + "\n";
+                        break;
+                    case Toks.empty:
+                        StrOpt += "(" + i + ")" + "\n";
+                        break;             
+                    default:
+                        StrOpt += "(" + i + ")";
+                        switch (command.Types[0])
+                        {
+                            case 'i':
+                                AddVal(Convert.ToString((ulong)command.pia));
+                                StrOpt += Values[Convert.ToString((ulong)command.pia)];
+                                break;
+                            case 'd':
+                                AddVal(Convert.ToString((ulong)command.pda));
+                                StrOpt += Values[Convert.ToString((ulong)command.pda)];
+                                break;
+                            case 'b':
+                                AddVal(Convert.ToString((ulong)command.pba));
+                                StrOpt += Values[Convert.ToString((ulong)command.pba)];
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (command.Tok.ToString()[3])
+                        {
+                            case 'a':
+                                StrOpt += " = ";
+                                break;
+                            case 'p':
+                                StrOpt += " += ";
+                                break;
+                            case 'n':
+                                StrOpt += " -=";
+                                break;
+                            case 'm':
+                                StrOpt += " *= ";
+                                break;
+                            case 'd':
+                                StrOpt += " /= ";
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (command.Types[1])
+                        {
+                            case 'i':
+                                AddVal(Convert.ToString((ulong)command.pib));
+                                StrOpt += Values[Convert.ToString((ulong)command.pib)];
+                                break;
+                            case 'd':
+                                AddVal(Convert.ToString((ulong)command.pdb));
+                                StrOpt += Values[Convert.ToString((ulong)command.pdb)];
+                                break;
+                            case 'b':
+                                AddVal(Convert.ToString((ulong)command.pbb));
+                                StrOpt += Values[Convert.ToString((ulong)command.pbb)];
+                                break;
+                            default:
+                                break;
+                        }
+                        if (command.Count == 2)
+                        {
+                            StrOpt += "\n";
+                            break;
+                        }
+                        switch (command.Tok.ToString()[7])
+                        {
+                            case 'p':
+                                StrOpt += " + ";
+                                break;
+                            case 'n':
+                                StrOpt += " -";
+                                break;
+                            case 'm':
+                                StrOpt += " * ";
+                                break;
+                            case 'd':
+                                StrOpt += " / ";
+                                break;
+                            case 'l':
+                                StrOpt += " < ";
+                                break;
+                            case 'b':
+                                StrOpt += " > ";
+                                break;
+                            case 'e':
+                                StrOpt += " == ";
+                                break;
+                            case 'w':
+                                StrOpt += " != ";
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (command.Types[2])
+                        {
+                            case 'i':
+                                AddVal(Convert.ToString((ulong)command.pic));
+                                StrOpt += Values[Convert.ToString((ulong)command.pic)];
+                                break;
+                            case 'd':
+                                AddVal(Convert.ToString((ulong)command.pdc));
+                                StrOpt += Values[Convert.ToString((ulong)command.pdc)];
+                                break;
+                            case 'b':
+                                AddVal(Convert.ToString((ulong)command.pbc));
+                                StrOpt += Values[Convert.ToString((ulong)command.pbc)];
+                                break;
+                            default:
+                                break;
+                        }
+                        StrOpt += "\n";
+                        break;
+                }
+            }
+            Console.WriteLine(StrOpt);
+        }
+
         public unsafe void RunCommands()
         {
             //Print();
