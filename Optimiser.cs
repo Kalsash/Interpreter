@@ -137,15 +137,19 @@ namespace SimpleLang
 
         public void AddGlobal(string s, string s2, int k)
         {
-            if (DefCon[k].Contains(s))
+            if (DefCon[k] != null)
             {
-                if (!GlobalUse[k].ContainsKey(s))
+                if (DefCon[k].Contains(s))
                 {
-                    var st = new SortedSet<string>();
-                    st.Add(s2);
-                    GlobalUse[k].Add(s,st);
+                    if (!GlobalUse[k].ContainsKey(s))
+                    {
+                        var st = new SortedSet<string>();
+                        st.Add(s2);
+                        GlobalUse[k].Add(s, st);
+                    }
                 }
             }
+
         }
         public void FindLeaders()
         {
@@ -1334,6 +1338,7 @@ namespace SimpleLang
                     case Toks.printint:
                         break;
                     case Toks.printdouble:
+                        StrOpt += "(" + i + ")" + "print \n";
                         break;
                     case Toks.printbool:
                         break;

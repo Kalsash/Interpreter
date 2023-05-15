@@ -428,18 +428,18 @@ namespace SimpleLang
             if (tval == Types.tint)
             {
                 op.AddCommands(new ThreeAddress(17, val.pi));
-                op.Commands[SymbolTable.CommandsCounter].Tok = Toks.printint;
+                op.Commands[SymbolTable.CommandsCounter++].Tok = Toks.printint;
 
             }
             if (tval == Types.tdouble)
             {
                 op.AddCommands(new ThreeAddress(18, val.pd));
-                op.Commands[SymbolTable.CommandsCounter].Tok = Toks.printdouble;
+                op.Commands[SymbolTable.CommandsCounter++].Tok = Toks.printdouble;
             }
             if (tval == Types.tbool)
             {
                 op.AddCommands(new ThreeAddress(19, val.pb));
-                op.Commands[SymbolTable.CommandsCounter].Tok = Toks.printbool;
+                op.Commands[SymbolTable.CommandsCounter++].Tok = Toks.printbool;
             }
             if (SymbolTable.CommandsCounter >= 2)
             {
